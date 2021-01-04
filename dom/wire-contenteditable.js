@@ -14,7 +14,7 @@ function wireContentEditable({
   editableSelection.on('click.name', null);
   editableSelection.on('keyup.name', null);
 
-  // Update chaos-galaxies value.
+  // Update cardfields value.
   editableSelection.text(initialValue);
 
   // Connect current listeners.

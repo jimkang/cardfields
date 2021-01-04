@@ -2,22 +2,22 @@ require('longjohn');
 var test = require('tape');
 var assertNoError = require('assert-no-error');
 
-var initialFieldFlow = require('../flows/initial-chaos-galaxies-flow.ts');
+var initialFieldFlow = require('../flows/initial-cardfields-flow.ts');
 var PouchDB = require('pouchdb');
 
 var testCases = [
   {
-    name: 'Nothing in db yet, so it initializes with a chaos-galaxies',
+    name: 'Nothing in db yet, so it initializes with a cardfields',
     dbName: 'db-a',
     expectError: false,
     expectStore: true,
     expectFieldStore: true,
     opts: {
-      chaos-galaxiesId: 'smidgeo-chaos-galaxies'
+      cardfieldsId: 'smidgeo-cardfields'
     }
   },
   {
-    name: 'No chaos-galaxiesId provided, so it returns a store, and a recent chaos-galaxies',
+    name: 'No cardfieldsId provided, so it returns a store, and a recent cardfields',
     dbName: 'db-a',
     expectError: false,
     expectStore: true,
@@ -31,9 +31,9 @@ var testCases = [
     expectStore: true,
     expectFieldStore: false,
     expectedMessage:
-      'Could not load the chaos-galaxies with the id nonexistent-chaos-galaxies. Try picking another chaos-galaxies?',
+      'Could not load the cardfields with the id nonexistent-cardfields. Try picking another cardfields?',
     opts: {
-      chaos-galaxiesId: 'nonexistent-chaos-galaxies'
+      cardfieldsId: 'nonexistent-cardfields'
     }
   },
   {
@@ -42,9 +42,9 @@ var testCases = [
     expectError: false,
     expectStore: true,
     expectFieldStore: false,
-    expectedFieldStoreId: 'smidgeo-chaos-galaxies',
+    expectedFieldStoreId: 'smidgeo-cardfields',
     opts: {
-      chaos-galaxiesId: 'smidgeo-chaos-galaxies'
+      cardfieldsId: 'smidgeo-cardfields'
     }
   }
 ];
@@ -74,15 +74,15 @@ function runCase(testCase) {
       }
       if (testCase.expectFieldStore) {
         t.equal(
-          typeof result.chaos-galaxiesStore.saveAll,
+          typeof result.cardfieldsStore.saveAll,
           'function',
-          'chaos-galaxiesStore is provided by flow.'
+          'cardfieldsStore is provided by flow.'
         );
         if (testCase.expectedFieldStoreFieldId) {
           t.equal(
-            result.chaos-galaxiesStore.getFieldId(),
-            result.chaos-galaxiesStoreFieldId,
-            'Id of chaos-galaxies is correct.'
+            result.cardfieldsStore.getFieldId(),
+            result.cardfieldsStoreFieldId,
+            'Id of cardfields is correct.'
           );
         }
       }

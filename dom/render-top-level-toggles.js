@@ -15,7 +15,7 @@ var forceSourceToggleButton = document.querySelector(
 function renderTopLevelToggles({ selProj, selAttr }) {
   on('#toggle-forceSource-controls', 'click', onToggleClick);
   on('#toggle-project-controls', 'click', onToggleClick);
-  on('#toggle-chaos-galaxies-controls', 'click', onToggleClick);
+  on('#toggle-cardfields-controls', 'click', onToggleClick);
 
   if (selProj) {
     callAttnToEl(projectToggleButton);

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Your Personal Forces Field</title>
+    <title>Cardfield</title>
     <link rel="stylesheet" href="app.css" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,113 +8,7 @@
   <body>
     <pre id="status-message" class="hidden ui"></pre>
 
-    <section class="overlays-container centered-col">
-      <section id="project-container" class="centered-col">
-        <svg width="100vmax" height="95vmin" viewBox="0 0 100 100" id="board">
-          <defs></defs>
-          <g id="zoom-root">
-            <g id="forceSource-root"></g>
-            <g id="project-root"></g>
-          </g>
-        </svg>
-        <div>
-          You can pan around the board by dragging. You can zoom in and out with
-          either the mouse wheel or pinching.
-        </div>
-      </section>
-
-      <section id="ui-overlay" class="ui">
-        <section class="controls ui" id="top-level-toggles-container">
-          <div
-            id="toggle-forceSource-controls"
-            class="top-level-toggle"
-            data-sheet="forceSource-sheet"
-          >
-            <div class="display-area"></div>
-          </div>
-          <div
-            id="toggle-chaos-galaxies-controls"
-            class="top-level-toggle"
-            data-sheet="chaos-galaxies-sheet"
-          >
-            <div class="display-area"></div>
-          </div>
-          <div
-            id="toggle-project-controls"
-            class="top-level-toggle"
-            data-sheet="project-sheet"
-          >
-            <div class="display-area"></div>
-          </div>
-        </section>
-        <section id="chaos-galaxies-sheet" class="controls ui editor-container">
-          <div class="chaos-galaxies-sheet-contents centered-col">
-            <button id="add-project-button">Add a project</button>
-            <button id="add-forceSource-button">Add a force source</button>
-            <button id="export-button">Export</button>
-            <div id="downloads" class="hidden"></div>
-            <button id="import-button">Import</button>
-            <input
-              type="file"
-              id="import-file"
-              accept="application/json"
-              class="hidden"
-            />
-            <button id="show-replace-button">Find and replace attribute</button>
-            <form>
-              <div id="find-and-replace-container" class="centered-col hidden">
-                <label class="prop-label">Find attributes named:</label>
-                <input type="text" id="find-chaos-galaxies" required="required" />
-                <label class="prop-label">Replace with:</label>
-                <input type="text" id="replace-chaos-galaxies" required="required" />
-                <input type="submit" id="replace-button" value="Replace all" />
-              </div>
-            </form>
-            <div>
-              <label>Include only things with these tags:</label>
-              <input type="text" id="include-tags-chaos-galaxies" class="filter-chaos-galaxies" />
-            </div>
-            <div>
-              <label>Exclude things with these tags:</label>
-              <input type="text" id="exclude-tags-chaos-galaxies" class="filter-chaos-galaxies" />
-            </div>
-            <button id="clear-projects-button">Clear all projects</button>
-            <button id="clear-forceSources-button">
-              Clear all force sources
-            </button>
-          </div>
-        </section>
-
-        <section id="project-sheet" class="prop-editor ui editor-container">
-          <h2 class="name sheet-name" contenteditable="true">Slop Cube</h2>
-          <!-- TODO: Template for this. -->
-          <div class="edit-chaos-galaxies-tip">
-            Hit Ctrl+Enter (or click outside of chaos-galaxies) to complete editing. Hit
-            Esc to cancel edit.
-          </div>
-          <ul class="props"></ul>
-          <button class="add-prop-button">Add project property</button>
-          <h2>Tags</h2>
-          <ul class="tags"></ul>
-          <button class="add-tag-button">Add tag</button>
-          <button class="delete-button">Delete project</button>
-        </section>
-
-        <section id="forceSource-sheet" class="prop-editor ui editor-container">
-          <h2 class="name props-name" contenteditable="true">
-            ForceSource name
-          </h2>
-          <div class="edit-chaos-galaxies-tip">
-            Hit Ctrl+Enter (or click outside of chaos-galaxies) to complete editing. Hit
-            Esc to cancel edit.
-          </div>
-          <ul class="props"></ul>
-          <button class="add-prop-button">Add force source property</button>
-          <button class="delete-button">Delete force source</button>
-        </section>
-      </section>
-    </section>
-
+    <div id="temp"></div>
     <script src="build/bundle.js"></script>
   </body>
 </html>

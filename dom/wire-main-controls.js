@@ -6,8 +6,8 @@ var filePicker = document.getElementById('import-file');
 var findAndReplaceContainer = document.getElementById(
   'find-and-replace-container'
 );
-var findField = document.getElementById('find-chaos-galaxies');
-var replaceField = document.getElementById('replace-chaos-galaxies');
+var findField = document.getElementById('find-cardfields');
+var replaceField = document.getElementById('replace-cardfields');
 
 function wireMainControls({
   onAddProjectClick,
@@ -28,7 +28,7 @@ function wireMainControls({
   on('#replace-button', 'click', onReplaceClick);
   wireReveal('#import-button', filePicker);
   wireReveal('#show-replace-button', findAndReplaceContainer);
-  on('#include-tags-chaos-galaxies', 'change', onIncludeTagsChange);
+  on('#include-tags-cardfields', 'change', onIncludeTagsChange);
 
   function onImportFileChange() {
     var file = this.files[0];
