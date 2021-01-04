@@ -1,6 +1,7 @@
 include config.mk
 
 HOMEDIR = $(shell pwd)
+rollup = ./node_modules/.bin/rollup
 
 pushall: sync
 	git push origin master
@@ -9,18 +10,24 @@ deploy:
 	make build && git commit -a -m"Build" && make pushall
 
 build:
-	./node_modules/.bin/rollup -c
+	$(rollup) -c
+
+card-render-test:
+	cd tools && \
+    ../$(rollup) \
+    --config card-render-test.config.js \
+    --watch
 
 prettier:
 	prettier --single-quote --write "**/*.html"
 
 test:
 	rm -rf tests/fixtures/*
-	node -r ts-node/register tests/initial-chaos-galaxies-flow-tests.js
+	node -r ts-node/register tests/initial-cardfields-flow-tests.js
 
 debug-test:
 	rm -rf tests/fixtures/*
-	node inspect -r ts-node/register tests/initial-chaos-galaxies-flow-tests.js
+	node inspect -r ts-node/register tests/initial-cardfields-flow-tests.js
 
 sync:
 	rsync -a $(HOMEDIR)/ $(USER)@$(SERVER):/$(APPDIR) \

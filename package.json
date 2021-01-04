@@ -1,5 +1,5 @@
 {
-  "name": "chaos-galaxies",
+  "name": "cardfields",
   "version": "1.0.0",
   "description": "Task observer",
   "main": "index.js",
@@ -7,22 +7,20 @@
   "scripts": {
     "test": "make test",
     "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "start": "sirv public --host 0.0.0.0"
+    "dev": "rollup -c -w"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:jimkang/chaos-galaxies.git"
+    "url": "git@github.com:jimkang/cardfields.git"
   },
   "keywords": [
     "cubes"
   ],
   "author": "Jim Kang",
-  "license": "BSD",
   "bugs": {
-    "url": "https://github.com/jimkang/chaos-galaxies/issues"
+    "url": "https://github.com/jimkang/cardfields/issues"
   },
-  "homepage": "https://github.com/jimkang/chaos-galaxies",
+  "homepage": "https://github.com/jimkang/cardfields",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.1.0",
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -62,6 +60,7 @@
     "errorback-promise": "^1.0.0",
     "get-at-path": "^1.0.1",
     "handle-error-web": "^1.0.1",
+    "hyperhtml": "^2.33.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.curry": "^4.1.1",
     "lodash.findwhere": "^3.1.0",
@@ -84,6 +83,7 @@
     "standard-bail": "^2.0.1",
     "strokerouter": "^3.0.0",
     "tablenest": "^4.0.0",
+    "tslib": "^2.0.3",
     "verror": "^1.10.0"
   }
 }
