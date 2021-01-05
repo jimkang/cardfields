@@ -17,10 +17,16 @@ run:
 	$(rollup) -c -w
 	$(sirv) public --host 0.0.0.0
 
-card-render-test:
+card-render-vat:
 	cd vats/card && \
     ../../$(rollup) \
     --config card-render-test.config.js \
+    --watch
+
+stores-vat:
+	cd vats/stores && \
+    ../../$(rollup) \
+    --config stores-test.config.js \
     --watch
 
 prettier:
