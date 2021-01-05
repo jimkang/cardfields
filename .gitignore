@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 *.swp
+*.js
+*.map
 config.js
 config.mk
 index.d.ts

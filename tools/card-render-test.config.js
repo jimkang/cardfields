@@ -9,8 +9,6 @@ import typescript from '@rollup/plugin-typescript';
 const production = !process.env.ROLLUP_WATCH;
 const unminify = process.env.UNMINIFY;
 
-//console.log('flags', production, unminify);
-
 export default {
   input: 'card-render-test-app.ts',
   output: {
@@ -47,7 +45,8 @@ export default {
     json()
   ],
   watch: {
-    clearScreen: false
+    clearScreen: false,
+    include: ['./**', '../public/app.css']
   }
 };
 
