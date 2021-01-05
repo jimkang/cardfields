@@ -1,5 +1,6 @@
 /* global process */
 
+import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
@@ -19,13 +20,15 @@ export default {
     file: 'card-render-test-build.js'
   },
   plugins: [
+    svelte(),
     // If you have external dependencies installed from
     // npm, you'll most likely need these plugins. In
     // some cases you'll need additional configuration -
     // consult the documentation for details:
     // https://github.com/rollup/plugins/tree/master/packages/commonjs
     resolve({
-      browser: true
+      browser: true,
+      dedupe: ['svelte']
     }),
 
     typescript({
@@ -47,6 +50,6 @@ export default {
   ],
   watch: {
     clearScreen: false,
-    include: ['./**', '../public/app.css']
+    include: ['../**', '../public/app.css']
   }
 };

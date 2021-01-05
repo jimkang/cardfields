@@ -1,10 +1,10 @@
 body {
   --atom: 8px;
-  --dark-line: #533;
+  --dark-line: #334;
   --light: #fee;
   font-size: 24px;
   font-family: Ubuntu, roboto, noto, segoe ui, arial, -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, sans-serif;
-  background-color: #fff;
+  background-color: var(--light);
   margin-bottom: 2em;
   display: flex;
   flex-wrap: wrap;
@@ -72,7 +72,7 @@ p {
 }
 
 #status-message {
-  background-color: #ffffee;
+  background-color: var(--light)fee;
   margin: 1em;
   padding: 1em;
 }
@@ -81,7 +81,7 @@ button {
   color: #666;
   font-size: 1em;
   cursor: pointer;
-  background-color: #fff;
+  background-color: var(--light);
   padding-top: 0.5em;
   border-radius: 1.2em;
   border-width: 2px;
@@ -223,7 +223,7 @@ footer {
 }
 
 #board .chit circle {
-  fill: #fff;
+  fill: var(--light);
   stroke: #444;
   stroke-width: 0.1;
 }
@@ -241,7 +241,7 @@ footer {
 }
 
 #board .chit.forceSource text {
-  fill: #fff;
+  fill: var(--light);
 }
 
 .centered-col {
@@ -378,9 +378,15 @@ footer {
 
 .card > * {
   color: var(--dark-line);
-  padding: var(--atom);
-  border-radius: calc(var(--atom)/2);
   background-color: var(--light);
+}
+
+.card * {
+  border-radius: calc(var(--atom)/2);
+}
+
+.card .group {
+  background-color: inherit;
 }
 
 .card h2 {
@@ -389,15 +395,23 @@ footer {
   background-color: inherit;
 }
 
+.card .label {
+  margin: 0;
+  margin-bottom: var(--atom);
+  color: var(--light);
+  background-color: inherit;
+}
+
 .card img {
   border: 2px solid var(--dark-line);
   margin-left: auto;
   margin-right: auto;
-  max-width: calc(100% - 2 * var(--atom) -  4px);
+  max-width: calc(100% - 4px);
 }
 
 .card .text {
-  background-color: #fff;
+  background-color: var(--light);
+  padding: var(--atom);
 }
 
 .card .tags {

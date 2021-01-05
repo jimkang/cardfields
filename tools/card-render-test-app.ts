@@ -1,4 +1,4 @@
-import { bind, wire } from 'hyperhtml';
+import Card from '../components/Card.svelte';
 
 interface Card {
   id: string;
@@ -8,6 +8,7 @@ interface Card {
   picture?: string;
   tags: string[];
   color?: string;
+  // TODO: History
 }
 
 var card: Card = {
@@ -21,20 +22,9 @@ var card: Card = {
   color: 'hsl(0, 50%, 50%)'
 };
 
-function renderCard(card) {
-  bind(
-    document.getElementById('temp')
-  )`<div class="card" style="background-color: ${card.color}">
-    <h2 contenteditable>${card.title || card.text}</h2>
-    <img src="${card.picture}" alt="Card illustration">
-    <div class="text" contenteditable>${card.text}</div>
-    <div class="secret text" contenteditable>${card.secretText}</div>
-    <div class="tags" contenteditable>${card.tags.map(renderTag)}</div>
-   </div>`;
-}
+var cardComp = new Card({
+  target: document.getElementById('temp'),
+  props: { card }
+});
 
-function renderTag(tag) {
-  return wire()`<span class="tag">${tag}</span>`;
-}
-
-renderCard(card);
+export default cardComp;
