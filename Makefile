@@ -2,6 +2,7 @@ include config.mk
 
 HOMEDIR = $(shell pwd)
 rollup = ./node_modules/.bin/rollup
+sirv = ./node_modules/.bin/sirv
 
 pushall: sync
 	git push origin master
@@ -11,6 +12,10 @@ deploy:
 
 build:
 	$(rollup) -c
+
+run:
+	$(rollup) -c -w
+	$(sirv) public --host 0.0.0.0
 
 card-render-test:
 	cd tools && \

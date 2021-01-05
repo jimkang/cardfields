@@ -7,7 +7,8 @@
   "scripts": {
     "test": "make test",
     "build": "rollup -c",
-    "dev": "rollup -c -w"
+    "dev": "rollup -c -w",
+    "start": "echo \"Include start so that it doesn't kill rollup -w, but don't call sirv so that we can call it ourselves in the rollup config and in the Makefile and have it use different working directories.\""
   },
   "repository": {
     "type": "git",
@@ -78,10 +79,12 @@
     "render-as-nested-list": "^1.0.1",
     "render-dl-link": "^1.0.0",
     "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-svelte": "^7.0.0",
     "route-state": "^2.0.5",
     "seedrandom": "^3.0.1",
     "standard-bail": "^2.0.1",
     "strokerouter": "^3.0.0",
+    "svelte": "^3.31.2",
     "tablenest": "^4.0.0",
     "tslib": "^2.0.3",
     "verror": "^1.10.0"

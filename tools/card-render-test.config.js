@@ -5,6 +5,7 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
+import { serve } from '../config-tools';
 
 const production = !process.env.ROLLUP_WATCH;
 const unminify = process.env.UNMINIFY;
@@ -49,24 +50,3 @@ export default {
     include: ['./**', '../public/app.css']
   }
 };
-
-function serve() {
-  let started = false;
-
-  return {
-    writeBundle() {
-      if (!started) {
-        started = true;
-
-        require('child_process').spawn(
-          '../node_modules/.bin/sirv',
-          ['.', '--host', '0.0.0.0', '--dev'],
-          {
-            stdio: ['ignore', 'inherit', 'inherit'],
-            shell: true
-          }
-        );
-      }
-    }
-  };
-}
