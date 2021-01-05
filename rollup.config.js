@@ -2,11 +2,12 @@
 
 import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
+//import commonjs from '@rollup/plugin-commonjs';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
 import { serve } from './config-tools';
+import typescript from '@rollup/plugin-typescript';
 //import babel from '@rollup/plugin-babel';
 
 const production = !process.env.ROLLUP_WATCH;
@@ -34,11 +35,15 @@ export default {
       browser: true,
       dedupe: ['svelte']
     }),
-    commonjs(),
+
+    typescript({
+      sourceMap: !production,
+      inlineSources: !production
+    }),
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
-    !production && serve(),
+    !production && serve({}),
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production

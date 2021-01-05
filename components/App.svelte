@@ -4,7 +4,7 @@
 
 <main>
   <h1>Cardfields</h1>
-  <div>Observe what you do hey</div>
+  <div>Observe what you do</div>
 
   <div id="version-info">{version}</div>
 </main>

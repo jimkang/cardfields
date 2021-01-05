@@ -1,4 +1,4 @@
-import Card from '../components/Card.svelte';
+import Card from '../../components/Card.svelte';
 
 interface Card {
   id: string;

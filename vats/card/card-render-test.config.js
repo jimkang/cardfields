@@ -6,7 +6,7 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
-import { serve } from '../config-tools';
+import { serve } from '../../config-tools';
 
 const production = !process.env.ROLLUP_WATCH;
 const unminify = process.env.UNMINIFY;
@@ -38,7 +38,7 @@ export default {
 
     // In dev mode, call `npm run start` once
     // the bundle has been generated
-    !production && serve(),
+    !production && serve({ rootDir: '../..', serveDir: '.' }),
 
     !production && livereload('.'),
 
@@ -50,6 +50,6 @@ export default {
   ],
   watch: {
     clearScreen: false,
-    include: ['../**', '../public/app.css']
+    include: ['../../**', '../../public/app.css']
   }
 };

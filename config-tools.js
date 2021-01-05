@@ -1,4 +1,4 @@
-export function serve() {
+export function serve({ rootDir = '.', serveDir = 'public' }) {
   let started = false;
 
   return {
@@ -7,8 +7,8 @@ export function serve() {
         started = true;
 
         require('child_process').spawn(
-          '../node_modules/.bin/sirv',
-          ['.', '--host', '0.0.0.0', '--dev'],
+          `${rootDir}/node_modules/.bin/sirv`,
+          [serveDir, '--host', '0.0.0.0', '--dev', '--verbose'],
           {
             stdio: ['ignore', 'inherit', 'inherit'],
             shell: true

@@ -18,8 +18,8 @@ run:
 	$(sirv) public --host 0.0.0.0
 
 card-render-test:
-	cd tools && \
-    ../$(rollup) \
+	cd vats/card && \
+    ../../$(rollup) \
     --config card-render-test.config.js \
     --watch
 
