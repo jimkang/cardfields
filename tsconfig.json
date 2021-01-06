@@ -1,17 +1,13 @@
 {
-	"compilerOptions": {
-		"outDir": "./built",
-		"allowJs": true,
-		"target": "ES2017",
-		"module": "CommonJS",
-		"lib": ["ES2017", "DOM"]
-	},
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true
+  },
 	"include": [
 		"./**/*"
 	],
 	"exclude": [
 		"./node_modules",
-		"./built",
-		"./index.js"
+    "public/*"
 	]
 }

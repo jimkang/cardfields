@@ -1,3 +1,5 @@
+<script lang="ts">
+// @ts-check
 import CardComp from '../../components/Card.svelte';
 import type { Card } from '../../types';
 
@@ -11,10 +13,9 @@ var card: Card = {
   tags: ['email', 'maintenance', 'chore'],
   color: 'hsl(0, 50%, 50%)'
 };
+</script>
 
-var cardComp = new CardComp({
-  target: document.getElementById('temp'),
-  props: { card }
-});
-
-export default cardComp;
+<main>
+  <h1>Stores experiment</h1>
+  <CardComp card={card} />
+</main>

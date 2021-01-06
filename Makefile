@@ -14,8 +14,8 @@ build:
 	$(rollup) -c
 
 run:
+	./node_modules/.bin/svelte-check
 	$(rollup) -c -w
-	$(sirv) public --host 0.0.0.0
 
 card-render-vat:
 	cd vats/card && \
