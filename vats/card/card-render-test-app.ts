@@ -1,4 +1,5 @@
 import CardComp from '../../components/Card.svelte';
+import CardStore from '../../stores/card-store';
 import type { Card } from '../../types';
 
 var card: Card = {
@@ -14,7 +15,7 @@ var card: Card = {
 
 var cardComp = new CardComp({
   target: document.getElementById('temp'),
-  props: { card }
+  props: { cardStore: CardStore(card) }
 });
 
 export default cardComp;

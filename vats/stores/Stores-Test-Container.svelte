@@ -2,6 +2,7 @@
 // @ts-check
 import type { Card } from '../../types';
 import CardComp from '../../components/Card.svelte';
+import CardStore from '../../stores/card-store';
 
 var card: Card = {
   id: 'unique-card',
@@ -13,9 +14,10 @@ var card: Card = {
   tags: ['email', 'maintenance', 'chore'],
   color: 'hsl(0, 50%, 50%)'
 };
+
 </script>
 
 <main>
   <h1>Stores experiment</h1>
-  <CardComp card={card} />
+  <CardComp cardStore={CardStore(card)} />
 </main>
