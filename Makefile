@@ -18,16 +18,10 @@ run:
 	$(rollup) -c -w
 
 card-render-vat:
-	cd vats/card && \
-    ../../$(rollup) \
-    --config card-render-test.config.js \
-    --watch
+	APP=card make run
 
 stores-vat:
-	cd vats/stores && \
-    ../../$(rollup) \
-    --config stores-test.config.js \
-    --watch
+	APP=stores make run
 
 prettier:
 	prettier --single-quote --write "**/*.html"

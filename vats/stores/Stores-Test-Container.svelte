@@ -1,7 +1,7 @@
 <script lang="ts">
 // @ts-check
-import CardComp from '../../components/Card.svelte';
 import type { Card } from '../../types';
+import CardComp from '../../components/Card.svelte';
 
 var card: Card = {
   id: 'unique-card',

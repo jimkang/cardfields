@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 *.swp
-*.js
+components/*.js
+vats/**/*.js
 *.map
 config.js
 config.mk

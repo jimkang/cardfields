@@ -1,65 +1,30 @@
 /* global process */
 
-import svelte from 'rollup-plugin-svelte';
-import resolve from '@rollup/plugin-node-resolve';
-import livereload from 'rollup-plugin-livereload';
-import { terser } from 'rollup-plugin-terser';
-import commonjs from '@rollup/plugin-commonjs';
-import json from '@rollup/plugin-json';
-import { serve } from './config-tools';
-import typescript from '@rollup/plugin-typescript';
-//import autoPreprocess from 'svelte-preprocess';
-import sveltePreprocess from 'svelte-preprocess';
-//import babel from '@rollup/plugin-babel';
+import createConfig from './rollup-tools/base-config';
+import { serve } from './rollup-tools/config-tools';
 
-const production = !process.env.ROLLUP_WATCH;
-const unminify = process.env.UNMINIFY;
-
-//console.log('flags', production, unminify);
-
-export default {
-  input: 'main.ts',
-  output: {
-    sourcemap: true,
-    format: 'iife',
-    name: 'app',
-    file: 'public/build/bundle.js'
+// Inspired by https://github.com/Tom-Siegel/multi-page-svelte/blob/5dd47f9ffe3cbddbaa5e29be5056ce1ed56060b2/rollup-pages.config.js#L45
+var configs = [
+  {
+    input: 'main.ts',
+    outputFile: 'public/build/bundle.js',
+    reloadPath: 'public',
+    serve: !process.env.APP && serve
   },
-  plugins: [
-    svelte({
-      preprocess: sveltePreprocess(),
-      // enable run-time checks when not in production
-      compilerOptions: { dev: !production }
-    }),
-
-    resolve({
-      browser: true,
-      dedupe: ['svelte']
-    }),
-
-    commonjs(),
-    json(),
-    typescript({
-      sourceMap: !production,
-      inlineSources: !production
-    }),
-
-    // In dev mode, call `npm run start` once
-    // the bundle has been generated
-    !production && serve({}),
-
-    // Watch the `public` directory and refresh the
-    // browser on changes when not in production
-    !production && livereload('public'),
-
-    // If we're building for production (npm run build
-    // instead of npm run dev), minify
-    production && !unminify && terser()
-    //babel({
-    //babelHelpers: 'bundled'
-    //})
-  ],
-  watch: {
-    clearScreen: false
+  {
+    input: 'vats/card/card-render-test-app.ts',
+    outputFile: 'vats/card/card-render-test-bundle.js',
+    reloadPath: 'vats/card',
+    serve: process.env.APP === 'card' && serve,
+    serveOpts: { rootDir: '.', serveDir: 'vats/card' }
+  },
+  {
+    input: 'vats/stores/stores-test-app.ts',
+    outputFile: 'vats/stores/stores-test-bundle.js',
+    reloadPath: 'vats/stores',
+    serve: process.env.APP === 'stores' && serve,
+    serveOpts: { rootDir: '.', serveDir: 'vats/stores' }
   }
-};
+].map(createConfig);
+
+export default configs;
