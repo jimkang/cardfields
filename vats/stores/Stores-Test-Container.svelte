@@ -4,7 +4,10 @@ import CardComp from '../../components/Card.svelte';
 import CardStore from '../../stores/card-store';
 import AllCardsStore from '../../stores/all-cards-store';
 
-var allCardsStore = AllCardsStore([
+var allCardsStore = AllCardsStore();
+
+/*
+allCardsStore.add(
   {
     id: 'unique-card',
     text: 'Clean inbox all the way!',
@@ -14,7 +17,9 @@ var allCardsStore = AllCardsStore([
     //  'https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg',
     tags: ['email', 'maintenance', 'chore'],
     color: 'hsl(0, 50%, 50%)'
-  },
+  }
+);
+allCardsStore.add(
   {
     id: 'unique-card-2',
     text: 'Another card!',
@@ -24,7 +29,7 @@ var allCardsStore = AllCardsStore([
     tags: ['eat', 'pie'],
     color: 'hsl(70, 50%, 50%)'
   }
-]);
+);
 
 allCardsStore.add({
   id: 'unique-card-3',
@@ -35,6 +40,7 @@ allCardsStore.add({
   tags: ['magic'],
   color: 'hsl(210, 50%, 50%)'
 });
+*/
 
 </script>
 

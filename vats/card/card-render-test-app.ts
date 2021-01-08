@@ -1,6 +1,6 @@
 import CardComp from '../../components/Card.svelte';
 import CardStore from '../../stores/card-store';
-import type { Card } from '../../types';
+import type { Card } from '../../things/card';
 
 var card: Card = {
   id: 'unique-card',

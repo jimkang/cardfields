@@ -1,11 +1,13 @@
 import { writable, get } from 'svelte/store';
-import type { Card } from '../types';
+import type { Card } from '../things/card';
+import { getCardKey } from '../things/card';
 
 export default function CardStore(card: Card) {
   var store = writable(card);
   return {
     set(value) {
       console.log('Setting', value);
+      localStorage.setItem(getCardKey(value), JSON.stringify(value));
       store.set(value);
     },
     // Takes a callback that returns a (possibly)
@@ -21,3 +23,4 @@ export default function CardStore(card: Card) {
     subscribe: store.subscribe
   };
 }
+
