@@ -1,5 +1,13 @@
 <script lang="ts">
 export let cardStore;
+export let allCardsStore;
+
+function deleteCard() {
+  //console.log(allCardsStore, cardStore);
+  allCardsStore.del($cardStore.id);
+  cardStore.del($cardStore.id);
+}
+
 </script>
 
 <div class="card" style="background-color: {$cardStore.color}">
@@ -24,5 +32,9 @@ export let cardStore;
       <span class="tag">{tag}</span>
     {/each}
     </div>
+  </div>
+
+  <div class="actions">
+    <button class="delete-button" on:click={deleteCard}>Delete</button>
   </div>
  </div>

@@ -2,6 +2,7 @@ import { writable } from 'svelte/store';
 import type { Card } from '../things/card';
 import { getCardKeyFromId } from '../things/card';
 import pluck from 'lodash.pluck';
+import compact from 'lodash.compact';
 
 const idIndexKey = 'ids__cards';     
 
@@ -16,11 +17,17 @@ export default function AllCardsStore(initCards?: Card[]) {
   if (!cards) {
     cards = [];
   }
+  cards = compact(cards);
   var store = writable(cards);
 
   function set(value) {
     console.log('Setting', value);
     store.set(value);
+  }
+
+  function persist() {
+    saveIdsToLocalStorage(cards);
+    set(cards);
   }
 
   return {
@@ -38,8 +45,17 @@ export default function AllCardsStore(initCards?: Card[]) {
     subscribe: store.subscribe,
     add(card: Card) {
       cards.push(card);
-      saveIdsToLocalStorage(cards);
-      set(cards);
+      persist();
+    },
+    del(id: string) {
+      const index = cards.findIndex(c => c.id === id);
+      if (index < 0) {
+        console.error(new Error('del cannot find ' + id));
+        return;
+      }
+
+      cards.splice(index, 1);
+      persist();
     }
   };
 }

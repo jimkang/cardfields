@@ -47,6 +47,6 @@ allCardsStore.add({
 <main>
   <h1>Stores experiment</h1>
   {#each $allCardsStore as card}
-    <CardComp cardStore={CardStore(card)} />
+    <CardComp cardStore={CardStore(card)} allCardsStore={allCardsStore} />
   {/each}
 </main>

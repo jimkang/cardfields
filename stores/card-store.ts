@@ -20,6 +20,10 @@ export default function CardStore(card: Card) {
       // Just passing through right now.
       cb(get(store));
     },
+    // Be careful to keep AllCardsStore up to date.
+    del() {
+      localStorage.removeItem(getCardKey(card));
+    },
     subscribe: store.subscribe
   };
 }
