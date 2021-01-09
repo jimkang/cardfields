@@ -1,6 +1,9 @@
 import CardComp from '../../components/Card.svelte';
+import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
 import type { Card } from '../../things/card';
+
+var state = State();
 
 var card: Card = {
   id: 'unique-card',
@@ -15,7 +18,7 @@ var card: Card = {
 
 var cardComp = new CardComp({
   target: document.getElementById('temp'),
-  props: { cardStore: CardStore(card) }
+  props: { cardStore: CardStore(state, card) }
 });
 
 export default cardComp;

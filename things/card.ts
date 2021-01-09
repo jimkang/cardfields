@@ -8,11 +8,3 @@ export interface Card {
   color?: string;
   // TODO: History
 }
-
-export function getCardKey(card: Card): string {
-  return getCardKeyFromId(card.id);
-}
-
-export function getCardKeyFromId(id: string): string {
-  return 'card__' + id;
-}

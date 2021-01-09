@@ -1,13 +1,12 @@
-import { writable, get } from 'svelte/store';
+import { writable } from 'svelte/store';
 import type { Card } from '../things/card';
-import { getCardKey } from '../things/card';
 
-export default function CardStore(card: Card) {
+export default function CardStore(state, card) {
   var store = writable(card);
   return {
-    set(value) {
+    set(value: Card) {
       console.log('Setting', value);
-      localStorage.setItem(getCardKey(value), JSON.stringify(value));
+      state.updateCard(value);
       store.set(value);
     },
     // Takes a callback that returns a (possibly)
@@ -15,15 +14,11 @@ export default function CardStore(card: Card) {
     // Svelte is OK with it calling back on the same
     // tick as this call, according to the docs'
     // example.
-    update(cb) {
-      console.log('updating');
-      // Just passing through right now.
-      cb(get(store));
-    },
-    // Be careful to keep AllCardsStore up to date.
-    del() {
-      localStorage.removeItem(getCardKey(card));
-    },
+    //update(cb) {
+    //console.log('updating');
+    //// Just passing through right now.
+    //cb(get(store));
+    //},
     subscribe: store.subscribe
   };
 }

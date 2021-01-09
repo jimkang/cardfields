@@ -1,13 +1,13 @@
 <script lang="ts">
 export let cardStore;
-export let allCardsStore;
+export let state;
 
 function deleteCard() {
   //console.log(allCardsStore, cardStore);
-  allCardsStore.del($cardStore.id);
-  cardStore.del($cardStore.id);
+  // $cardStore refers to the value (the Card)
+  // and cardStore refers to the store.
+  state.deleteCard($cardStore.id);
 }
-
 </script>
 
 <div class="card" style="background-color: {$cardStore.color}">

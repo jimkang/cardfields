@@ -1,10 +1,11 @@
 <script lang="ts">
 // @ts-check
 import CardComp from '../../components/Card.svelte';
+import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
-import AllCardsStore from '../../stores/all-cards-store';
 
-var allCardsStore = AllCardsStore();
+var state = State();
+var allCardsStore = state.allCardsStore;
 
 /*
 allCardsStore.add(
@@ -47,6 +48,8 @@ allCardsStore.add({
 <main>
   <h1>Stores experiment</h1>
   {#each $allCardsStore as card}
-    <CardComp cardStore={CardStore(card)} allCardsStore={allCardsStore} />
+    <CardComp cardStore={CardStore(state, card)} state={state} />
   {/each}
+
+  <button on:click={state.createCard}>Add new card</button>
 </main>

@@ -1,21 +1,16 @@
-cardfields
-==================
+# cardfields
 
 A task observer and capturer.
 
-## TODO
+## State and stores relationship
 
-- Test import and export
+![State and stores](meta/state-stores-relationship.png)
 
-Installation
-------------
+## Installation
 
 First, install Node. Then:
 
-    npm install
-    npm install wzrd -g
+    npm i
+    make run
 
-Usage
------
-
-    npm run dev
+There are make targets for specific experiments in the Makefile.
