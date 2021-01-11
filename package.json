@@ -89,6 +89,7 @@
     "standard-bail": "^2.0.1",
     "strokerouter": "^3.0.0",
     "svelte": "^3.31.2",
+    "svelte-error-message": "^1.0.1",
     "tablenest": "^4.0.0",
     "tslib": "^2.0.3",
     "uuid": "^8.3.2",

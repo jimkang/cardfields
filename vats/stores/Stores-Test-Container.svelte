@@ -2,6 +2,7 @@
 // @ts-check
 import CardComp from '../../components/Card.svelte';
 import ExportComp from '../../components/Export.svelte';
+import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
 
@@ -19,6 +20,5 @@ var allCardsStore = state.allCardsStore;
   <button on:click={state.createCard}>Add new card</button>
 
   <ExportComp allCardsStore={allCardsStore} />
-
-  <button on:click={state.createCard}>Import cards</button>
+  <ImportComp allCardsStore={allCardsStore} state={state} />
 </main>
