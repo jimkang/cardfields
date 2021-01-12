@@ -5,6 +5,7 @@ export let cardStore;
 export let state;
 export let showDeleteButton = true;
 export let allowEditing = true;
+export let compact = false;
 
 let rootEl;
 
@@ -38,23 +39,27 @@ function updateEditables() {
   <img src="{$cardStore.picture}" alt="Card illustration">
 
   <div class="group">
-    <h4 class="label">Description</h4>
+    {#if !compact }
+      <h4 class="label">Description</h4>
+    {/if}
     <div class="text" contenteditable="true" bind:innerHTML={$cardStore.text}></div>
   </div>
 
-  <div class="group">
-    <h4 class="label">Secret description</h4>
-    <div class="secret text" contenteditable="true" bind:innerHTML={$cardStore.secretText}></div>
-  </div>
-
-  <div class="group">
-    <h4 class="label">Tags</h4>
-    <div class="tags" contenteditable="true">
-    {#each $cardStore.tags as tag}
-      <span class="tag">{tag}</span>
-    {/each}
+  {#if !compact }
+    <div class="group">
+      <h4 class="label">Secret description</h4>
+      <div class="secret text" contenteditable="true" bind:innerHTML={$cardStore.secretText}></div>
     </div>
-  </div>
+
+    <div class="group">
+      <h4 class="label">Tags</h4>
+      <div class="tags" contenteditable="true">
+      {#each $cardStore.tags as tag}
+        <span class="tag">{tag}</span>
+      {/each}
+      </div>
+    </div>
+  {/if}
 
   <div class="actions">
     {#if showDeleteButton}
