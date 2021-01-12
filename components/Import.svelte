@@ -11,6 +11,7 @@ export let state;
 
 let applyToAllDecisionMade = false;
 let conflictCards: Card[] = [];
+let conflictSrcCards: Card[] = [];
 let error;
 let cardsImportedCount = 0;
 
@@ -33,9 +34,11 @@ function importCardsString(cardsString: string) {
   cards.forEach(curry(importIfSafe)(existingIds));
 }
 
-function importIfSafe(existingIds: string[], card: Card) {
+function importIfSafe(existingIds: string[], card: Card, index: number) {
   if (existingIds.includes(card.id)) {
     conflictCards.push(card);
+    let srcCard = $allCardsStore[existingIds.indexOf(card.id)];
+    conflictSrcCards.push(srcCard);
     conflictCards = conflictCards;
     console.log('conflictCards', conflictCards);
     return;
@@ -59,9 +62,10 @@ function importIfSafe(existingIds: string[], card: Card) {
   {#if !applyToAllDecisionMade && conflictCards.length > 0}
     <h4>We need you to tell us what to do with these cards from your file</h4>
     <ul>
-    {#each conflictCards as conflictCard}
+    {#each conflictCards as conflictCard, index}
       <li>
         <CardComp cardStore={CardStore(state, conflictCard)} state={state} showDeleteButton={false} allowEditing={false} />
+        <CardComp cardStore={CardStore(state, conflictSrcCards[index])} state={state} showDeleteButton={false} allowEditing={false} />
       </li>
     {/each}
     </ul>
