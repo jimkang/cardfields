@@ -102,10 +102,13 @@ input {
   color: var(--light);
   border: var(--atom) solid var(--dark-line);
   border-radius: var(--atom);
-  padding: calc(4 * var(--atom));
+  padding: calc(2 * var(--atom));
   display: grid;
-  row-gap: calc(2 * var(--atom));
-  max-width: calc(70 * var(--atom));
+  row-gap: calc(1 * var(--atom));
+  max-width: calc(25 * var(--atom));
+  max-height: calc(40 * var(--atom));
+  overflow-y: scroll;
+  font-size: calc(2 * var(--atom));
 }
 
 .card > * {
@@ -163,9 +166,4 @@ input {
   body {
     font-size: 18px;
   }
-}
-
-@keyframes pulse-border {
-  0% { border-width: 2px }
-  100% { border-width: 10px }
 }

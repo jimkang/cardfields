@@ -8,6 +8,7 @@ var state = State();
 var card: Card = {
   id: 'unique-card',
   text: 'Clean inbox all the way!',
+  title: 'Clean',
   secretText: 'Delete incriminating evidence!',
   //picture: 'https://smidgeo.com/images/smidgeo_headshot.jpg',
   picture:
