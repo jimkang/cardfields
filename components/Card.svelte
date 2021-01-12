@@ -34,7 +34,7 @@ function updateEditables() {
 </script>
 
 <div class="card" id={$cardStore.id} style="background-color: {$cardStore.color}" bind:this={rootEl}>
-  <h2 contenteditable="true" bind:innerHTML={$cardStore.title}></h2>
+  <h4 contenteditable="true" bind:innerHTML={$cardStore.title} class="title"></h4>
 
   <img src="{$cardStore.picture}" alt="Card illustration">
 

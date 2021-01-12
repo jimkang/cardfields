@@ -1,40 +1,10 @@
-/*
-@font-face {
-    font-family: Raleway;
-    src: url('fonts/Raleway-Light.woff2') format('woff2'), url('fonts/Raleway-Light.woff') format('woff');
-    font-weight: 300;
-    font-style: normal
-}
-@font-face {
-    font-family: Raleway;
-    src: url('fonts/Raleway-Regular.woff2') format('woff2'), url('fonts/Raleway-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal
-}
-@font-face {
-    font-family: Raleway;
-    src: url('fonts/Raleway-Medium.woff2') format('woff2'), url('fonts/Raleway-Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal
-}
-@font-face {
-    font-family: Raleway;
-    src: url('fonts/Raleway-Bold.woff2') format('woff2'), url('fonts/Raleway-Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal
-}
-@font-face {
-    font-family: Raleway;
-    src: url('fonts/Raleway-Black.woff2') format('woff2'), url('fonts/Raleway-Black.woff') format('woff');
-    font-weight: 900;
-    font-style: normal
-}
-*/
-
 body {
   --atom: 8px;
   --dark-line: #334;
-  --light: #fee;
+  --darken: hsla(0, 0%, 0%, 0.1);
+  --lighten: hsla(0, 0%, 100%, 0.3);
+  --lighten-a-lot: hsla(0, 0%, 100%, 0.5);
+  --light: #fffdfd;
   font-size: 24px;
   font-family: Georgia, serif;
   background-color: var(--light);
@@ -135,7 +105,7 @@ input {
   color: var(--light);
   border: var(--atom) solid var(--dark-line);
   border-radius: var(--atom);
-  padding: calc(2 * var(--atom));
+  padding: calc(1 * var(--atom));
   display: grid;
   row-gap: calc(1 * var(--atom));
   max-width: calc(25 * var(--atom));
@@ -146,15 +116,20 @@ input {
 
 .card > * {
   color: var(--dark-line);
-  background-color: var(--light);
 }
 
 .card * {
   border-radius: calc(var(--atom)/2);
 }
 
-.card .group {
-  background-color: inherit;
+.card .group [contenteditable=true] {
+  background-color: var(--lighten-a-lot);
+}
+
+.card .title {
+  background-color: var(--lighten);
+  margin-top: var(--atom);
+  border: 2px solid var(--darken);
 }
 
 .card h2,h3,h4 {

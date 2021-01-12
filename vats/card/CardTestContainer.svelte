@@ -29,7 +29,6 @@ var cardStore = CardStore(state, card);
   <CardComp cardStore={cardStore} state={state} bind:compact={compactCheck} />
 
   <div>
-hi
     <input type="checkbox" bind:checked={compactCheck} id="compact-check">
     <label for="compact-check">Compact</label>
   </div>
