@@ -2,21 +2,12 @@
 import { onMount } from 'svelte';
 
 export let cardStore;
-export let state;
-export let showDeleteButton = true;
 export let allowEditing = true;
 export let compact = false;
 
 let rootEl;
 
 onMount(updateEditables);
-
-function deleteCard() {
-  //console.log(allCardsStore, cardStore);
-  // $cardStore refers to the value (the Card)
-  // and cardStore refers to the store.
-  state.deleteCard($cardStore.id);
-}
 
 function updateEditables() {
   if (allowEditing) {
@@ -33,7 +24,7 @@ function updateEditables() {
 
 </script>
 
-<div class="card" id={$cardStore.id} style="background-color: {$cardStore.color}" bind:this={rootEl}>
+<div class="card {compact ? 'compact' : ''}" id={$cardStore.id} style="background-color: {$cardStore.color}" bind:this={rootEl}>
   <h4 contenteditable="true" bind:innerHTML={$cardStore.title} class="title"></h4>
 
   <img src="{$cardStore.picture}" alt="Card illustration">
@@ -60,10 +51,4 @@ function updateEditables() {
       </div>
     </div>
   {/if}
-
-  <div class="actions">
-    {#if showDeleteButton}
-      <button class="delete-button" on:click={deleteCard}>Delete</button>
-    {/if}
-  </div>
- </div>
+</div>

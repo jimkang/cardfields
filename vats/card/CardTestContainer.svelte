@@ -1,6 +1,7 @@
 <script lang="ts">
 // @ts-check
 import CardComp from '../../components/Card.svelte';
+import CardActions from '../../components/CardActions.svelte';
 import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
 import type { Card } from '../../things/card';
@@ -26,10 +27,12 @@ var cardStore = CardStore(state, card);
 
 <main>
   <h1>Card test vat</h1>
-  <CardComp cardStore={cardStore} state={state} bind:compact={compactCheck} />
+  <CardComp cardStore={cardStore} bind:compact={compactCheck} />
+  <CardActions cardStore={cardStore} state={state} />
 
   <div>
     <input type="checkbox" bind:checked={compactCheck} id="compact-check">
+
     <label for="compact-check">Compact</label>
   </div>
 </main>

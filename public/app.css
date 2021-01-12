@@ -114,6 +114,10 @@ input {
   font-size: calc(2 * var(--atom));
 }
 
+.card.compact {
+  overflow-y: inherit;
+}
+
 .card > * {
   color: var(--dark-line);
 }

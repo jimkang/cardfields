@@ -1,10 +1,12 @@
 <script lang="ts">
 // @ts-check
 import CardComp from '../../components/Card.svelte';
+import CardActions from '../../components/CardActions.svelte';
 import ExportComp from '../../components/Export.svelte';
 import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
+import curry from 'lodash.curry';
 
 var state = State();
 var allCardsStore = state.allCardsStore;
@@ -13,8 +15,9 @@ var allCardsStore = state.allCardsStore;
 
 <main>
   <h1>Stores experiment</h1>
-  {#each $allCardsStore as card}
-    <CardComp cardStore={CardStore(state, card)} state={state} />
+  {#each $allCardsStore.map(curry(CardStore)(state)) as cardStore}
+    <CardComp cardStore={cardStore} />
+    <CardActions cardStore={cardStore} state={state} />
   {/each}
 
   <button on:click={state.createCard}>Add new card</button>
