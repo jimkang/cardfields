@@ -37,21 +37,6 @@ body > section {
   width: 100%;
 }
 
-#board {
-  border-radius: 8px;
-  margin-bottom: 1em;
-  border: 1px solid #444;
-}
-
-.debug #board {
-  border: 1px solid #888;
-}
-
-.hide-ui #board{
-  border: none;
-  margin: 0;
-}
-
 p {
   margin-top: 0;
 }
@@ -67,11 +52,7 @@ p {
   transition: opacity 2s;
 }
 
-.hide-ui .ui {
-  display: none;
-}
-
-#status-message {
+.status-message {
   background-color: var(--light)fee;
   margin: 1em;
   padding: 1em;
@@ -99,37 +80,7 @@ input {
   pointer-events: initial;
 }
 
-.click-target {
-  cursor: pointer;
-  fill: transparent;
-}
-
-.dark .click-target {
-  stroke: hsla(0, 0%, 100%, 0.25);
-}
-
-.light .click-target {
-  stroke: hsla(0, 0%, 0%, 0.25);
-}
-
-#ui-overlay {
-  z-index: 2;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  pointer-events: none;
-  width: 100%;
-}
-
-#ui-overlay > * {
-  min-width: 20em;
-  padding-left: 1em;
-  padding-right: 1em;
-}
-
-
-.controls {
+.actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -137,233 +88,14 @@ input {
   padding-top: 1em;
 }
 
-.controls div {
+.actions div {
   margin-bottom: 1em;
-}
-
-.props-editor {
-  border: 4px dashed #666;
-  border-radius: 0.2em;
-}
-
-.props-editor ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.props-editor li {
-  display: flex;
-  justify-content: end;
-}
-
-.props-editor li .prop-label {
-  max-width: 4em;
-}
-
-.props-editor li .prop-slider {
-  flex-grow: 1;
-  /*! max-width: 12em; */
-  margin-left: 1em;
-  margin-right: 1em;
-}
-
-.props-editor li .prop-val {
-  width: 5em;
-}
-
-.editing {
-  border: 8px dashed #444;
-}
-
-.edit-field-tip {
-  display: none;
-  font-style: italic;
-}
-
-.editing + .edit-field-tip {
-  display: block;
-}
-
-ul.props {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.prop {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.prop .prop-label {
-  width: 100%;
-  pointer-events: initial;
-}
-
-.prop .prop-slider {
-  flex-grow: 1;
-}
-
-.prop .prop-val {
-  width: 3em;
-  font-size: 2em;
-  margin-left: 0.5em;
-}
-
-footer {
-  margin-top: 1em;
-}
-
-#board {
-  /* Total board width is 100. */
-  font-size: 1.5;
-}
-
-#board .chit {
-  cursor: pointer;
-}
-
-#board .chit circle {
-  fill: var(--light);
-  stroke: #444;
-  stroke-width: 0.1;
-}
-
-#board .chit.forceSource circle {
-  fill: #000;
-}
-
-#board .chit.selected circle {
-  stroke-width: 0.2;
-}
-
-#board .chit text {
-  text-anchor: middle;
-}
-
-#board .chit.forceSource text {
-  fill: var(--light);
 }
 
 .centered-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-#debug-layer {
-  display: none;
-}
-
-.debug #debug-layer {
-  display: initial;
-}
-
-.overlays-container {
-  position: relative;
-}
-
-.editor-container {
-  background-color: hsla(0, 0%, 95%, 1.0);
-  margin-bottom: 0.5em;
-  border: 4px solid #666;
-  border-radius: 0.5em;
-  /* Hidden by default. */
-  opacity: 0;
-  display: none;
-  transition: opacity 1s;
-}
-
-.editor-container.active {
-  opacity: 1;
-  display: block;
-}
-
-.name {
-  line-height: 1em;
-  /*! margin-top: 0.5em; */
-  text-align: center;
-  pointer-events: initial;
-}
-
-.name-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-
-.forceSource .name {
-  color: white;
-}
-
-#top-level-toggles-container {
-  display: flex;
-  width: 100%;
-  padding: 0;
-}
-
-.top-level-toggle {
-  width: 44px;
-  height: 44px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: initial;
-}
-
-.top-level-toggle .display-area {
-  width: 22px;
-  height: 22px;
-  margin-bottom: 0;
-  pointer-events: none;
-}
-
-#toggle-field-controls .display-area {
-  border: 4px solid black;
-}
-
-#toggle-forceSource-controls .display-area {
-  border-radius: 50%;
-  background-color: black;
-  border: 2px solid black;
-  width: 22px;
-  height: 22px;
-}
-
-#toggle-project-controls {
-  margin-left: 1px;
-}
-
-#toggle-project-controls .display-area {
-  border-radius: 50%;
-  border: 2px solid black;
-  width: 22px;
-  height: 22px;
-}
-
-.top-level-toggle .display-area.call-attn {
-  animation: pulse-border 1s ease 2 alternate;
-}
-
-#downloads {
-  pointer-events: initial;
-}
-
-[contenteditable=true] {
-  pointer-events: initial;
-}
-
-#field-sheet {
-  max-width: 10em;
-}
-
-#field-sheet .field-sheet-contents {
-}
-
-.filter-field {
-  width: 10em;
-  font-size: 1.2em;
 }
 
 .card {
