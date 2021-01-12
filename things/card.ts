@@ -8,3 +8,4 @@ export interface Card {
   color?: string;
   // TODO: History
 }
+

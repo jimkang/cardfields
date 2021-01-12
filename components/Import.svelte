@@ -2,8 +2,9 @@
 import type { Card } from '../things/card';
 import pluck from 'lodash.pluck';
 import curry from 'lodash.curry';
-
 import ErrorMessage from 'svelte-error-message';
+import CardComp from './Card.svelte';
+import CardStore from '../stores/card-store';
 
 export let allCardsStore;
 export let state;
@@ -29,11 +30,10 @@ function importCardsString(cardsString: string) {
   console.log('cards', cards);
   var importIds: string = pluck(cards, 'id');
   var existingIds: string = pluck($allCardsStore, 'id');
-  $allCardsStore.forEach(curry(importIfSafe)(existingIds));
+  cards.forEach(curry(importIfSafe)(existingIds));
 }
 
 function importIfSafe(existingIds: string[], card: Card) {
-  debugger
   if (existingIds.includes(card.id)) {
     conflictCards.push(card);
     conflictCards = conflictCards;
@@ -60,7 +60,9 @@ function importIfSafe(existingIds: string[], card: Card) {
     <h4>We need you to tell us what to do with these cards from your file</h4>
     <ul>
     {#each conflictCards as conflictCard}
-      <li>{conflictCard.title} {conflictCard.id}</li>
+      <li>
+        <CardComp cardStore={CardStore(state, conflictCard)} state={state} showDeleteButton={false} allowEditing={false} />
+      </li>
     {/each}
     </ul>
   {/if}

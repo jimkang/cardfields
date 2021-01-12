@@ -14,8 +14,11 @@ build:
 	$(rollup) -c
 
 run:
-	./node_modules/.bin/svelte-check
 	$(rollup) -c -w
+
+check:
+	./node_modules/.bin/svelte-check \
+    --ignore components/Import.svelte
 
 card-render-vat:
 	APP=card make run
