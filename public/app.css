@@ -1,9 +1,42 @@
+/*
+@font-face {
+    font-family: Raleway;
+    src: url('fonts/Raleway-Light.woff2') format('woff2'), url('fonts/Raleway-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal
+}
+@font-face {
+    font-family: Raleway;
+    src: url('fonts/Raleway-Regular.woff2') format('woff2'), url('fonts/Raleway-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal
+}
+@font-face {
+    font-family: Raleway;
+    src: url('fonts/Raleway-Medium.woff2') format('woff2'), url('fonts/Raleway-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal
+}
+@font-face {
+    font-family: Raleway;
+    src: url('fonts/Raleway-Bold.woff2') format('woff2'), url('fonts/Raleway-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal
+}
+@font-face {
+    font-family: Raleway;
+    src: url('fonts/Raleway-Black.woff2') format('woff2'), url('fonts/Raleway-Black.woff') format('woff');
+    font-weight: 900;
+    font-style: normal
+}
+*/
+
 body {
   --atom: 8px;
   --dark-line: #334;
   --light: #fee;
   font-size: 24px;
-  font-family: Ubuntu, roboto, noto, segoe ui, arial, -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, sans-serif;
+  font-family: Georgia, serif;
   background-color: var(--light);
   margin-bottom: 2em;
   display: flex;
@@ -124,10 +157,11 @@ input {
   background-color: inherit;
 }
 
-.card h2 {
+.card h2,h3,h4 {
   margin: 0;
   color: var(--light);
   background-color: inherit;
+  font-family: Arial, sans-serif;
 }
 
 .card .label {
