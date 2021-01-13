@@ -64,8 +64,8 @@ function importIfSafe(existingIds: string[], card: Card, index: number) {
     <ul>
     {#each conflictCards as conflictCard, index}
       <li>
-        <CardComp cardStore={CardStore(state, conflictCard)} state={state} showDeleteButton={false} allowEditing={false} />
-        <CardComp cardStore={CardStore(state, conflictSrcCards[index])} state={state} showDeleteButton={false} allowEditing={false} />
+        <CardComp cardStore={CardStore(state, conflictCard)} allowEditing={false} />
+        <CardComp cardStore={CardStore(state, conflictSrcCards[index])} allowEditing={false} />
       </li>
     {/each}
     </ul>
