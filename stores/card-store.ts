@@ -6,7 +6,7 @@ export default function CardStore(state, card) {
   return {
     set(value: Card) {
       console.log('Setting', value);
-      state.updateCard(value);
+      state.persistCard(value);
       store.set(value);
     },
     // Takes a callback that returns a (possibly)

@@ -25,6 +25,7 @@ function onFileChange() {
 }
 
 function importCardsString(cardsString: string) {
+  cardsImportedCount = 0;
   // TODO: Safe parse
   var cards: Card[] = JSON.parse(cardsString);
   console.log('cards', cards);

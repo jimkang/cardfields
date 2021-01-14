@@ -16,12 +16,12 @@ export default function State(initCards?: Card[]) {
     allCardsStore,
     deleteCard,
     createCard,
-    updateCard,
+    persistCard,
     updateAllCards: saveIdsToLocalStorage,
     addCard
   };
 
-  function updateCard(card: Card) {
+  function persistCard(card: Card) {
     localStorage.setItem(card.id, JSON.stringify(card));
   }
 
@@ -56,7 +56,7 @@ export default function State(initCards?: Card[]) {
 
   function addCard(card: Card) {
     cards.push(card);
-
+    persistCard(card);
     saveIdsToLocalStorage(cards);
     allCardsStore.set(cards);
   }

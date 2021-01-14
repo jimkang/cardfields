@@ -1,0 +1,34 @@
+[
+  {
+    "id": "card__464bc74b-3e13-4b9e-9859-24499d662390",
+    "text": "Wizard shit<br>changed",
+    "secretText": "Magic Missile",
+    "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+    "tags": [
+      "magic"
+    ],
+    "color": "hsl(210, 50%, 50%)",
+    "title": ""
+  },
+  {
+    "id": "card__3ea5be98-4e9e-468d-86f4-848931fe0cb7",
+    "text": "Export this!<br>Edited",
+    "secretText": "Magic Missile",
+    "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+    "tags": [
+      "magic"
+    ],
+    "color": "hsl(210, 50%, 50%)",
+    "title": ""
+  },
+  {
+    "id": "card__newfromimport",
+    "text": "New from import",
+    "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+    "tags": [
+      "magic"
+    ],
+    "color": "hsl(110, 50%, 50%)",
+    "title": ""
+  }
+]
