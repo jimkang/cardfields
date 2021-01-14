@@ -47,7 +47,13 @@ function importIfSafe(existingIds: string[], card: Card, index: number) {
 }
 
 function onConflictResolved(e) {
-  const pairIndex = e.detail;
+  const pairId = e.detail;
+  const pairIndex = conflictPairs.findIndex(p => p.id === pairId);
+  if (pairIndex < 0) {
+    error = new Error(`Cannot find conflictPair ${pairId} while resolving conflict.`);
+    return;
+  }
+
   conflictPairs.splice(pairIndex, 1);
   conflictPairs = conflictPairs;
 }
