@@ -5,6 +5,7 @@ body {
   --lighten: hsla(0, 0%, 100%, 0.3);
   --lighten-a-lot: hsla(0, 0%, 100%, 0.5);
   --light: #fffdfd;
+  --card-width: calc(25 * var(--atom));
   font-size: 24px;
   font-family: Georgia, serif;
   background-color: var(--light);
@@ -108,7 +109,7 @@ input {
   padding: calc(1 * var(--atom));
   display: grid;
   row-gap: calc(1 * var(--atom));
-  max-width: calc(25 * var(--atom));
+  max-width: var(--card-width);
   max-height: calc(40 * var(--atom));
   overflow-y: scroll;
   font-size: calc(2 * var(--atom));
@@ -136,7 +137,7 @@ input {
   border: 2px solid var(--darken);
 }
 
-.card h2,h3,h4 {
+.card h2, .card h3, .card h4 {
   margin: 0;
   color: var(--light);
   background-color: inherit;
@@ -173,6 +174,16 @@ input {
 .card .tags .tag {
   background-color: var(--light);
   border-radius: var(--atom);
+}
+
+.import-zone {
+  color: var(--dark-line);
+}
+
+.conflict-frame {
+  display: grid;
+  grid-template-columns: var(--card-width) var(--card-width);
+  grid-gap: calc(2 * var(--atom));
 }
 
 @media all and (max-height: 568px) {

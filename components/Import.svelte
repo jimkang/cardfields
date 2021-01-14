@@ -1,21 +1,20 @@
 <script lang="ts">
-import type { Card } from '../things/card';
+import type { CardConflictPair } from '../things/card';
 import pluck from 'lodash.pluck';
 import curry from 'lodash.curry';
 import ErrorMessage from 'svelte-error-message';
-import CardComp from './Card.svelte';
-import CardStore from '../stores/card-store';
+import { removeCardFromList } from '../things/card';
+import ImportConflictFrame from './ImportConflictFrame.svelte';
 
 export let allCardsStore;
 export let state;
 
 let applyToAllDecisionMade = false;
-let conflictCards: Card[] = [];
-let conflictSrcCards: Card[] = [];
+let conflictPairs: CardConflictPair[] = [];
 let error;
 let cardsImportedCount = 0;
 
-$: conflictCards;
+$: conflictPairs;
 
 function onFileChange() {
   var file = this.files[0];
@@ -36,16 +35,20 @@ function importCardsString(cardsString: string) {
 
 function importIfSafe(existingIds: string[], card: Card, index: number) {
   if (existingIds.includes(card.id)) {
-    conflictCards.push(card);
-    let srcCard = $allCardsStore[existingIds.indexOf(card.id)];
-    conflictSrcCards.push(srcCard);
-    conflictCards = conflictCards;
-    console.log('conflictCards', conflictCards);
+    let incumbent = $allCardsStore[existingIds.indexOf(card.id)];
+    conflictPairs.push({ id: index, incumbent, challenger: card });
+    conflictPairs = conflictPairs;
     return;
   }
 
   state.addCard(card);
   cardsImportedCount += 1;
+}
+
+function onConflictResolved(e) {
+  const pairIndex = e.detail;
+  conflictPairs.splice(pairIndex, 1);
+  conflictPairs = conflictPairs;
 }
 
 </script>
@@ -59,14 +62,11 @@ function importIfSafe(existingIds: string[], card: Card, index: number) {
   <h4>Cards imported</h4>
   <div>{cardsImportedCount}</div>
 
-  {#if !applyToAllDecisionMade && conflictCards.length > 0}
-    <h4>We need you to tell us what to do with these cards from your file</h4>
+  {#if !applyToAllDecisionMade && conflictPairs.length > 0}
+    <h4>We need you to tell us what to do with these cards from your file.</h4>
     <ul>
-    {#each conflictCards as conflictCard, index}
-      <li>
-        <CardComp cardStore={CardStore(state, conflictCard)} allowEditing={false} />
-        <CardComp cardStore={CardStore(state, conflictSrcCards[index])} allowEditing={false} />
-      </li>
+    {#each conflictPairs as conflictPair}
+      <ImportConflictFrame state={state} conflictPair={conflictPair} on:conflictResolved={onConflictResolved} />
     {/each}
     </ul>
   {/if}
