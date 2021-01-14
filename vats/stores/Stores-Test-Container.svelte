@@ -1,22 +1,21 @@
 <script lang="ts">
 // @ts-check
 import CardActionsContainer from '../../components/CardActionsContainer.svelte';
-import CardComp from '../../components/Card.svelte';
 import ExportComp from '../../components/Export.svelte';
 import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
-import CardStore from '../../stores/card-store';
-import curry from 'lodash.curry';
+import { CardStoreIssuer } from '../../stores/card-store-issuer';
 
 var state = State();
 var allCardsStore = state.allCardsStore;
+var cardStoreIssuer = CardStoreIssuer(state);
 
 </script>
 
 <main>
   <h1>Stores experiment</h1>
-  {#each $allCardsStore.map(curry(CardStore)(state)) as cardStore}
-    <CardActionsContainer cardStore={cardStore} state={state} />
+  {#each $allCardsStore.map(cardStoreIssuer.getCardStore) as cardStore}
+    <CardActionsContainer cardStore={cardStore} />
   {/each}
 
   <button on:click={state.createCard}>Add new card</button>
@@ -42,5 +41,5 @@ var allCardsStore = state.allCardsStore;
       <dd>That conflict frame should disappear.</dd>
     </dl>
   </div>
-  <ImportComp allCardsStore={allCardsStore} state={state} />
+  <ImportComp allCardsStore={allCardsStore} cardStoreIssuer={cardStoreIssuer} state={state} />
 </main>

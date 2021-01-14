@@ -24,5 +24,5 @@ var cardStore = CardStore(state, card);
 
 <main>
   <h1>Card test vat</h1>
-  <CardActionsContainer cardStore={cardStore} state={state} />
+  <CardActionsContainer cardStore={cardStore} />
 </main>

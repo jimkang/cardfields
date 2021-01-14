@@ -1,16 +1,12 @@
 <script lang="ts">
 import CardComp from './Card.svelte';
 
-export let state;
 export let cardStore;
 export let showDeleteButton = true;
 export let compact = false;
 
 function deleteCard() {
-  //console.log(allCardsStore, cardStore);
-  // $cardStore refers to the value (the Card)
-  // and cardStore refers to the store.
-  state.deleteCard($cardStore.id);
+  cardStore.delete();
 }
 
 function toggleCompact() {
