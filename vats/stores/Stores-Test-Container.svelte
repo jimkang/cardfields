@@ -6,14 +6,38 @@ import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
 import { CardStoreIssuer } from '../../stores/card-store-issuer';
 
-var state = State();
-var allCardsStore = state.allCardsStore;
-var cardStoreIssuer = CardStoreIssuer(state);
+let selectedProfile = 'main';
+let profiles = [
+  'main',
+  'test'
+];
 
+let state;
+let allCardsStore;
+let cardStoreIssuer;
+
+$: state;
+$: allCardsStore;
+
+function onProfileChange() {
+  state = State(selectedProfile);
+  allCardsStore = state.allCardsStore;
+  cardStoreIssuer = CardStoreIssuer(state);
+}
+
+onProfileChange();
 </script>
 
 <main>
   <h1>Stores experiment</h1>
+
+  <h2>Profile</h2>
+  <select bind:value={selectedProfile} on:change={onProfileChange}>
+    {#each profiles as profile}
+      <option value={profile}>{profile}</option>
+    {/each}
+  </select>
+
   {#each $allCardsStore.map(cardStoreIssuer.getCardStore) as cardStore}
     <CardActionsContainer cardStore={cardStore} />
   {/each}

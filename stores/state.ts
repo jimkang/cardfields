@@ -8,7 +8,8 @@ import compact from 'lodash.compact';
 
 const idIndexKey = 'ids__cards';     
 
-export default function State(initCards?: Card[]) {
+export default function State(profileId: string, initCards?: Card[]) {
+  const cardIdsKeyForProfile = `${profileId}__${idIndexKey}`;
   var cards = loadCards(initCards);
   var allCardsStore = writable(cards);
 
@@ -60,6 +61,25 @@ export default function State(initCards?: Card[]) {
     saveIdsToLocalStorage(cards);
     allCardsStore.set(cards);
   }
+
+  function saveIdsToLocalStorage(cards: Card[]) {
+    localStorage.setItem(cardIdsKeyForProfile, pluck(cards, 'id').join(','));
+  }
+
+  function loadCards(initCards) {
+    var cards = initCards;
+    if (!cards) {
+      const ids = localStorage.getItem(cardIdsKeyForProfile);
+      if (ids && ids.length > 0) {
+        cards = ids.split(',').map(getCardFromLocalStorage);
+      }
+    }
+    if (!cards) {
+      cards = [];
+    }
+    cards = compact(cards);
+    return cards;
+  }
 }
 
 // TODO: Validate?
@@ -67,23 +87,3 @@ function getCardFromLocalStorage(id: string): Card {
   // TODO: Safe parse
   return JSON.parse(localStorage.getItem(id));
 }
-
-function saveIdsToLocalStorage(cards: Card[]) {
-  localStorage.setItem(idIndexKey, pluck(cards, 'id').join(','));
-}
-
-function loadCards(initCards) {
-  var cards = initCards;
-  if (!cards) {
-    const ids = localStorage.getItem(idIndexKey);
-    if (ids && ids.length > 0) {
-      cards = ids.split(',').map(getCardFromLocalStorage);
-    }
-  }
-  if (!cards) {
-    cards = [];
-  }
-  cards = compact(cards);
-  return cards;
-}
-

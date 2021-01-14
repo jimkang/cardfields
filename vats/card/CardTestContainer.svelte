@@ -5,7 +5,7 @@ import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
 import type { Card } from '../../things/card';
 
-var state = State();
+var state = State('main');
 
 var card: Card = {
   id: 'unique-card',
