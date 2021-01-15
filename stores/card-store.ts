@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
-import type { Writable } from 'svelte/store';
 import type { Card } from '../things/card';
+import type { ThingStore } from './store-types';
 
-export interface CardStoreType extends Writable<Card> {
+export interface CardStoreType extends ThingStore<Card> {
   delete: () => void;
 }
 

@@ -1,11 +1,7 @@
-export interface Card {
-  id: string;
+import type { Thing } from './thing';
+
+export interface Card extends Omit<Thing, 'text'> {
   text: string;
-  title?: string;
-  secretText?: string;
-  picture?: string;
-  tags: string[];
-  color?: string;
   // TODO: History
 }
 

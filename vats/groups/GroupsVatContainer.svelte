@@ -38,13 +38,19 @@ onProfileChange();
     {/each}
   </select>
 
-
   <button on:click={state.createPile}>Add new pile</button>
+
+  <h2>All piles</h2>
+
+  {#each $allPilesStore.map(pileStoreIssuer.getCardStore) as cardStore}
+    <CardActionsContainer cardStore={cardStore} />
+  {/each}
+
+  <h2>All cards</h2>
 
   {#each $allCardsStore.map(cardStoreIssuer.getCardStore) as cardStore}
     <CardActionsContainer cardStore={cardStore} />
   {/each}
-
   <button on:click={state.createCard}>Add new card</button>
 
   <ExportComp allCardsStore={allCardsStore} />

@@ -20,7 +20,7 @@ function takeIncumbent() {
 
 function takeChallenger() {
   cardStoreIssuer
-    .getCardStore(conflictPair.incumbent)
+    .getStore(conflictPair.incumbent)
     .set(conflictPair.challenger);
   dispatch('conflictResolved', conflictPair.id);
 }
@@ -28,7 +28,7 @@ function takeChallenger() {
 </script>
 
 <li class="conflict-frame">
-  <CardComp cardStore={cardStoreIssuer.getCardStore(conflictPair.incumbent)} allowEditing={false} />
+  <CardComp cardStore={cardStoreIssuer.getStore(conflictPair.incumbent)} allowEditing={false} />
   <CardComp cardStore={CardStore(state, conflictPair.challenger)} allowEditing={false} />
   <button on:click={takeIncumbent}>Leaving existing card</button>
   <button on:click={takeChallenger}>Replace existing card with this version</button>

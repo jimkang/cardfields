@@ -3,19 +3,22 @@
 import { writable } from 'svelte/store';
 import { v4 as uuid } from 'uuid';
 import type { Card } from '../things/card';
+import type { Pile } from '../things/pile';
 import pluck from 'lodash.pluck';
 import compact from 'lodash.compact';
 
-const idCardIndexPrefix = 'ids__cards';
+const idListPrefix = 'ids';
 
 type StateOptParams = { initCards?: Card[]; initPiles? };
 
 export default function State(profileId: string, opts?: StateOptParams) { 
-  const cardIdsKeyForProfile = `${profileId}__${idCardIndexPrefix}`;
-  var cards = loadThings(cardIdsKeyForProfile, opts ? opts.initCards : null);
-  var allCardsStore = writable(cards);
+  const cardIdsKeyForProfile = `${profileId}__${idListPrefix}__cards`;
+  const pileIdsKeyForProfile = `${profileId}__${idListPrefix}__piles`;
 
-  //var piles = loadPiles(initPiles);
+  var cards: Card[] = loadThings(cardIdsKeyForProfile, opts ? opts.initCards : null);
+  var piles: Pile[] = loadThings(pileIdsKeyForProfile, opts ? opts.initPiles : null);
+
+  var allCardsStore = writable(cards);
 
   return {
     allCardsStore,
