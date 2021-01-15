@@ -26,6 +26,9 @@ card-render-vat:
 stores-vat:
 	APP=stores make run
 
+groups-vat:
+	APP=groups make run
+
 prettier:
 	prettier --single-quote --write "**/*.html"
 

@@ -24,6 +24,13 @@ var configs = [
     reloadPath: 'vats/stores',
     serve: process.env.APP === 'stores' && serve,
     serveOpts: { rootDir: '.', serveDir: 'vats/stores' }
+  },
+  {
+    input: 'vats/groups/groups-vat-app.ts',
+    outputFile: 'vats/groups/groups-vat-bundle.js',
+    reloadPath: 'vats/groups',
+    serve: process.env.APP === 'groups' && serve,
+    serveOpts: { rootDir: '.', serveDir: 'vats/groups' }
   }
 ].map(createConfig);
 
