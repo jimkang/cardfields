@@ -40,7 +40,6 @@ function importIfSafe(existingIds: string[], card: Card, index: number) {
     conflictPairs = conflictPairs;
     return;
   }
-
   state.addCard(card);
   cardsImportedCount += 1;
 }

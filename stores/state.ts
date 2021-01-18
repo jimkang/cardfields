@@ -68,12 +68,12 @@ export default function State(profileId: string, opts?: StateOptParams) {
       tags: ['magic'],
       color: 'hsl(210, 50%, 50%)'
     };
-    addThing(allCardsStore, cards, card, cardIdsKeyForProfile);
+    addThing(allCardsStore, cards, cardIdsKeyForProfile, card);
 
     return card;
   }
 
-  function addThing(allThingsStore, things: Thing[], thing: Thing, idsKeyForProfile: string) {
+  function addThing(allThingsStore, things: Thing[],  idsKeyForProfile: string, thing: Thing) {
     things.push(thing);
     persistThing(thing);
     saveIdsToLocalStorage(idsKeyForProfile, things);
@@ -90,7 +90,7 @@ export default function State(profileId: string, opts?: StateOptParams) {
       color: 'hsl(210, 50%, 50%)',
       cards: []
     };
-    addThing(allPilesStore, piles, pile, pileIdsKeyForProfile);
+    addThing(allPilesStore, piles, pileIdsKeyForProfile, pile);
 
     return pile;
   }
