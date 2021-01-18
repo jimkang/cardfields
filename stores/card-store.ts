@@ -12,7 +12,7 @@ export default function CardStore(state, card): CardStoreType {
   return {
     set(value: Card) {
       console.log('Setting', value);
-      state.persistCard(value);
+      state.persistThing(value);
       store.set(value);
       card = value;
     },

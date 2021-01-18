@@ -49,3 +49,13 @@ sync:
 
 set-up-server-dir:
 	ssh $(USER)@$(SERVER) "mkdir -p $(APPDIR)"
+
+# https://snapcraft.io/universal-ctags
+vim-tags:
+	#rm tags
+	ctags -R \
+    --exclude=built \
+    --exclude=node_modules \
+    --exclude=package*.json \
+    --exclude=.eslintrc.js \
+    .

@@ -1,10 +1,15 @@
 <script lang="ts">
 // @ts-check
 import CardActionsContainer from '../../components/CardActionsContainer.svelte';
+import PileActionsContainer from '../../components/PileActionsContainer.svelte';
 import ExportComp from '../../components/Export.svelte';
 import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
-import { CardStoreIssuer } from '../../stores/card-store-issuer';
+import CardStore from '../../stores/card-store';
+import PileStore from '../../stores/pile-store';
+import { StoreIssuer } from '../../stores/store-issuer';
+import type { Card } from '../../things/card';
+import type { Pile } from '../../things/pile';
 
 let selectedProfile = 'main';
 let profiles = [
@@ -14,15 +19,20 @@ let profiles = [
 
 let state;
 let allCardsStore;
+let allPilesStore;
 let cardStoreIssuer;
+let pileStoreIssuer;
 
 $: state;
 $: allCardsStore;
+$: allPilesStore;
 
 function onProfileChange() {
   state = State(selectedProfile);
   allCardsStore = state.allCardsStore;
-  cardStoreIssuer = CardStoreIssuer(state);
+  allPilesStore = state.allPilesStore;
+  cardStoreIssuer = StoreIssuer<Card>(state, CardStore);
+  pileStoreIssuer = StoreIssuer<Pile>(state, PileStore);
 }
 
 onProfileChange();
@@ -42,13 +52,13 @@ onProfileChange();
 
   <h2>All piles</h2>
 
-  {#each $allPilesStore.map(pileStoreIssuer.getCardStore) as cardStore}
-    <CardActionsContainer cardStore={cardStore} />
+  {#each $allPilesStore.map(pileStoreIssuer.getStore) as pileStore}
+    <PileActionsContainer pileStore={pileStore} cardStoreIssuer={cardStoreIssuer} />
   {/each}
 
   <h2>All cards</h2>
 
-  {#each $allCardsStore.map(cardStoreIssuer.getCardStore) as cardStore}
+  {#each $allCardsStore.map(cardStoreIssuer.getStore) as cardStore}
     <CardActionsContainer cardStore={cardStore} />
   {/each}
   <button on:click={state.createCard}>Add new card</button>

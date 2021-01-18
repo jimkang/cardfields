@@ -2,10 +2,12 @@
 
 import { writable } from 'svelte/store';
 import { v4 as uuid } from 'uuid';
+import type { Thing } from '../things/thing';
 import type { Card } from '../things/card';
 import type { Pile } from '../things/pile';
 import pluck from 'lodash.pluck';
 import compact from 'lodash.compact';
+import curry from 'lodash.curry';
 
 const idListPrefix = 'ids';
 
@@ -19,32 +21,41 @@ export default function State(profileId: string, opts?: StateOptParams) {
   var piles: Pile[] = loadThings(pileIdsKeyForProfile, opts ? opts.initPiles : null);
 
   var allCardsStore = writable(cards);
+  var allPilesStore = writable(piles);
 
   return {
     allCardsStore,
-    deleteCard,
+    allPilesStore,
+    deleteCard: curry(deleteThing)(allCardsStore, cards, cardIdsKeyForProfile),
+    deletePile: curry(deleteThing)(allPilesStore, piles, pileIdsKeyForProfile),
     createCard,
-    persistCard,
-    updateAllCards: saveIdsToLocalStorage,
-    addCard
+    createPile,
+    persistThing,
+    updateAllCards: curry(saveIdsToLocalStorage)(cardIdsKeyForProfile),
+    updateAllPiles: curry(saveIdsToLocalStorage)(pileIdsKeyForProfile),
+    addCard: curry(addThing)(allCardsStore, cards, cardIdsKeyForProfile),
+    addPile: curry(addThing)(allPilesStore, piles, pileIdsKeyForProfile)
   };
 
-  function persistCard(card: Card) {
-    localStorage.setItem(card.id, JSON.stringify(card));
+  function persistThing(thing: Thing) {
+    // Someday: Custom serializers?
+    localStorage.setItem(thing.id, JSON.stringify(thing));
   }
+  // TODO: Pile versions of these. That do make
+  // additional transformations.
 
-  function deleteCard(id: string) {
-    //console.log(allCardsStore, cardStore);
-    const index = cards.findIndex(c => c.id === id);
+  function deleteThing(allThingsStore, things: Thing[], idsKeyForProfile: string, id: string) {
+    //console.log(allCardsStore, thingStore);
+    const index = things.findIndex(c => c.id === id);
     if (index < 0) {
       console.error(new Error('del cannot find ' + id));
       return;
     }
-    cards.splice(index, 1);
+    things.splice(index, 1);
 
-    saveIdsToLocalStorage(cards);
+    saveIdsToLocalStorage(idsKeyForProfile, things);
     localStorage.removeItem(id);
-    allCardsStore.set(cards);
+    allThingsStore.set(things);
   }
 
   function createCard() {
@@ -57,20 +68,35 @@ export default function State(profileId: string, opts?: StateOptParams) {
       tags: ['magic'],
       color: 'hsl(210, 50%, 50%)'
     };
-    addCard(card);
+    addThing(allCardsStore, cards, card, cardIdsKeyForProfile);
 
     return card;
   }
 
-  function addCard(card: Card) {
-    cards.push(card);
-    persistCard(card);
-    saveIdsToLocalStorage(cards);
-    allCardsStore.set(cards);
+  function addThing(allThingsStore, things: Thing[], thing: Thing, idsKeyForProfile: string) {
+    things.push(thing);
+    persistThing(thing);
+    saveIdsToLocalStorage(idsKeyForProfile, things);
+    allThingsStore.set(things);
   }
 
-  function saveIdsToLocalStorage(cards: Card[]) {
-    localStorage.setItem(cardIdsKeyForProfile, pluck(cards, 'id').join(','));
+  function createPile() {
+    var pile: Pile = {
+      id: 'pile__' + uuid(),
+      title: 'Spells',
+      text: 'Spells pile',
+      secretText: 'Magic Missile',
+      tags: ['magic'],
+      color: 'hsl(210, 50%, 50%)',
+      cards: []
+    };
+    addThing(allPilesStore, piles, pile, pileIdsKeyForProfile);
+
+    return pile;
+  }
+
+  function saveIdsToLocalStorage(idsKeyForProfile, things: Thing[]) {
+    localStorage.setItem(idsKeyForProfile, pluck(things, 'id').join(','));
   }
 
   function loadThings<T>(idsKeyForProfile: string, initThings: T[]): T[] {
