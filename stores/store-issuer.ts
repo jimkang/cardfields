@@ -3,11 +3,16 @@
 import type { Thing } from '../things/thing';
 import type { ThingStore } from './store-types';
 
-type StoreCtor<T> = (object, T) => ThingStore<T>
+type StoreCtor<T, StoreT extends ThingStore<T>> = (object, T) => StoreT;
 
-export function StoreIssuer<ThingType>(state, createStore: StoreCtor<ThingType>) {
+export interface StoreIssuerType<T, StoreT> {
+  getStore: (T) => StoreT;
+  getStoreForId: (string) => StoreT;
+  removeWithId: (string) => void;
+}
 
-  var storesById: Record<string, ThingStore<ThingType>> = {};
+export function StoreIssuer<ThingType, StoreT extends ThingStore<ThingType>>(state, createStore: StoreCtor<ThingType, StoreT>): StoreIssuerType<ThingType, StoreT> {
+  var storesById: Record<string, StoreT> = {};
 
   return {
     getStore,
@@ -15,11 +20,11 @@ export function StoreIssuer<ThingType>(state, createStore: StoreCtor<ThingType>)
     removeWithId
   };
 
-  function getStoreForId(id: string): ThingStore<ThingType> {
+  function getStoreForId(id: string): StoreT {
     return storesById[id];
   }
 
-  function getStore(thing: Thing): ThingStore<ThingType> {
+  function getStore(thing: Thing): StoreT {
     var store = getStoreForId(thing.id);
     if (!store) {
       store = createStore(state, thing);

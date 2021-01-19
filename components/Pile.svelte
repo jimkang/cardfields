@@ -1,9 +1,12 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import CardActionsContainer from './CardActionsContainer.svelte';
+import type { Card } from '../things/card';
+import type { StoreIssuerType } from '../stores/store-issuer';
+import type { CardStoreType } from '../stores/card-store';
 
 export let pileStore;
-export let cardStoreIssuer;
+export let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
 export let allowEditing = true;
 export let compact = false;
 
@@ -23,6 +26,10 @@ function updateEditables() {
   for (var i = 0; i < editables.length; ++i) {
     editables[i].setAttribute('contenteditable', 'false');
   }
+}
+
+function getCardStores(cards: Card[]): CardStoreType[] {
+  return cards.map(cardStoreIssuer.getStore);
 }
 
 </script>
@@ -53,7 +60,7 @@ function updateEditables() {
     </div>
   {/if}
 
-  {#each $pileStore.cards.map(cardStoreIssuer.getStore) as cardStore}
-    <CardActionsContainer cardStore={cardStore} />
+  {#each getCardStores($pileStore.cards) as cardStore}
+    <CardActionsContainer cardStore={cardStore} pileStore={pileStore} />
   {/each}
 </div>

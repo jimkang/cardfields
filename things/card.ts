@@ -1,4 +1,5 @@
 import type { Thing } from './thing';
+import { removeFromArray } from './thing';
 
 export interface Card extends Omit<Thing, 'text'> {
   text: string;
@@ -6,10 +7,7 @@ export interface Card extends Omit<Thing, 'text'> {
 }
 
 export function removeCardFromList(list: Card[], card: Card): Card[] {
-  const index = list.findIndex(listCard => listCard.id === card.id);
-  if (index > -1) {
-    list.splice(index, 1);
-  }
+  removeFromArray(list, card);
   return list;
 }
 

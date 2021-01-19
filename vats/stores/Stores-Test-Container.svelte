@@ -6,6 +6,8 @@ import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
 import { StoreIssuer } from '../../stores/store-issuer';
 import CardStore from '../../stores/card-store';
+import type { CardStoreType } from '../../stores/card-store';
+import type { StoreIssuerType } from '../../stores/store-issuer';
 import type { Card } from '../../things/card';
 
 let selectedProfile = 'main';
@@ -16,7 +18,7 @@ let profiles = [
 
 let state;
 let allCardsStore;
-let cardStoreIssuer;
+let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
 
 $: state;
 $: allCardsStore;
@@ -24,7 +26,7 @@ $: allCardsStore;
 function onProfileChange() {
   state = State(selectedProfile);
   allCardsStore = state.allCardsStore;
-  cardStoreIssuer = StoreIssuer<Card>(state, CardStore);
+  cardStoreIssuer = StoreIssuer<Card, CardStoreType>(state, CardStore);
 }
 
 onProfileChange();
@@ -40,8 +42,8 @@ onProfileChange();
     {/each}
   </select>
 
-  {#each $allCardsStore.map(cardStoreIssuer.getStore) as cardStore}
-    <CardActionsContainer cardStore={cardStore} />
+  {#each $allCardsStore as cardStore}
+    <CardActionsContainer cardStore={cardStoreIssuer.getStore(cardStore)} />
   {/each}
 
   <button on:click={state.createCard}>Add new card</button>

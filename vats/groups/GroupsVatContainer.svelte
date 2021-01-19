@@ -7,7 +7,10 @@ import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
 import PileStore from '../../stores/pile-store';
+import type { CardStoreType } from '../../stores/card-store';
+import type { PileStoreType } from '../../stores/pile-store';
 import { StoreIssuer } from '../../stores/store-issuer';
+import type { StoreIssuerType } from '../../stores/store-issuer';
 import type { Card } from '../../things/card';
 import type { Pile } from '../../things/pile';
 
@@ -20,8 +23,8 @@ let profiles = [
 let state;
 let allCardsStore;
 let allPilesStore;
-let cardStoreIssuer;
-let pileStoreIssuer;
+let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
+let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
 
 $: state;
 $: allCardsStore;
@@ -31,8 +34,8 @@ function onProfileChange() {
   state = State(selectedProfile);
   allCardsStore = state.allCardsStore;
   allPilesStore = state.allPilesStore;
-  cardStoreIssuer = StoreIssuer<Card>(state, CardStore);
-  pileStoreIssuer = StoreIssuer<Pile>(state, PileStore);
+  cardStoreIssuer = StoreIssuer<Card, CardStoreType>(state, CardStore);
+  pileStoreIssuer = StoreIssuer<Pile, PileStoreType>(state, PileStore);
 }
 
 onProfileChange();
@@ -52,14 +55,14 @@ onProfileChange();
 
   <h2>All piles</h2>
 
-  {#each $allPilesStore.map(pileStoreIssuer.getStore) as pileStore}
-    <PileActionsContainer state={state} pileStore={pileStore} cardStoreIssuer={cardStoreIssuer} />
+  {#each $allPilesStore as pileStore}
+    <PileActionsContainer state={state} pileStore={pileStoreIssuer.getStore(pileStore)} cardStoreIssuer={cardStoreIssuer} />
   {/each}
 
   <h2>All cards</h2>
 
-  {#each $allCardsStore.map(cardStoreIssuer.getStore) as cardStore}
-    <CardActionsContainer cardStore={cardStore} />
+  {#each $allCardsStore as cardStore}
+    <CardActionsContainer cardStore={cardStoreIssuer.getStore(cardStore)} />
   {/each}
   <button on:click={state.createCard}>Add new card</button>
 
@@ -101,7 +104,7 @@ onProfileChange();
       <dd>Everything should be the same.</dd>
       <dt>Move Draw A to The Void.</dt>
       <dt>Move Discard B to Draw.</dt>
-      <dt>Add a cards named "Draw D" to the Draw pile.</dt>
+      <dt>Add a card named "Draw D" to the Draw pile.</dt>
       <dd>The Void should contain Draw A.</dd>
       <dd>Draw should Discard B and D.</dd>
       <dt>Reload.</dt>

@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import type { Thing } from '../things/thing';
 import type { Card } from '../things/card';
 import type { Pile } from '../things/pile';
+import { removeFromArrayById } from '../things/thing';
 import { rehydratePile } from '../things/pile';
 import pluck from 'lodash.pluck';
 import compact from 'lodash.compact';
@@ -55,12 +56,10 @@ export default function State(profileId: string, opts?: StateOptParams) {
 
   function deleteThing(allThingsStore, things: Thing[], idsKeyForProfile: string, id: string) {
     //console.log(allCardsStore, thingStore);
-    const index = things.findIndex(c => c.id === id);
-    if (index < 0) {
+    if (!removeFromArrayById(things, id)) {
       console.error(new Error('del cannot find ' + id));
       return;
     }
-    things.splice(index, 1);
 
     saveIdsToLocalStorage(idsKeyForProfile, things);
     localStorage.removeItem(id);
