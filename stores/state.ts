@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import type { Thing } from '../things/thing';
 import type { Card } from '../things/card';
 import type { Pile } from '../things/pile';
+import { rehydratePile } from '../things/pile';
 import pluck from 'lodash.pluck';
 import compact from 'lodash.compact';
 import curry from 'lodash.curry';
@@ -18,10 +19,12 @@ export default function State(profileId: string, opts?: StateOptParams) {
   const pileIdsKeyForProfile = `${profileId}__${idListPrefix}__piles`;
 
   var cards: Card[] = loadThings(cardIdsKeyForProfile, opts ? opts.initCards : null);
-  var piles: Pile[] = loadThings(pileIdsKeyForProfile, opts ? opts.initPiles : null);
+  var piles: Pile[] = loadThings(pileIdsKeyForProfile, opts ? opts.initPiles : null, curry(rehydratePile)(cards));
 
   var allCardsStore = writable(cards);
   var allPilesStore = writable(piles);
+  var addCard = curry(add)(allCardsStore, cards, persistThing, cardIdsKeyForProfile);
+  var addPile = curry(add)(allPilesStore, piles, persistPile, pileIdsKeyForProfile);
 
   return {
     allCardsStore,
@@ -31,18 +34,24 @@ export default function State(profileId: string, opts?: StateOptParams) {
     createCard,
     createPile,
     persistThing,
+    persistPile,
     updateAllCards: curry(saveIdsToLocalStorage)(cardIdsKeyForProfile),
     updateAllPiles: curry(saveIdsToLocalStorage)(pileIdsKeyForProfile),
-    addCard: curry(addThing)(allCardsStore, cards, cardIdsKeyForProfile),
-    addPile: curry(addThing)(allPilesStore, piles, pileIdsKeyForProfile)
+    addCard,
+    addPile
   };
 
   function persistThing(thing: Thing) {
-    // Someday: Custom serializers?
     localStorage.setItem(thing.id, JSON.stringify(thing));
   }
-  // TODO: Pile versions of these. That do make
-  // additional transformations.
+
+  function persistPile(pile: Pile) {
+    var persistable = Object.assign({}, pile);
+    delete persistable.cards;
+    persistable.cards = pluck(pile.cards, 'id');
+  
+    localStorage.setItem(pile.id, JSON.stringify(persistable));
+  }
 
   function deleteThing(allThingsStore, things: Thing[], idsKeyForProfile: string, id: string) {
     //console.log(allCardsStore, thingStore);
@@ -68,14 +77,14 @@ export default function State(profileId: string, opts?: StateOptParams) {
       tags: ['magic'],
       color: 'hsl(210, 50%, 50%)'
     };
-    addThing(allCardsStore, cards, cardIdsKeyForProfile, card);
+    addCard(card);
 
     return card;
   }
 
-  function addThing(allThingsStore, things: Thing[],  idsKeyForProfile: string, thing: Thing) {
+  function add<T extends Thing>(allThingsStore, things: T[], persistFn: (T) => void, idsKeyForProfile: string, thing: T) {
     things.push(thing);
-    persistThing(thing);
+    persistFn(thing);
     saveIdsToLocalStorage(idsKeyForProfile, things);
     allThingsStore.set(things);
   }
@@ -90,7 +99,7 @@ export default function State(profileId: string, opts?: StateOptParams) {
       color: 'hsl(210, 50%, 50%)',
       cards: []
     };
-    addThing(allPilesStore, piles, pileIdsKeyForProfile, pile);
+    addPile(pile);
 
     return pile;
   }
@@ -99,7 +108,7 @@ export default function State(profileId: string, opts?: StateOptParams) {
     localStorage.setItem(idsKeyForProfile, pluck(things, 'id').join(','));
   }
 
-  function loadThings<T>(idsKeyForProfile: string, initThings: T[]): T[] {
+  function loadThings<T extends Thing>(idsKeyForProfile: string, initThings: T[], rehydrateFn: (object) => T = x => x): T[] {
     var things = initThings;
     if (!things) {
       const ids = localStorage.getItem(idsKeyForProfile);
@@ -111,7 +120,7 @@ export default function State(profileId: string, opts?: StateOptParams) {
       things = [];
     }
     things = compact(things);
-    return things;
+    return things.map(rehydrateFn);
   }
 }
 
@@ -120,3 +129,4 @@ function getThingFromLocalStorage(id: string) {
   // TODO: Safe parse
   return JSON.parse(localStorage.getItem(id));
 }
+

@@ -53,7 +53,7 @@ onProfileChange();
   <h2>All piles</h2>
 
   {#each $allPilesStore.map(pileStoreIssuer.getStore) as pileStore}
-    <PileActionsContainer pileStore={pileStore} cardStoreIssuer={cardStoreIssuer} />
+    <PileActionsContainer state={state} pileStore={pileStore} cardStoreIssuer={cardStoreIssuer} />
   {/each}
 
   <h2>All cards</h2>
