@@ -1,12 +1,17 @@
 <script lang="ts">
 import PileComp from './Pile.svelte';
 import type { Card } from '../things/card';
+import type { Pile } from '../things/pile';
+import type { PileStoreType } from '../stores/pile-store';
+import type { StoreIssuerType } from '../stores/store-issuer';
 
 export let state;
 export let pileStore;
 export let cardStoreIssuer;
 export let showDeleteButton = true;
 export let compact = false;
+export let allPilesStore;
+export let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
 
 function deletePile() {
   pileStore.delete();
@@ -25,7 +30,7 @@ function createCard() {
 
 </script>
 <div class="pile-actions-container">
-  <PileComp pileStore={pileStore} cardStoreIssuer={cardStoreIssuer} bind:compact={compact} />
+  <PileComp {pileStore} {cardStoreIssuer} {pileStoreIssuer} bind:compact={compact} {allPilesStore} />
   <div class="actions">
     {#if showDeleteButton}
       <button class="delete-button" on:click={deletePile}>Delete</button>
