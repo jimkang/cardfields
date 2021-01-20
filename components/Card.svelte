@@ -23,7 +23,6 @@ function updateEditables() {
 }
 
 </script>
-
 <div class="card {compact ? 'compact' : ''}" id={$cardStore.id} style="background-color: {$cardStore.color}" bind:this={rootEl}>
   <h4 contenteditable="true" bind:innerHTML={$cardStore.title} class="title"></h4>
 
@@ -42,13 +41,15 @@ function updateEditables() {
       <div class="secret text" contenteditable="true" bind:innerHTML={$cardStore.secretText}></div>
     </div>
 
-    <div class="group">
-      <h4 class="label">Tags</h4>
-      <div class="tags" contenteditable="true">
-      {#each $cardStore.tags as tag}
-        <span class="tag">{tag}</span>
-      {/each}
+    {#if $cardStore.tags}
+      <div class="group">
+        <h4 class="label">Tags</h4>
+        <div class="tags" contenteditable="true">
+        </div>
+        {#each $cardStore.tags as tag}
+          <span class="tag">{tag}</span>
+        {/each}
       </div>
-    </div>
+    {/if}
   {/if}
 </div>
