@@ -25,6 +25,11 @@ export function StoreIssuer<ThingType, StoreT extends ThingStore<ThingType>>(sta
   }
 
   function getStore(thing: Thing): StoreT {
+    if (!thing) {
+      console.error(new Error('null thing passed to getStore.'));
+      return;
+    }
+
     var store = getStoreForId(thing.id);
     if (!store) {
       store = createStore(state, thing);

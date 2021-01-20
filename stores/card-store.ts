@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store';
 import type { Card } from '../things/card';
 import type { ThingStore } from './store-types';
+import type { StoreIssuerType } from './store-issuer';
+import compact from 'lodash.compact';
 
 export interface CardStoreType extends ThingStore<Card> {
   delete: () => void;
@@ -32,5 +34,11 @@ export default function CardStore(state, card): CardStoreType {
       state.deleteCard(card.id);
     }
   };
+}
+
+export function getCardStores(cardStoreIssuer: StoreIssuerType<Card, CardStoreType>, cards: Card[]): CardStoreType[] {
+  var stores = compact(cards.map(cardStoreIssuer.getStore));
+  console.log('stores', stores);
+  return stores;
 }
 
