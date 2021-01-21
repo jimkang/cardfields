@@ -6,9 +6,12 @@ import ImportComp from '../../components/Import.svelte';
 import State from '../../stores/state';
 import { StoreIssuer } from '../../stores/store-issuer';
 import CardStore from '../../stores/card-store';
+import PileStore from '../../stores/pile-store';
 import type { CardStoreType } from '../../stores/card-store';
+import type { PileStoreType } from '../../stores/pile-store';
 import type { StoreIssuerType } from '../../stores/store-issuer';
 import type { Card } from '../../things/card';
+import type { Pile } from '../../things/pile';
 
 let selectedProfile = 'main';
 let profiles = [
@@ -31,6 +34,7 @@ function onProfileChange() {
   allCardsStore = state.allCardsStore;
   allPilesStore = state.allPilesStore;
   cardStoreIssuer = StoreIssuer<Card, CardStoreType>(state, CardStore);
+  pileStoreIssuer = StoreIssuer<Pile, PileStoreType>(state, PileStore);
 }
 
 onProfileChange();
