@@ -9,7 +9,7 @@ import curry from 'lodash.curry';
 import pluck from 'lodash.pluck';
 
 export let cardStore: CardStoreType;
-export let pileStore: PileStoreType;
+export let pileStore: PileStoreType = null;
 export let allPilesStore;
 export let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
 

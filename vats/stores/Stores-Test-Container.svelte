@@ -18,14 +18,18 @@ let profiles = [
 
 let state;
 let allCardsStore;
+let allPilesStore;
 let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
+let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
 
 $: state;
 $: allCardsStore;
+$: allPilesStore;
 
 function onProfileChange() {
   state = State(selectedProfile);
   allCardsStore = state.allCardsStore;
+  allPilesStore = state.allPilesStore;
   cardStoreIssuer = StoreIssuer<Card, CardStoreType>(state, CardStore);
 }
 
@@ -43,7 +47,7 @@ onProfileChange();
   </select>
 
   {#each $allCardsStore as cardStore}
-    <CardActionsContainer cardStore={cardStoreIssuer.getStore(cardStore)} />
+    <CardActionsContainer cardStore={cardStoreIssuer.getStore(cardStore)} {allPilesStore} {pileStoreIssuer} />
   {/each}
 
   <button on:click={state.createCard}>Add new card</button>
