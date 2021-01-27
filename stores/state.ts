@@ -6,7 +6,7 @@ import type { Thing } from '../things/thing';
 import type { Card } from '../things/card';
 import type { Pile } from '../things/pile';
 import { removeFromArrayById } from '../things/thing';
-import { rehydratePile } from '../things/pile';
+import { rehydratePile, dehydratePile } from '../things/pile';
 import pluck from 'lodash.pluck';
 import compact from 'lodash.compact';
 import curry from 'lodash.curry';
@@ -47,11 +47,7 @@ export default function State(profileId: string, opts?: StateOptParams) {
   }
 
   function persistPile(pile: Pile) {
-    var persistable = Object.assign({}, pile);
-    delete persistable.cards;
-    persistable.cards = pluck(pile.cards, 'id');
-  
-    localStorage.setItem(pile.id, JSON.stringify(persistable));
+    localStorage.setItem(pile.id, JSON.stringify(dehydratePile(pile)));
   }
 
   function deleteThing(allThingsStore, things: Thing[], idsKeyForProfile: string, id: string) {

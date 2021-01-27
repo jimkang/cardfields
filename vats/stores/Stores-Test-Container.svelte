@@ -56,7 +56,9 @@ onProfileChange();
 
   <button on:click={state.createCard}>Add new card</button>
 
-  <ExportComp allCardsStore={allCardsStore} />
+  {#if $allPilesStore}
+    <ExportComp {allCardsStore} {allPilesStore} />
+  {/if}
 
   <div>
     Import test script:
@@ -75,7 +77,8 @@ onProfileChange();
       <dd>The challenger card should appear in the cards list.</dd>
       <dt>Click to keep an "incumbent" card.</dt>
       <dd>That conflict frame should disappear.</dd>
+      <dt>Delete all of the cards.</dt>
     </dl>
   </div>
-  <ImportComp allCardsStore={allCardsStore} cardStoreIssuer={cardStoreIssuer} state={state} />
+  <ImportComp {allCardsStore} {cardStoreIssuer} {state} />
 </main>

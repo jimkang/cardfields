@@ -1,10 +1,10 @@
 <script lang="ts">
-import type { CardConflictPair } from '../things/card';
+import type { ThingConflictPair } from '../things/thing';
 import CardComp from './Card.svelte';
 import CardStore from '../stores/card-store';
 import { createEventDispatcher } from 'svelte';
 
-export let conflictPair: CardConflictPair;
+export let conflictPair: ThingConflictPair;
 export let cardStoreIssuer;
 export let state;
 

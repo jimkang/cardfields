@@ -1,17 +1,22 @@
 <script>
 export let allCardsStore;
+export let allPilesStore;
+import { rehydratePile, dehydratePile } from '../things/pile';
 
 let blobURL;
 
 function onExportClick() {
-  var blob = new Blob([JSON.stringify($allCardsStore, null, 2)], { type: 'application/json' });
+  var exportPkg = {
+    cards: $allCardsStore,
+    piles: $allPilesStore.map(dehydratePile)
+  };
+  var blob = new Blob([JSON.stringify(exportPkg, null, 2)], { type: 'application/json' });
   blobURL = window.URL.createObjectURL(blob);
 }
 
 function revokeDownload() {
   const urlCopy = blobURL.slice();
   blobURL = null;
-  debugger
   // Code after revokeDownload doesn't seem
   // to execute?!
   URL.revokeDownload(urlCopy);

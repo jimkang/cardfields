@@ -74,8 +74,8 @@ onProfileChange();
   {/if}
   <button on:click={state.createCard}>Add new card</button>
 
-  <ExportComp allCardsStore={allCardsStore} />
-  <ImportComp allCardsStore={allCardsStore} cardStoreIssuer={cardStoreIssuer} state={state} />
+  <ExportComp {allCardsStore} {allPilesStore} />
+  <ImportComp {allCardsStore} {cardStoreIssuer} {state} />
 
   </main>
 
@@ -99,11 +99,15 @@ onProfileChange();
       <dt>Reload.</dt>
       <dd>Everything should be the same.</dd>
       <dt>Create another pile named "The Void".</dt>
+      <dd>The action containers from existing cards should list The Void as a place to move. (Not working!)</dd>
       <dt>Remove A from the Discard pile.</dt>
       <dd>A should not be in the Discard pile, but it should be in the all cards list.</dd>
       <dt>Reload.</dt>
       <dd>Everything should be the same.</dd>
       <dt>Move B to The Void pile.</dt>
+      <dt>Export everything.</dt>
+      <dt>Import everything.</dt>
+      <dd>Everything should be the same.</dd>
       <dt>Delete the Discard pile.</dt>
       <dd>C should still be in the All Cards list, even if it isn't in a pile.</dd>
       <dt>Reload.</dt>

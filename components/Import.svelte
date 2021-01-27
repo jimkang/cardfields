@@ -1,17 +1,19 @@
 <script lang="ts">
-import type { CardConflictPair } from '../things/card';
+import { importThings } from '../tasks/import';
+import type { ThingConflictPair } from '../things/thing';
 import pluck from 'lodash.pluck';
 import curry from 'lodash.curry';
 import ErrorMessage from 'svelte-error-message';
 import { removeCardFromList } from '../things/card';
 import ImportConflictFrame from './ImportConflictFrame.svelte';
+import { rehydratePile } from '../things/pile';
 
 export let allCardsStore;
 export let cardStoreIssuer;
 export let state;
 
 let applyToAllDecisionMade = false;
-let conflictPairs: CardConflictPair[] = [];
+let conflictPairs: ThingConflictPair[] = [];
 let error;
 let cardsImportedCount = 0;
 
@@ -20,28 +22,25 @@ $: conflictPairs;
 function onFileChange() {
   var file = this.files[0];
   if (file && (file.type.startsWith('text/') || file.type === 'application/json')) {
-    file.text().then(importCardsString).catch(e => error = e);
+    file.text().then(importString).catch(e => error = e);
   }
 }
 
-function importCardsString(cardsString: string) {
+function importString(s: string) {
   cardsImportedCount = 0;
   // TODO: Safe parse
-  var cards: Card[] = JSON.parse(cardsString);
-  var importIds: string = pluck(cards, 'id');
-  var existingIds: string = pluck($allCardsStore, 'id');
-  cards.forEach(curry(importIfSafe)(existingIds));
-}
-
-function importIfSafe(existingIds: string[], card: Card, index: number) {
-  if (existingIds.includes(card.id)) {
-    let incumbent = $allCardsStore[existingIds.indexOf(card.id)];
-    conflictPairs.push({ id: index, incumbent, challenger: card });
-    conflictPairs = conflictPairs;
-    return;
+  var importObj = JSON.parse(s);
+  var cards: Card[] = importObj.cards;
+  var piles: Pile[];
+  if (importObj.piles) {
+    importObj.piles.map(curry(rehydratePile)($allCardsStore));
   }
-  state.addCard(card);
-  cardsImportedCount += 1;
+  if (cards) {
+    cardsImportedCount = importThings<Card>(cards, $allCardsStore, conflictPairs, state.addCard);
+    conflictPairs = conflictPairs;
+  } else {
+    error = new Error('Could not find cards to import.');
+  }
 }
 
 function onConflictResolved(e) {
