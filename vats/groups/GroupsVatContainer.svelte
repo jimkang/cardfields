@@ -106,7 +106,9 @@ onProfileChange();
       <dd>Everything should be the same.</dd>
       <dt>Move B to The Void pile.</dt>
       <dt>Export everything.</dt>
+      <dt>Delele everything except The Void pile and card B.</dt>
       <dt>Import everything.</dt>
+      <dt>Resolve conflicts by taking the piles and cards on the right.</dt>
       <dd>Everything should be the same.</dd>
       <dt>Delete the Discard pile.</dt>
       <dd>C should still be in the All Cards list, even if it isn't in a pile.</dd>
