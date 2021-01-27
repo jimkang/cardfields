@@ -1,7 +1,6 @@
 <script lang="ts">
 import { importThings } from '../tasks/import';
 import type { ThingConflictPair } from '../things/thing';
-import pluck from 'lodash.pluck';
 import curry from 'lodash.curry';
 import ErrorMessage from 'svelte-error-message';
 import { removeCardFromList } from '../things/card';
