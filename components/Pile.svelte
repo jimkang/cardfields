@@ -9,11 +9,11 @@ import { getCardStores } from '../stores/card-store';
 import type { PileStoreType } from '../stores/pile-store';
 
 export let pileStore;
+export let allPilesStore;
 export let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
 export let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
 export let allowEditing = true;
 export let compact = false;
-export let allPilesStore;
 
 let rootEl;
 

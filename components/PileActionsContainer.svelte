@@ -10,8 +10,9 @@ export let pileStore;
 export let cardStoreIssuer;
 export let showDeleteButton = true;
 export let compact = false;
-export let allPilesStore;
 export let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
+
+let allPilesStore = state.allPilesStore;
 
 function deletePile() {
   pileStore.delete();

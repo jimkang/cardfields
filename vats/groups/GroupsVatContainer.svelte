@@ -58,7 +58,7 @@ onProfileChange();
 
   {#if $allCardsStore && $allPilesStore}
     {#each $allPilesStore as pileStore}
-      <PileActionsContainer {state} pileStore={pileStoreIssuer.getStore(pileStore)} {cardStoreIssuer} {pileStoreIssuer} {allPilesStore} />
+      <PileActionsContainer {state} pileStore={pileStoreIssuer.getStore(pileStore)} {cardStoreIssuer} {pileStoreIssuer} />
     {/each}
   {/if}
 
@@ -75,7 +75,7 @@ onProfileChange();
   <button on:click={state.createCard}>Add new card</button>
 
   <ExportComp {allCardsStore} {allPilesStore} />
-  <ImportComp {allCardsStore} {cardStoreIssuer} {state} />
+  <ImportComp {allCardsStore} {allPilesStore} {state} {cardStoreIssuer} {pileStoreIssuer} />
 
   </main>
 

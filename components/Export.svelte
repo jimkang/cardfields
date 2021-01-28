@@ -1,7 +1,7 @@
 <script>
 export let allCardsStore;
 export let allPilesStore;
-import { rehydratePile, dehydratePile } from '../things/pile';
+import { dehydratePile } from '../things/pile';
 
 let blobURL;
 

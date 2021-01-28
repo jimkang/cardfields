@@ -20,7 +20,6 @@ let pilesCardIsNotIn: Pile[];
 $: pilesCardIsNotIn = getPilesCardIsNotIn($pileStore, $allPilesStore);
 
 function deleteCard() {
-  var pilesCardIsIn = $allPilesStore.filter(curry(pileHasCard));
   pilesCardIsNotIn.map(pileStoreIssuer.getStore).forEach(ps => ps.removeCard($cardStore));
   cardStore.delete();
 }
@@ -44,10 +43,6 @@ function getPilesCardIsNotIn(currentPile: Pile, allPiles: Pile[]): Pile[] {
     return allPiles;
   }
   return allPiles.filter(pile => pile.id !== currentPile.id);
-}
-
-function pileHasCard(card: Card, pile: Pile): boolean {
-  return pluck(pile.cards, 'id').includes(card.id);
 }
 
 </script>

@@ -2,6 +2,7 @@
 //import type { Writable } from 'svelte/store';
 import type { Thing } from '../things/thing';
 import type { ThingStore } from './store-types';
+// TODO: All types in one file.
 
 type StoreCtor<T, StoreT extends ThingStore<T>> = (object, T) => StoreT;
 
