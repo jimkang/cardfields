@@ -5,6 +5,8 @@ import curry from 'lodash.curry';
 import ErrorMessage from 'svelte-error-message';
 import { rehydratePile } from '../things/pile';
 import ImportConflictSection from './ImportConflictSection.svelte';
+import type { Card } from '../../things/card';
+import type { Pile } from '../../things/pile';
 
 export let state;
 export let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;

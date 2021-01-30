@@ -1,0 +1,101 @@
+{
+  "cards": [
+    {
+      "id": "card__7f996520-1ccc-437a-998d-4c936fbcc521",
+      "text": "Cast a spell",
+      "secretText": "Magic Missile",
+      "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "title": "A"
+    },
+    {
+      "id": "card__6a768a9c-1772-42bd-9618-f4d8b7e79d84",
+      "text": "Giza Power Plant<br>",
+      "secretText": "Magic Missile",
+      "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "title": "B"
+    },
+    {
+      "id": "card__2ca9aa74-adb8-4c7e-9855-9eb5e2b50f00",
+      "text": "Cast a spell",
+      "secretText": "Magic Missile",
+      "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "title": "C"
+    },
+    {
+      "id": "card__e2488bd3-89fb-4402-bd5c-db6e748d8051",
+      "text": "Cast a spell",
+      "secretText": "Magic Missile",
+      "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "title": "D"
+    },
+    {
+      "id": "card__437f0d07-438e-41e8-b8ed-9736c2e3aa25",
+      "text": "Hovering Lifeless<br>",
+      "secretText": "Magic Missile",
+      "picture": "https://smidgeo.com/notes/deathmtn/media/54F917E8-D61B-4D7D-8537-7073D2E53713.jpeg",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "title": "E"
+    }
+  ],
+  "piles": [
+    {
+      "id": "pile__ca01666c-73e4-463a-b1ef-de75e0b39e9b",
+      "title": "Discard",
+      "text": "Discard",
+      "secretText": "Magic Missile",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "cards": [
+        "card__2ca9aa74-adb8-4c7e-9855-9eb5e2b50f00"
+      ]
+    },
+    {
+      "id": "pile__d21d5ba2-6325-4926-8717-2488039b3e71",
+      "title": "Draw",
+      "text": "Spells pile",
+      "secretText": "Magic Missile",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "cards": [
+        "card__e2488bd3-89fb-4402-bd5c-db6e748d8051",
+        "card__437f0d07-438e-41e8-b8ed-9736c2e3aa25"
+      ]
+    },
+    {
+      "id": "pile__8de6c951-4ac6-496f-bf22-4cd9d34328ef",
+      "title": "The Void",
+      "text": "Spells pile",
+      "secretText": "Magic Missile",
+      "tags": [
+        "magic"
+      ],
+      "color": "hsl(210, 50%, 50%)",
+      "cards": [
+        "card__6a768a9c-1772-42bd-9618-f4d8b7e79d84"
+      ]
+    }
+  ]
+}

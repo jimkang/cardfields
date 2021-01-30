@@ -75,7 +75,7 @@ onProfileChange();
   <button on:click={state.createCard}>Add new card</button>
 
   <ExportComp {allCardsStore} {allPilesStore} />
-  <ImportComp {allCardsStore} {allPilesStore} {state} {cardStoreIssuer} {pileStoreIssuer} />
+  <ImportComp {state} {cardStoreIssuer} {pileStoreIssuer} />
 
   </main>
 
@@ -105,8 +105,18 @@ onProfileChange();
       <dt>Reload.</dt>
       <dd>Everything should be the same.</dd>
       <dt>Move B to The Void pile.</dt>
+      <dd>Expected contents:
+        <dl>
+          <dt>Discard</dt>
+          <dd>C</dd>
+          <dt>Draw</dt>
+          <dd>D, E</dd>
+          <dt>The Void</dt>
+          <dd>B</dd>
+        </dl>
+      </dd>
       <dt>Export everything.</dt>
-      <dt>Delele everything except The Void pile and card B.</dt>
+      <dt>Delete everything except The Void pile and card B.</dt>
       <dt>Import everything.</dt>
       <dt>Resolve conflicts by taking the piles and cards on the right.</dt>
       <dd>Everything should be the same.</dd>
@@ -123,6 +133,18 @@ onProfileChange();
       <dd>Everything should be the same.</dd>
       <dt>Delete D from the All Cards list.</dt>
       <dd>It should be gone from the Void pile.</dd>
+      <dt>Import from the previous export.</dt>
+      <dt>Resolve conflicts by taking the piles and cards on the right. (Do cards before piles.)</dt>
+      <dd>Expected contents:
+        <dl>
+          <dt>Discard</dt>
+          <dd>C</dd>
+          <dt>Draw</dt>
+          <dd>D, E</dd>
+          <dt>The Void</dt>
+          <dd>B</dd>
+        </dl>
+      </dd>
     </dl>
     </div>
 </div>
