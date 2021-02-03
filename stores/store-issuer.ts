@@ -1,16 +1,6 @@
 // (Intended) singleton that makes sure there is one ThingStore per Thing, at least for things that actually use this issuer. You can go outside of this if you want duplicate stores that are untracked.
 //import type { Writable } from 'svelte/store';
-import type { Thing } from '../things/thing';
-import type { ThingStore } from './store-types';
-// TODO: All types in one file.
-
-type StoreCtor<T, StoreT extends ThingStore<T>> = (object, T) => StoreT;
-
-export interface StoreIssuerType<T, StoreT> {
-  getStore: (T) => StoreT;
-  getStoreForId: (string) => StoreT;
-  removeWithId: (string) => void;
-}
+import type { Thing, ThingStore, StoreCtor, StoreIssuerType } from '../types';
 
 export function StoreIssuer<ThingType, StoreT extends ThingStore<ThingType>>(state, createStore: StoreCtor<ThingType, StoreT>): StoreIssuerType<ThingType, StoreT> {
   var storesById: Record<string, StoreT> = {};

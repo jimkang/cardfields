@@ -1,10 +1,6 @@
 <script lang="ts">
 import CardComp from './Card.svelte';
-import type { PileStoreType } from '../stores/pile-store';
-import type { CardStoreType } from '../stores/card-store';
-import type { Card } from '../things/card';
-import type { Pile } from '../things/pile';
-import type { StoreIssuerType } from '../stores/store-issuer';
+import type { PileStoreType, CardStoreType, Card, Pile, StoreIssuerType } from '../types';
 import curry from 'lodash.curry';
 import pluck from 'lodash.pluck';
 

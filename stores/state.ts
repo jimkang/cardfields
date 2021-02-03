@@ -2,9 +2,7 @@
 
 import { writable } from 'svelte/store';
 import { v4 as uuid } from 'uuid';
-import type { Thing } from '../things/thing';
-import type { Card } from '../things/card';
-import type { Pile } from '../things/pile';
+import type { Thing, Card, Pile, StateOptParams } from '../types';
 import { removeFromArrayById } from '../things/thing';
 import { rehydratePile, dehydratePile } from '../things/pile';
 import pluck from 'lodash.pluck';
@@ -12,8 +10,6 @@ import compact from 'lodash.compact';
 import curry from 'lodash.curry';
 
 const idListPrefix = 'ids';
-
-type StateOptParams = { initCards?: Card[]; initPiles? };
 
 export default function State(profileId: string, opts?: StateOptParams) { 
   const cardIdsKeyForProfile = `${profileId}__${idListPrefix}__cards`;

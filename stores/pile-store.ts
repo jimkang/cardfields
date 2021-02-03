@@ -1,14 +1,6 @@
 import { writable } from 'svelte/store';
-import type { Pile } from '../things/pile';
-import type { Card } from '../things/card';
-import type { ThingStore } from './store-types';
+import type { Pile, Card, PileStoreType } from '../types';
 import { removeFromArray } from '../things/thing';
-
-export interface PileStoreType extends ThingStore<Pile> {
-  delete: () => void;
-  addCard: (card: Card) => void;
-  removeCard: (card: Card) => void;
-}
 
 export default function PileStore(state, pile): PileStoreType {
   var store = writable(pile);

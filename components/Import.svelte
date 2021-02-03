@@ -1,12 +1,11 @@
 <script lang="ts">
 import { importThings } from '../tasks/import';
-import type { ThingConflictPair } from '../things/thing';
+import type { Card, Pile, ThingConflictPair, StoreIssuerType, CardStoreType, PileStoreType } from '../types';
 import curry from 'lodash.curry';
-import ErrorMessage from 'svelte-error-message';
+// I guess the format for modules changed?
+import ErrorMessage from 'svelte-error-message/src/ErrorMessage.svelte';
 import { rehydratePile } from '../things/pile';
 import ImportConflictSection from './ImportConflictSection.svelte';
-import type { Card } from '../../things/card';
-import type { Pile } from '../../things/pile';
 
 export let state;
 export let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
@@ -66,12 +65,12 @@ function importString(s: string) {
   <h4>Piles imported</h4>
   <div>{pilesImportedCount}</div>
   {#if !applyToAllDecisionMade}
-    <ImportConflictSection conflictPairs={pileConflictPairs} thingTypeName="pile" {cardStoreIssuer} {pileStoreIssuer} {state} {allPilesStore} />
+    <ImportConflictSection conflictPairs={pileConflictPairs} thingTypeName="pile" {cardStoreIssuer} {pileStoreIssuer} {state} />
   {/if}
 
   <h4>Cards imported</h4>
   <div>{cardsImportedCount}</div>
   {#if !applyToAllDecisionMade}
-    <ImportConflictSection conflictPairs={cardConflictPairs} thingTypeName="card" {cardStoreIssuer} {pileStoreIssuer} {state} {allPilesStore} />
+    <ImportConflictSection conflictPairs={cardConflictPairs} thingTypeName="card" {cardStoreIssuer} {pileStoreIssuer} {state} />
   {/if}
 </div>

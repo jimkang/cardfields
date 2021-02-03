@@ -7,11 +7,7 @@ import State from '../../stores/state';
 import { StoreIssuer } from '../../stores/store-issuer';
 import CardStore from '../../stores/card-store';
 import PileStore from '../../stores/pile-store';
-import type { CardStoreType } from '../../stores/card-store';
-import type { PileStoreType } from '../../stores/pile-store';
-import type { StoreIssuerType } from '../../stores/store-issuer';
-import type { Card } from '../../things/card';
-import type { Pile } from '../../things/pile';
+import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../../types';
 
 let selectedProfile = 'main';
 let profiles = [
@@ -80,5 +76,5 @@ onProfileChange();
       <dt>Delete all of the cards.</dt>
     </dl>
   </div>
-  <ImportComp {allCardsStore} {cardStoreIssuer} {state} />
+  <ImportComp {pileStoreIssuer} {cardStoreIssuer} {state} />
 </main>

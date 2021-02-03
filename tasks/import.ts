@@ -1,4 +1,4 @@
-import type { Thing, ThingConflictPair } from '../things/thing';
+import type { Thing, ThingConflictPair } from '../types';
 import pluck from 'lodash.pluck';
 
 function checkForImportConflict<T extends Thing>(existingIds: string[], allThings: T[], conflictPairs: ThingConflictPair[], thing: T, index: number): boolean {

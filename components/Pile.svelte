@@ -1,12 +1,8 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import CardActionsContainer from './CardActionsContainer.svelte';
-import type { Card } from '../things/card';
-import type { Pile } from '../things/pile';
-import type { StoreIssuerType } from '../stores/store-issuer';
-import type { CardStoreType } from '../stores/card-store';
+import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../types';
 import { getCardStores } from '../stores/card-store';
-import type { PileStoreType } from '../stores/pile-store';
 
 export let pileStore;
 export let allPilesStore;

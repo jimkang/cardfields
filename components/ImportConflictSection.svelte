@@ -1,10 +1,8 @@
 <script lang="ts">
-import type { ThingConflictPair } from '../things/thing';
-import type { StoreIssuerType } from '../stores/store-issuer';
-import type { CardStoreType } from '../stores/card-store';
-import type { PileStoreType } from '../stores/pile-store';
+// I guess the format for modules changed?
+import ErrorMessage from 'svelte-error-message/src/ErrorMessage.svelte';
+import type { Card, Pile, ThingConflictPair, StoreIssuerType, CardStoreType, PileStoreType } from '../types';
 import ImportConflictFrame from './ImportConflictFrame.svelte';
-import ErrorMessage from 'svelte-error-message';
 
 export let conflictPairs: ThingConflictPair[];
 export let thingTypeName: string;

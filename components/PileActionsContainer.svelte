@@ -1,9 +1,6 @@
 <script lang="ts">
 import PileComp from './Pile.svelte';
-import type { Card } from '../things/card';
-import type { Pile } from '../things/pile';
-import type { PileStoreType } from '../stores/pile-store';
-import type { StoreIssuerType } from '../stores/store-issuer';
+import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../types';
 
 export let state;
 export let pileStore;

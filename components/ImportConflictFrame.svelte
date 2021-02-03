@@ -1,9 +1,5 @@
 <script lang="ts">
-import type { ThingConflictPair, Thing } from '../things/thing';
-import type { Card } from '../things/card';
-import type { Pile } from '../things/pile';
-import type { StoreIssuerType } from '../stores/store-issuer';
-import type { ThingStore } from './../stores/store-types';
+import type { ThingConflictPair, Thing, Card, Pile, CardStoreType, PileStoreType, StoreIssuerType, ThingStore } from '../types';
 
 import CardComp from './Card.svelte';
 import PileComp from './Pile.svelte';
@@ -14,8 +10,8 @@ import curry from 'lodash.curry';
 
 export let thingTypeName: string;
 export let conflictPair: ThingConflictPair;
-export let cardStoreIssuer: StoreIssuerType<Card, ThingStore<Card>>;
-export let pileStoreIssuer: StoreIssuerType<Pile, ThingStore<Pile>>;
+export let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
+export let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
 export let state;
 let allPilesStore = state.allPilesStore;
 

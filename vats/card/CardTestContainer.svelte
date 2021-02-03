@@ -3,7 +3,7 @@
 import CardActionsContainer from '../../components/CardActionsContainer.svelte';
 import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
-import type { Card } from '../../things/card';
+import type { Card } from '../../types';
 
 var state = State('main');
 

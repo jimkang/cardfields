@@ -1,6 +1,6 @@
 <script lang="ts">
 // @ts-check
-import type { Card } from '../things/card';
+import type { Card } from '../types';
 import { version } from '../package.json';
 
 interface Test {

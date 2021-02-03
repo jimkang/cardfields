@@ -1,55 +1,51 @@
-export enum ThingType {
-  project = 'project',
-  forceSource = 'forceSource'
-}
-
-export interface NumberProp {
-  name: string;
-  value: number;
-}
-
-export interface StringProp {
-  id: string;
-  value: string;
-}
+import type { Writable } from 'svelte/store';
 
 export interface Thing {
-  lastUpdated: Date;
   id: string;
-  name: string;
-  numberProps: Array<NumberProp>;
-  created: Date;
-  // TODO: Shouldn't it just be an array of simple strings?
-  tags: Array<StringProp>;
-  thingType: ThingType;
-  x: number;
-  y: number;
+  text?: string;
+  title?: string;
+  secretText?: string;
+  picture?: string;
+  tags: string[];
+  color?: string;
 }
 
-export interface Project extends Thing {
-  // Key: relationship name.
-  // Value: List of project ids.
-  relationships: Record<string, Array<string>>;
-  // d3-force properties:
-  index: number;
-  vx: number;
-  vy: number;
+export interface Card extends Omit<Thing, 'text'> {
+  text: string;
+  // TODO: History
 }
 
-export interface ForceSource extends Thing {
-  fx: number;
-  fy: number;
+export interface Pile extends Omit<Thing, 'title'> {
+  title: string;
+  cards: Card[];
 }
 
-export type ThingDict = Record<string, Thing>;
-
-export type Done = (Error, any?) => void;
-// TODO: Define FieldStore.
-export interface StorePack {
-  store?: object;
-  fieldStore?: object;
-  message?: object;
+export interface ThingStore<ThingType> extends Writable<ThingType> {
+  delete: () => void;
 }
 
-export type FieldStoreDone = (Error, StorePack?) => void;
+export interface CardStoreType extends ThingStore<Card> {
+  delete: () => void;
+}
 
+export type StoreCtor<T, StoreT extends ThingStore<T>> = (object, T) => StoreT;
+
+export interface StoreIssuerType<T, StoreT> {
+  getStore: (T) => StoreT;
+  getStoreForId: (string) => StoreT;
+  removeWithId: (string) => void;
+}
+
+export interface PileStoreType extends ThingStore<Pile> {
+  delete: () => void;
+  addCard: (card: Card) => void;
+  removeCard: (card: Card) => void;
+}
+
+export type StateOptParams = { initCards?: Card[]; initPiles? };
+
+export interface ThingConflictPair {
+  id: string; // Only needs to be unique to the import.
+  incumbent: Thing;
+  challenger: Thing;
+}
