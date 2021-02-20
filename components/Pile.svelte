@@ -2,7 +2,7 @@
 import { onMount } from 'svelte';
 import CardActionsContainer from './CardActionsContainer.svelte';
 import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../types';
-import { getCardStores } from '../stores/card-store';
+//import { getCardStores } from '../stores/card-store';
 
 export let pileStore;
 export let allPilesStore;
@@ -56,8 +56,9 @@ function updateEditables() {
       </div>
     </div>
   {/if}
-
+<!--
   {#each getCardStores(cardStoreIssuer, $pileStore.cards) as cardStore}
     <CardActionsContainer {cardStore} {pileStore} {allPilesStore} {pileStoreIssuer} />
   {/each}
+-->
 </div>

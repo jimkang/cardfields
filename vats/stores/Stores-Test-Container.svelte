@@ -3,10 +3,8 @@
 import CardActionsContainer from '../../components/CardActionsContainer.svelte';
 import ExportComp from '../../components/Export.svelte';
 import ImportComp from '../../components/Import.svelte';
-import State from '../../stores/state';
-import { StoreIssuer } from '../../stores/store-issuer';
 import CardStore from '../../stores/card-store';
-import PileStore from '../../stores/pile-store';
+//import PileStore from '../../stores/pile-store';
 import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../../types';
 
 let selectedProfile = 'main';
@@ -15,22 +13,7 @@ let profiles = [
   'test'
 ];
 
-let state;
-let allCardsStore;
-let allPilesStore;
-let cardStoreIssuer: StoreIssuerType<Card, CardStoreType>;
-let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
-
-$: state;
-$: allCardsStore;
-$: allPilesStore;
-
 function onProfileChange() {
-  state = State(selectedProfile);
-  allCardsStore = state.allCardsStore;
-  allPilesStore = state.allPilesStore;
-  cardStoreIssuer = StoreIssuer<Card, CardStoreType>(state, CardStore);
-  pileStoreIssuer = StoreIssuer<Pile, PileStoreType>(state, PileStore);
 }
 
 onProfileChange();
@@ -46,6 +29,7 @@ onProfileChange();
     {/each}
   </select>
 
+<!--
   {#each $allCardsStore as cardStore}
     <CardActionsContainer cardStore={cardStoreIssuer.getStore(cardStore)} {allPilesStore} {pileStoreIssuer} />
   {/each}
@@ -55,6 +39,7 @@ onProfileChange();
   {#if $allPilesStore}
     <ExportComp {allCardsStore} {allPilesStore} />
   {/if}
+-->
 
   <div>
     Import test script:
@@ -76,5 +61,8 @@ onProfileChange();
       <dt>Delete all of the cards.</dt>
     </dl>
   </div>
+
+  <!--
   <ImportComp {pileStoreIssuer} {cardStoreIssuer} {state} />
+  -->
 </main>

@@ -8,7 +8,7 @@ import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
 import PileStore from '../../stores/pile-store';
 import { StoreIssuer } from '../../stores/store-issuer';
-import { getCardStores } from '../../stores/card-store';
+//import { getCardStores } from '../../stores/card-store';
 import type { Card, Pile, CardStoreType, PileStoreType, StoreIssuerType } from '../../types';
 
 let selectedProfile = 'main';
@@ -63,11 +63,13 @@ onProfileChange();
   <!-- This guard is necessary to prevent the
   CardActionsContainers from being created before
   their props are ready. -->
+<!--
   {#if $allPilesStore}
     {#each getCardStores(cardStoreIssuer, $allCardsStore) as cardStore}
       <CardActionsContainer {cardStore} {allPilesStore} {pileStoreIssuer} />
     {/each}
   {/if}
+-->
   <button on:click={state.createCard}>Add new card</button>
 
   <ExportComp {allCardsStore} {allPilesStore} />

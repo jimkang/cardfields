@@ -6,7 +6,7 @@ import pluck from 'lodash.pluck';
 
 export let cardStore: CardStoreType;
 export let pileStore: PileStoreType = null;
-export let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
+//export let pileStoreIssuer: StoreIssuerType<Pile, PileStoreType>;
 export let showDeleteButton = true;
 export let compact = false;
 
