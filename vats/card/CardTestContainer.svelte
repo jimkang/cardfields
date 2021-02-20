@@ -1,11 +1,8 @@
 <script lang="ts">
 // @ts-check
 import CardActionsContainer from '../../components/CardActionsContainer.svelte';
-import State from '../../stores/state';
 import CardStore from '../../stores/card-store';
 import type { Card } from '../../types';
-
-var state = State('main');
 
 var card: Card = {
   id: 'unique-card',
@@ -19,10 +16,10 @@ var card: Card = {
   color: 'hsl(0, 50%, 50%)'
 };
 
-var cardStore = CardStore(state, card);
+var cardStore = CardStore(card);
 </script>
 
 <main>
   <h1>Card test vat</h1>
-  <CardActionsContainer cardStore={cardStore} />
+  <CardActionsContainer {cardStore} />
 </main>

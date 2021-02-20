@@ -1,14 +1,16 @@
 import { writable } from 'svelte/store';
-import type { Card, CardStoreType, StoreIssuerType } from '../types';
-import compact from 'lodash.compact';
+import type { Card, CardStoreType } from '../types';
+import { writeThing, deleteThing } from './local-storage';
 
-export default function CardStore(state, card): CardStoreType {
+// Profiles don't apply here. They are collections
+// of piles and settings.
+export default function CardStore(card): CardStoreType {
   var store = writable(card);
 
   return {
     set(value: Card) {
       console.log('Setting', value);
-      state.persistThing(value);
+      writeThing(value);
       store.set(value);
       card = value;
     },
@@ -25,14 +27,8 @@ export default function CardStore(state, card): CardStoreType {
     update: store.update,
     subscribe: store.subscribe,
     delete() {
-      state.deleteCard(card.id);
-    }
+      deleteThing(card.id);
+    },
   };
-}
-
-export function getCardStores(cardStoreIssuer: StoreIssuerType<Card, CardStoreType>, cards: Card[]): CardStoreType[] {
-  var stores: CardStoreType[] = compact(cards.map(cardStoreIssuer.getStore));
-  //console.log('stores', stores);
-  return stores;
 }
 

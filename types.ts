@@ -6,7 +6,7 @@ export interface Thing {
   title?: string;
   secretText?: string;
   picture?: string;
-  tags: string[];
+  tags?: string[];
   color?: string;
 }
 

@@ -12,7 +12,6 @@ import curry from 'lodash.curry';
 const idListPrefix = 'ids';
 
 export default function State(profileId: string, opts?: StateOptParams) { 
-  const cardIdsKeyForProfile = `${profileId}__${idListPrefix}__cards`;
   const pileIdsKeyForProfile = `${profileId}__${idListPrefix}__piles`;
 
   var cards: Card[] = loadThings(cardIdsKeyForProfile, opts ? opts.initCards : null);
