@@ -20,6 +20,10 @@ export interface Pile extends Omit<Thing, 'title'> {
   cards: Card[];
 }
 
+export interface Profile extends Thing {
+  piles: Pile[];
+}
+
 export interface ThingStore<ThingType> extends Writable<ThingType> {
   delete: () => void;
 }

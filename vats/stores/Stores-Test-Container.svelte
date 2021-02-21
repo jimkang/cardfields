@@ -6,12 +6,13 @@ import ImportComp from '../../components/Import.svelte';
 import CardStore from '../../stores/card-store';
 //import PileStore from '../../stores/pile-store';
 import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../../types';
+import { initProfiles } from '../../init/init-profiles';
+import fw from 'lodash.findwhere';
 
-let selectedProfile = 'main';
-let profiles = [
-  'main',
-  'test'
-];
+let profiles = initProfiles();
+// TODO: Profiles store and Profile store.
+// Hydrate the profile ids.
+let selectedProfile = fw(profiles, { id: 'profile__main' });
 
 function onProfileChange() {
 }

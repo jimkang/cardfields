@@ -10,13 +10,18 @@ export function deleteThing(id: string) {
   localStorage.removeItem(id);
 }
 
-export function loadIds(idsKeyForProfile: string): string[] {
+export function getIds(idsKey: string): string[] {
   var ids = [];
-  const idsString = localStorage.getItem(idsKeyForProfile);
+  const idsString = localStorage.getItem(idsKey);
   if (idsString && idsString.length > 0) {
     ids = idsString.split(',');
   }
   return ids;
+}
+
+export function writeIds(idsKey: string, ids: string[]) {
+  const idsString = ids.join(',');
+  localStorage.setItem(idsKey, idsString);
 }
 
 // TODO: Validate?
