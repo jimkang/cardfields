@@ -1,13 +1,10 @@
 /* global process */
 
-import svelte from 'rollup-plugin-svelte';
 import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
-import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
-import sveltePreprocess from 'svelte-preprocess';
 
 const production = !process.env.ROLLUP_WATCH;
 const unminify = process.env.UNMINIFY;
@@ -28,19 +25,15 @@ export default function createConfig({
       file: outputFile
     },
     plugins: [
-      svelte({
-        preprocess: sveltePreprocess(),
-        // enable run-time checks when not in production
-        compilerOptions: { dev: !production }
-      }),
-
+      // If you have external dependencies installed from
+      // npm, you'll most likely need these plugins. In
+      // some cases you'll need additional configuration -
+      // consult the documentation for details:
+      // https://github.com/rollup/plugins/tree/master/packages/commonjs
       resolve({
-        browser: true,
-        dedupe: ['svelte']
+        browser: true
       }),
 
-      commonjs(),
-      json(),
       typescript({
         sourceMap: !production,
         inlineSources: !production
@@ -50,16 +43,15 @@ export default function createConfig({
       // the bundle has been generated
       !production && (serve && serve(serveOpts)),
 
-      // Watch the `public` directory and refresh the
+      // Watch the directory and refresh the
       // browser on changes when not in production
       !production && livereload(reloadPath),
 
       // If we're building for production (npm run build
       // instead of npm run dev), minify
-      production && !unminify && terser()
-      //babel({
-      //babelHelpers: 'bundled'
-      //})
+      production && !unminify && terser(),
+
+      json()
     ],
     watch: {
       clearScreen: false

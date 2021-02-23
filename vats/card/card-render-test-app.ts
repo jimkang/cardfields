@@ -1,7 +1,5 @@
-import CardTestContainer from './CardTestContainer.svelte';
+var container = {};
 
-var container = new CardTestContainer({
-  target: document.getElementById('temp')
-});
+console.log('hey');
 
 export default container;
