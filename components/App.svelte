@@ -21,7 +21,7 @@ var card: Card = {
 </script>
 
 <main>
-  <h1>Cardfields</h1>
+  <h1>Ambit</h1>
   <div>Observe what you do</div>
 {test.a} {test.b}
 {card.id}

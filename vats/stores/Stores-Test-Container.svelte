@@ -3,6 +3,8 @@
 import CardActionsContainer from '../../components/CardActionsContainer.svelte';
 import ExportComp from '../../components/Export.svelte';
 import ImportComp from '../../components/Import.svelte';
+import ProfileComp from '../../components/Profile.svelte';
+
 import CardStore from '../../stores/card-store';
 //import PileStore from '../../stores/pile-store';
 import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../../types';
@@ -17,7 +19,7 @@ initProfiles();
 // Hydrate the profile ids.
 var profileIdsStore = clearinghouse.getCollectionStore('profile');
 let selectedProfileId = mainProfileId;
-var profiles = profileIdsStore.get().map(clearinghouse.getThing);
+var profiles = clearinghouse.getThingsFromIds(profileIdsStore.get());
 console.log('hey', profiles);
 
 function onProfileChange() {
@@ -36,6 +38,8 @@ onProfileChange();
       <option value={profile.id}>{profile.title}</option>
     {/each}
   </select>
+
+  <ProfileComp profileStore={clearinghouse.getStore('profile', selectedProfileId)} />
 
 <!--
   {#each $allCardsStore as cardStore}
