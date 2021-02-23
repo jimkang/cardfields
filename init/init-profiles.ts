@@ -1,15 +1,19 @@
 import { writeThing, getThing, getIds, writeIds } from '../stores/local-storage';
 import type { Profile } from '../types';
+import { profileIdsKey, mainProfileId } from '../names';
 
+// This doesn't use clearinghouse, so components
+// won't get notified of the changes made here,
+// which is OK.
 export function initProfiles(): string[] {
-  var mainProfile = getThing('profile__main');
-  var profileIds = getIds('ids__profile');
+  var mainProfile = getThing(mainProfileId);
+  var profileIds = getIds(profileIdsKey);
   if (!profileIds) {
     profileIds = [];
   }
   if (!mainProfile) {
     let defaultMain: Profile = {
-      id: 'profile__main',
+      id: mainProfileId,
       title: 'Main',
       piles: [] // TODO: allCards
     };
@@ -17,7 +21,7 @@ export function initProfiles(): string[] {
     mainProfile = defaultMain;
     profileIds.push(mainProfile.id);
   }
-  writeIds('ids__profile', profileIds);
+  writeIds(profileIdsKey, profileIds);
 
   return profileIds;
 }

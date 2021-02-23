@@ -1,10 +1,9 @@
 import { writable } from 'svelte/store';
 import type { Card, CardStoreType } from '../types';
-import { writeThing, deleteThing } from './local-storage';
 
 // Profiles don't apply here. They are collections
 // of piles and settings.
-export default function CardStore(card): CardStoreType {
+export default function CardStore(writeThing, deleteThing, card): CardStoreType {
   var store = writable(card);
 
   return {

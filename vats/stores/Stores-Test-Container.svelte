@@ -8,11 +8,17 @@ import CardStore from '../../stores/card-store';
 import type { Card, Pile, StoreIssuerType, CardStoreType, PileStoreType } from '../../types';
 import { initProfiles } from '../../init/init-profiles';
 import fw from 'lodash.findwhere';
+import curry from 'lodash.curry';
+import { clearinghouse } from '../../stores/clearinghouse';
+import { mainProfileId } from '../../names';
 
-let profiles = initProfiles();
+initProfiles();
 // TODO: Profiles store and Profile store.
 // Hydrate the profile ids.
-let selectedProfile = fw(profiles, { id: 'profile__main' });
+var profileIdsStore = clearinghouse.getCollectionStore('profile');
+let selectedProfileId = mainProfileId;
+var profiles = profileIdsStore.get().map(clearinghouse.getThing);
+console.log('hey', profiles);
 
 function onProfileChange() {
 }
@@ -24,9 +30,10 @@ onProfileChange();
   <h1>Stores experiment</h1>
 
   <h2>Profile</h2>
-  <select bind:value={selectedProfile} on:change={onProfileChange}>
-    {#each profiles as profile}
-      <option value={profile}>{profile}</option>
+  <select bind:value={selectedProfileId} on:change={onProfileChange}>
+{#each profiles as profile}
+      { console.log('profile', profile) }
+      <option value={profile.id}>{profile.title}</option>
     {/each}
   </select>
 
