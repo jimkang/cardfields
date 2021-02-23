@@ -5,6 +5,7 @@ import type { ThingStore, Profile, Thing } from '../types';
 import { Store } from '../stores/store';
 import { CollectionStore } from '../stores/collection-store';
 import { profileIdsKey } from '../names';
+import { initProfile } from '../init/init-profiles';
 
 // TODO: If testing var is set, use mock storage.
 
@@ -15,7 +16,8 @@ export function Clearinghouse() {
     getStore,
     getCollectionStore,
     getThing,
-    getThingsFromIds
+    getThingsFromIds,
+    createStoredThing
   };
 
   function getStore(kind: string, id: string, value?: unknown): ThingStore<unknown> {
@@ -27,7 +29,9 @@ export function Clearinghouse() {
       if (kind === 'profile') {
         store = Store<Profile>(writeThing, deleteThing, value as Profile);
       }
-      storesById[id] = store;
+      if (store) {
+        storesById[id] = store;
+      }
     }
     return store;
   }
@@ -45,6 +49,17 @@ export function Clearinghouse() {
     return ids.map(getThing);
   }
 
+  function createStoredThing(kind: string): ThingStore<unknown> {
+    var thing: Thing;
+    if (kind === 'profile') {
+      thing = initProfile();
+    }
+    var collectionStore = getCollectionStore(kind);
+    collectionStore.add(thing.id);
+    var store = getStore(kind, thing.id);
+    store.set(thing);
+    return store;
+  }
 }
 
 export var clearinghouse = Clearinghouse();

@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import { profileIdsKey } from '../names';
 
 // This store deals with ids, not with hydrated
 // objects.
@@ -33,8 +34,8 @@ export function CollectionStore({
 
   function set(values: string[]) {
     console.log('Setting values', values);
-    writeIds(values);
-    store.set(values);
+    writeIds(profileIdsKey, values);
     ids = values;
+    store.set(values);
   }
 }

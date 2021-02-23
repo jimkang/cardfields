@@ -19,10 +19,23 @@ initProfiles();
 // Hydrate the profile ids.
 var profileIdsStore = clearinghouse.getCollectionStore('profile');
 let selectedProfileId = mainProfileId;
-var profiles = clearinghouse.getThingsFromIds(profileIdsStore.get());
-console.log('hey', profiles);
+let profiles;
+$: selectedProfileId;
+$: profiles = $profileIdsStore.map(curry(clearinghouse.getStore)('profile')).map(p => p.get());
+
+profileIdsStore.subscribe(updateProfiles);
+
+function updateProfiles(newProfileIds) {
+  debugger
+  profiles = newProfileIds.map(curry(clearinghouse.getStore)('profile')).map(p => p.get());
+}
 
 function onProfileChange() {
+}
+
+function addProfile() {
+  var newProfileStore: ThingStore<Profile> = clearinghouse.createStoredThing('profile');
+  selectedProfileId = newProfileStore.get().id;
 }
 
 onProfileChange();
@@ -40,6 +53,8 @@ onProfileChange();
   </select>
 
   <ProfileComp profileStore={clearinghouse.getStore('profile', selectedProfileId)} />
+
+  <button on:click={addProfile}>Add new profile</button>
 
 <!--
   {#each $allCardsStore as cardStore}
