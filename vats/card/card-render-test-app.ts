@@ -57,11 +57,12 @@ function Render({ parentSel }) {
   return render;
 
   function render(store) {
-    var nameSel = guarantee(parentEl, 'div', '.name', initName);
+    var nameSel = guarantee(parentEl, 'div', `#${store.get().id}`, initName);
     nameSel.text(store.get().name);
 
     function initName(sel) {
       sel
+        .attr('id', store.get().id)
         .attr('class', 'name')
         .attr('contenteditable', true)
         .on('blur', setName);
@@ -73,10 +74,13 @@ function Render({ parentSel }) {
   }
 }
 
-var store = Store({ name: 'Joe' });
-var update = Update(store);
+var stores = [
+  Store({ id: 'joe', name: 'Joe' }),
+  Store({ id: 'bob', name: 'Bob' })
+];
+var updates = stores.map(Update);
 
-update(store);
+updates.forEach((update, i) => update(stores[i]));
 
 console.log('hey');
 
