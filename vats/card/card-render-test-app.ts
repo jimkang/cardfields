@@ -40,7 +40,7 @@ function Store(val) {
 
 // This takes input and updates stores.
 function Update(store) {
-  var render = Render({ rootSel: '.root' });
+  var render = Render({ parentSel: '.root' });
   store.subscribe(update);
 
   return update;
@@ -51,18 +51,21 @@ function Update(store) {
 }
 
 // This renders objects and handles UI events.
-function Render({ rootSel }) {
-  var rootEl = document.querySelector(rootSel);
+function Render({ parentSel }) {
+  var parentEl = document.querySelector(parentSel);
 
   return render;
 
   function render(store) {
-    rootEl.innerHTML = `<div class="name" contenteditable="true">${
-      store.get().name
-    }</div>`;
-    select(rootEl)
-      .select('.name')
-      .on('blur', setName);
+    var nameSel = guarantee(parentEl, 'div', '.name', initName);
+    nameSel.text(store.get().name);
+
+    function initName(sel) {
+      sel
+        .attr('class', 'name')
+        .attr('contenteditable', true)
+        .on('blur', setName);
+    }
 
     function setName() {
       store.setPart({ name: select(this).text() });
@@ -76,5 +79,15 @@ var update = Update(store);
 update(store);
 
 console.log('hey');
+
+function guarantee(parentEl, childTag, childSelector, initFn) {
+  var parentSel = select(parentEl);
+  var childSel = parentSel.select(childSelector);
+  if (childSel.empty()) {
+    childSel = parentSel.append(childTag);
+    initFn(childSel);
+  }
+  return childSel;
+}
 
 export default container;
