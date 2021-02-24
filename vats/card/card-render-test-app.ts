@@ -1,12 +1,20 @@
 //import type { Card } from '../../types';
+import type { Thing } from '../../types';
 import { select } from 'd3-selection';
+import { writeThing, deleteThing, getThing } from '../../stores/local-storage';
+
 var container = {};
 
 var resolved = Promise.resolve();
 
-function Store(val) {
-  var value = val;
+var aPersister = {
+  writeThing, deleteThing, getThing
+};
+
+function Store(persister, val: Partial<Thing>) {
+  var value;
   var subscribers = [];
+  set(val);
 
   var store = {
     get() {
@@ -30,11 +38,19 @@ function Store(val) {
   function set(val) {
     console.log('Setting', val);
     value = val;
+    persister.writeThing(val);
     subscribers.forEach(callSubscriber);
   }
 
   function callSubscriber(subscriber) {
     resolved.then(() => subscriber(store));
+  }
+}
+
+function loadStore(id: string) {
+  var thing = getThing(id);
+  if (thing) {
+    return Store(aPersister, thing);
   }
 }
 
@@ -57,7 +73,7 @@ function Render({ parentSel }) {
   return render;
 
   function render(store) {
-    var nameSel = guarantee(parentEl, 'div', `#${store.get().id}`, initName);
+    var nameSel = establish(parentEl, 'div', `#${store.get().id}`, initName);
     nameSel.text(store.get().name);
 
     function initName(sel) {
@@ -75,16 +91,17 @@ function Render({ parentSel }) {
 }
 
 var stores = [
-  Store({ id: 'joe', name: 'Joe' }),
-  Store({ id: 'bob', name: 'Bob' })
+  loadStore('joe') || Store(aPersister, { id: 'joe', name: 'Joe' }),
+  loadStore('bob') || Store(aPersister, { id: 'bob', name: 'Bob' })
 ];
+
 var updates = stores.map(Update);
 
 updates.forEach((update, i) => update(stores[i]));
 
 console.log('hey');
 
-function guarantee(parentEl, childTag, childSelector, initFn) {
+function establish(parentEl, childTag, childSelector, initFn) {
   var parentSel = select(parentEl);
   var childSel = parentSel.select(childSelector);
   if (childSel.empty()) {

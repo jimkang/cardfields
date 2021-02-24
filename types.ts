@@ -1,7 +1,8 @@
-import type { Writable } from 'svelte/store';
-
 export interface Thing {
   id: string;
+}
+
+export interface UIThing extends Thing {
   text?: string;
   title?: string;
   secretText?: string;
@@ -10,40 +11,18 @@ export interface Thing {
   color?: string;
 }
 
-export interface Card extends Omit<Thing, 'text'> {
+export interface Card extends Omit<UIThing, 'text'> {
   text: string;
   // TODO: History
 }
 
-export interface Pile extends Omit<Thing, 'title'> {
+export interface Pile extends Omit<UIThing, 'title'> {
   title: string;
   cards: Card[];
 }
 
-export interface Profile extends Thing {
+export interface Profile extends UIThing {
   piles: Pile[];
-}
-
-export interface ThingStore<ThingType> extends Writable<ThingType> {
-  delete: () => void;
-}
-
-export interface CardStoreType extends ThingStore<Card> {
-  delete: () => void;
-}
-
-export type StoreCtor<T, StoreT extends ThingStore<T>> = (object, T) => StoreT;
-
-export interface StoreIssuerType<T, StoreT> {
-  getStore: (T) => StoreT;
-  getStoreForId: (string) => StoreT;
-  removeWithId: (string) => void;
-}
-
-export interface PileStoreType extends ThingStore<Pile> {
-  delete: () => void;
-  addCard: (card: Card) => void;
-  removeCard: (card: Card) => void;
 }
 
 export type StateOptParams = { initCards?: Card[]; initPiles? };
