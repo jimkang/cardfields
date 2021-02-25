@@ -4,6 +4,7 @@ import { select } from 'd3-selection';
 import { writeThing, deleteThing, getThing, writeIds, getIds } from '../../stores/local-storage';
 import curry from 'lodash.curry';
 import pluck from 'lodash.pluck';
+import compact from 'lodash.compact';
 import { v4 as uuid } from 'uuid';
 
 var container = {};
@@ -98,12 +99,12 @@ function CollectionStore(vals: Thing[]) {
   }
 }
 
-function loadStore(id: string) {
-  var thing = getThing(id);
-  if (thing) {
-    return Store(aPersister, thing);
-  }
-}
+//function loadStore(id: string) {
+//var thing = getThing(id);
+//if (thing) {
+//return Store(aPersister, thing);
+//}
+//}
 
 // This takes input and updates stores.
 function Update(store) {
@@ -132,8 +133,6 @@ function UpdateCollection(collectionStore, ItemUpdate) {
     itemUpdates = itemStores.map(ItemUpdate);
     itemUpdates.forEach((update, i) => update(itemStores[i]));
   }
-
-
 }
 
 // This renders objects and handles UI events.
@@ -204,12 +203,28 @@ function RenderCollection({ parentSelector }) {
   }
 }
 
-var stores = [
-  loadStore('joe') || Store(aPersister, { id: 'joe', name: 'Joe' }),
-  loadStore('bob') || Store(aPersister, { id: 'bob', name: 'Bob' })
-];
+function loadThings(idsKeyForProfile: string): Thing[] {
+  const ids = localStorage.getItem(idsKeyForProfile);
+  var things: Thing[] = [];
+  if (ids && ids.length > 0) {
+    things = ids.split(',').map(getThingFromLocalStorage);
+  }
+  things = compact(things);
+  return things;
+}
 
-var collectionStore = CollectionStore(stores.map(s => s.get()));
+function getThingFromLocalStorage(id: string) {
+  // TODO: Safe parse
+  return JSON.parse(localStorage.getItem(id));
+}
+
+//var stores = [
+//loadStore('joe') || Store(aPersister, { id: 'joe', name: 'Joe' }),
+//loadStore('bob') || Store(aPersister, { id: 'bob', name: 'Bob' })
+//];
+
+//var collectionStore = CollectionStore(stores.map(s => s.get()));
+var collectionStore = CollectionStore(loadThings('ids__test'));
 
 //var updates = stores.map(Update);
 
