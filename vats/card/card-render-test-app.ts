@@ -107,7 +107,7 @@ function loadStore(id: string) {
 
 // This takes input and updates stores.
 function Update(store) {
-  var render = Render({ parentSel: '.root' });
+  var render = Render({ parentSelector: `#${store.get().id}` });
   store.subscribe(update);
 
   return update;
@@ -117,17 +117,36 @@ function Update(store) {
   }
 }
 
-// This renders objects and handles UI events.
-function Render({ parentSel }) {
-  var parentEl = document.querySelector(parentSel);
+function UpdateCollection(collectionStore, ItemUpdate) {
+  var itemUpdates;
 
+  var renderCollection = RenderCollection({ parentSelector: '.root' });
+  collectionStore.subscribe(updateCollection);
+
+  return updateCollection;
+
+  function updateCollection(collectionStore) {
+    renderCollection(collectionStore);
+
+    var itemStores = collectionStore.get().map(thing => Store(aPersister, thing));
+    itemUpdates = itemStores.map(ItemUpdate);
+    itemUpdates.forEach((update, i) => update(itemStores[i]));
+  }
+
+
+}
+
+// This renders objects and handles UI events.
+function Render({ parentSelector }) {
+  var parentSel = select(parentSelector);
   return render;
 
   function render(store) {
-    var nameSel = establish(parentEl, 'div', `#${store.get().id}`, initName);
+
+    var nameSel = establish(parentSel, 'div', `#${store.get().id}`, initName);
     nameSel.text(store.get().name);
 
-    establish(parentEl, 'button', '.remove-thing-button', initRemoveButton);
+    establish(parentSel, 'button', '.remove-thing-button', initRemoveButton);
 
     function initName(sel) {
       sel
@@ -153,13 +172,23 @@ function Render({ parentSel }) {
   }
 }
 
-function RenderCollectionControls({ parentSel }) {
-  var parentEl = document.querySelector(parentSel);
+function RenderCollection({ parentSelector }) {
+  var parentSel = select(parentSelector);
+  var itemRoot = parentSel.select('.item-root');
+  var controlsParent = parentSel.select('.collection-controls');
 
-  return renderCollectionControls;
+  return renderCollection;
 
-  function renderCollectionControls(collectionStore) {
-    establish(parentEl, 'button', '.add-thing-button', initAddButton);
+  function renderCollection(collectionStore) {
+    establish(controlsParent, 'button', '.add-thing-button', initAddButton);
+  
+    var ids = collectionStore.getRaw();
+    var containers = itemRoot.selectAll('.item-container').data(ids, x => x);
+    containers.exit().remove();
+    containers.enter()
+      .append('li')
+      .classed('item-container', true)
+      .attr('id', x => x);
 
     function initAddButton(sel) {
       sel
@@ -183,18 +212,11 @@ var stores = [
 var collectionStore = CollectionStore(stores.map(s => s.get()));
 
 //var updates = stores.map(Update);
-// TODO: Move some of this into a getStores on 
-// CollectionStore.
-var updates = collectionStore.get().map(thing => Store(aPersister, thing)).map(Update);
 
-updates.forEach((update, i) => update(stores[i]));
+var updateCollection = UpdateCollection(collectionStore, Update);
+updateCollection(collectionStore);
 
-// No update fn for the collection controls.
-var renderCollectionControls = RenderCollectionControls({ parentSel: '.collection-controls' });
-renderCollectionControls(collectionStore);
-
-function establish(parentEl, childTag, childSelector, initFn) {
-  var parentSel = select(parentEl);
+function establish(parentSel, childTag, childSelector, initFn) {
   var childSel = parentSel.select(childSelector);
   if (childSel.empty()) {
     childSel = parentSel.append(childTag);
