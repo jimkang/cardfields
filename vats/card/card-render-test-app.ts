@@ -40,8 +40,13 @@ function Store<T>(persister, val: T, dehydrate?: (T) => void, rehydrate?: (any) 
     },
     subscribe(fn) {
       subscribers.push(fn);
+    },
+    delete() {
+      if (value) {
+        persister.delete(value.id);
+      }
+      setRaw(null);
     }
-    //delete() {}
   };
 
   return store;
@@ -107,14 +112,14 @@ function CollectionStore(vals: Thing[]) {
 //}
 
 // This takes input and updates stores.
-function Update(store) {
+function Update(collectionStore, store) {
   var render = Render({ parentSelector: `#${store.get().id}` });
   store.subscribe(update);
 
   return update;
 
   function update(store) {
-    render(store);
+    render(collectionStore, store);
   }
 }
 
@@ -130,7 +135,7 @@ function UpdateCollection(collectionStore, ItemUpdate) {
     renderCollection(collectionStore);
 
     var itemStores = collectionStore.get().map(thing => Store(aPersister, thing));
-    itemUpdates = itemStores.map(ItemUpdate);
+    itemUpdates = itemStores.map(curry(ItemUpdate)(collectionStore));
     itemUpdates.forEach((update, i) => update(itemStores[i]));
   }
 }
@@ -140,8 +145,7 @@ function Render({ parentSelector }) {
   var parentSel = select(parentSelector);
   return render;
 
-  function render(store) {
-
+  function render(collectionStore, store) {
     var nameSel = establish(parentSel, 'div', `#${store.get().id}`, initName);
     nameSel.text(store.get().name);
 
@@ -161,12 +165,13 @@ function Render({ parentSelector }) {
 
     function initRemoveButton(sel) {
       sel
-        .attr('class', 'add-thing-button')
+        .attr('class', 'remove-thing-button')
         .on('click', removeThing);
     }
 
     function removeThing() {
-      // Need the collection for this!?
+      collectionStore.remove(store.get());
+      store.delete();
     }
   }
 }
