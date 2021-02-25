@@ -5,6 +5,7 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
+import commonjs from '@rollup/plugin-commonjs';
 
 const production = !process.env.ROLLUP_WATCH;
 const unminify = process.env.UNMINIFY;
@@ -33,6 +34,7 @@ export default function createConfig({
       resolve({
         browser: true
       }),
+      commonjs(),
 
       typescript({
         sourceMap: !production,
