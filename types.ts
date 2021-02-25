@@ -32,3 +32,9 @@ export interface ThingConflictPair {
   incumbent: Thing;
   challenger: Thing;
 }
+
+export interface Persister {
+  write(Thing);
+  get(string): Thing;
+  delete(Thing);
+}

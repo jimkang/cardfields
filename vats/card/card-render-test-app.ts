@@ -1,5 +1,5 @@
 //import type { Card } from '../../types';
-import type { Thing } from '../../types';
+import type { Thing, Persister } from '../../types';
 import { select } from 'd3-selection';
 import { writeThing, deleteThing, getThing, writeIds, getIds } from '../../stores/local-storage';
 import curry from 'lodash.curry';
@@ -11,11 +11,11 @@ var container = {};
 
 var resolved = Promise.resolve();
 
-var aPersister = {
+var aPersister: Persister = {
   write: writeThing, delete: deleteThing, get: getThing
 };
 
-function Store<T>(persister, val: T, dehydrate?: (T) => void, rehydrate?: (any) => T) {
+function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, rehydrate?: (any) => T) {
   var value;
   var subscribers = [];
   set(val);
