@@ -1,5 +1,5 @@
 //import type { Card } from '../../types';
-import type { Thing, Persister } from '../../types';
+import type { Thing, Persister, ThingStoreType, CollectionStoreType, StoreType } from '../../types';
 import { select } from 'd3-selection';
 import { writeThing, deleteThing, getThing, writeIds, getIds } from '../../stores/local-storage';
 import curry from 'lodash.curry';
@@ -15,12 +15,12 @@ var aPersister: Persister = {
   write: writeThing, delete: deleteThing, get: getThing
 };
 
-function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, rehydrate?: (any) => T) {
+function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, rehydrate?: (any) => T): StoreType<T> {
   var value;
   var subscribers = [];
   set(val);
 
-  var store = {
+  var store: StoreType<T> = {
     get() {
       if (rehydrate) {
         return rehydrate(value);
@@ -40,12 +40,6 @@ function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, rehydra
     },
     subscribe(fn) {
       subscribers.push(fn);
-    },
-    delete() {
-      if (value) {
-        persister.delete(value.id);
-      }
-      setRaw(null);
     }
   };
 
@@ -71,7 +65,21 @@ function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, rehydra
   }
 }
 
-function CollectionStore(vals: Thing[]) {
+function ThingStore(persister: Persister, val: Thing, dehydrate?: (Thing) => void, rehydrate?: (any) => Thing): ThingStoreType {
+  var base = Store<Thing>(persister, val, dehydrate, rehydrate);
+  
+  return Object.assign(base, { del });
+
+  function del() {
+    var value: Thing = base.get();
+    if (value) {
+      persister.delete(value.id);
+    }
+    base.setRaw(null);
+  }
+}
+
+function CollectionStore(vals: Thing[]): CollectionStoreType {
   var idsPersister = {
     write: curry(writeIds)('ids__test'),
     get: curry(getIds)('ids__test'),
@@ -79,7 +87,7 @@ function CollectionStore(vals: Thing[]) {
   }; 
   var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
 
-  return Object.assign({}, base, { add, remove });
+  return Object.assign(base, { add, remove });
 
   function dehydrate(things) {
     return pluck(things, 'id');
@@ -91,13 +99,13 @@ function CollectionStore(vals: Thing[]) {
   
   function add(thing: Thing) {
     // TODO: Dupes
-    var ids = base.getRaw();
+    var ids = base.getRaw() as string[];
     ids.push(thing.id);
     base.setRaw(ids);
   }
 
   function remove(thing: Thing) {
-    var ids = base.getRaw();
+    var ids = base.getRaw() as string[];
     const index = ids.indexOf(thing.id);
     ids.splice(index, 1);
     base.setRaw(ids);
@@ -112,18 +120,18 @@ function CollectionStore(vals: Thing[]) {
 //}
 
 // This takes input and updates stores.
-function Update(collectionStore, store) {
+function Update(collectionStore: CollectionStoreType, store: ThingStoreType) {
   var render = Render({ parentSelector: `#${store.get().id}` });
   store.subscribe(update);
 
   return update;
 
-  function update(store) {
+  function update(store: ThingStoreType) {
     render(collectionStore, store);
   }
 }
 
-function UpdateCollection(collectionStore, ItemUpdate) {
+function UpdateCollection(collectionStore: CollectionStoreType, ItemUpdate) {
   var itemUpdates;
 
   var renderCollection = RenderCollection({ parentSelector: '.root' });
@@ -131,7 +139,7 @@ function UpdateCollection(collectionStore, ItemUpdate) {
 
   return updateCollection;
 
-  function updateCollection(collectionStore) {
+  function updateCollection(collectionStore: CollectionStoreType) {
     renderCollection(collectionStore);
 
     var itemStores = collectionStore.get().map(thing => Store(aPersister, thing));
@@ -145,7 +153,7 @@ function Render({ parentSelector }) {
   var parentSel = select(parentSelector);
   return render;
 
-  function render(collectionStore, store) {
+  function render(collectionStore: CollectionStoreType, store: ThingStoreType) {
     var nameSel = establish(parentSel, 'div', `#${store.get().id}`, initName);
     nameSel.text(store.get().name);
 
@@ -166,12 +174,13 @@ function Render({ parentSelector }) {
     function initRemoveButton(sel) {
       sel
         .attr('class', 'remove-thing-button')
-        .on('click', removeThing);
+        .on('click', removeThing)
+        .text('Delete');
     }
 
     function removeThing() {
       collectionStore.remove(store.get());
-      store.delete();
+      store.del();
     }
   }
 }
@@ -202,7 +211,7 @@ function RenderCollection({ parentSelector }) {
     }
 
     function addThing() {
-      var newStore = Store(aPersister, { id: `thing-${uuid()}`, name: 'Shabadoo' });
+      var newStore = ThingStore(aPersister, { id: `thing-${uuid()}`, name: 'Shabadoo' });
       collectionStore.add(newStore.get());
     }
   }

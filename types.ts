@@ -38,3 +38,21 @@ export interface Persister {
   get(string): Thing;
   delete(Thing);
 }
+
+export interface StoreType<T> {
+  get();
+  getRaw(): unknown;
+  set(T): void;
+  setRaw(unknown): void;
+  setPart(T): void;
+  subscribe: (Store) => void;
+}
+
+export interface ThingStoreType extends StoreType<Thing> {
+  del(): void;
+}
+
+export interface CollectionStoreType extends StoreType<Thing[]> {
+  add(Thing): void;
+  remove(Thing): void;
+}
