@@ -1,116 +1,23 @@
 //import type { Card } from '../../types';
-import type { Thing, Persister, ThingStoreType, CollectionStoreType, StoreType } from '../../types';
+import { ThingStore, CollectionStore } from '../../wily.js/stores';
+import type { Thing, Persister, ThingStoreType, CollectionStoreType } from '../../types';
 import { select } from 'd3-selection';
 import { writeThing, deleteThing, getThing, writeIds, getIds } from '../../stores/local-storage';
 import curry from 'lodash.curry';
-import pluck from 'lodash.pluck';
 import compact from 'lodash.compact';
 import { v4 as uuid } from 'uuid';
 
 var container = {};
 
-var resolved = Promise.resolve();
-
 var aPersister: Persister = {
   write: writeThing, delete: deleteThing, get: getThing
 };
 
-function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, rehydrate?: (any) => T): StoreType<T> {
-  var value;
-  var subscribers = [];
-  set(val);
-
-  var store: StoreType<T> = {
-    get() {
-      if (rehydrate) {
-        return rehydrate(value);
-      }
-      return value;
-    },
-    getRaw() {
-      return value;
-    },
-    set,
-    setRaw,
-    setPart(val) {
-      if (typeof val !== 'object') {
-        throw new Error('setPart cannot be used on a non-object value.');
-      }
-      set(Object.assign(value, val));
-    },
-    subscribe(fn) {
-      subscribers.push(fn);
-    }
-  };
-
-  return store;
-
-  function set(val) {
-    if (dehydrate) {
-      setRaw(dehydrate(val));
-    } else {
-      setRaw(val);
-    }
-  }
-
-  function setRaw(val) {
-    console.log('Setting', val);
-    value = val;
-    persister.write(value);
-    subscribers.forEach(callSubscriber);
-  }
-
-  function callSubscriber(subscriber) {
-    resolved.then(() => subscriber(store));
-  }
-}
-
-function ThingStore(persister: Persister, val: Thing, dehydrate?: (Thing) => void, rehydrate?: (any) => Thing): ThingStoreType {
-  var base = Store<Thing>(persister, val, dehydrate, rehydrate);
-  
-  return Object.assign(base, { del });
-
-  function del() {
-    var value: Thing = base.get();
-    if (value) {
-      persister.delete(value.id);
-    }
-    base.setRaw(null);
-  }
-}
-
-function CollectionStore(vals: Thing[]): CollectionStoreType {
-  var idsPersister = {
-    write: curry(writeIds)('ids__test'),
-    get: curry(getIds)('ids__test'),
-    delete: noOp
-  }; 
-  var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
-
-  return Object.assign(base, { add, remove });
-
-  function dehydrate(things) {
-    return pluck(things, 'id');
-  }
-
-  function rehydrate(ids) {
-    return ids.map(getThing);
-  }
-  
-  function add(thing: Thing) {
-    // TODO: Dupes
-    var ids = base.getRaw() as string[];
-    ids.push(thing.id);
-    base.setRaw(ids);
-  }
-
-  function remove(thing: Thing) {
-    var ids = base.getRaw() as string[];
-    const index = ids.indexOf(thing.id);
-    ids.splice(index, 1);
-    base.setRaw(ids);
-  }
-}
+var idsPersister = {
+  write: curry(writeIds)('ids__test'),
+  get: curry(getIds)('ids__test'),
+  delete: noOp
+}; 
 
 //function loadStore(id: string) {
 //var thing = getThing(id);
@@ -142,7 +49,7 @@ function UpdateCollection(collectionStore: CollectionStoreType, ItemUpdate) {
   function updateCollection(collectionStore: CollectionStoreType) {
     renderCollection(collectionStore);
 
-    var itemStores = collectionStore.get().map(thing => Store(aPersister, thing));
+    var itemStores = collectionStore.get().map(thing => ThingStore(aPersister, thing));
     itemUpdates = itemStores.map(curry(ItemUpdate)(collectionStore));
     itemUpdates.forEach((update, i) => update(itemStores[i]));
   }
@@ -238,7 +145,7 @@ function getThingFromLocalStorage(id: string) {
 //];
 
 //var collectionStore = CollectionStore(stores.map(s => s.get()));
-var collectionStore = CollectionStore(loadThings('ids__test'));
+var collectionStore = CollectionStore(idsPersister, aPersister, loadThings('ids__test'));
 
 //var updates = stores.map(Update);
 
