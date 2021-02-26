@@ -3,6 +3,7 @@
 import type { Thing, Persister } from '../../types';
 import compact from 'lodash.compact';
 import curry from 'lodash.curry';
+import { noThrowJSONParse as parse } from '../utils/no-throw-json-parse';
 
 export function writeThing(thing: Thing) {
   localStorage.setItem(thing.id, JSON.stringify(thing));
@@ -28,8 +29,7 @@ export function writeIds(idsKey: string, ids: string[]) {
 
 // TODO: Validate?
 export function getThing(id: string) {
-  // TODO: Safe parse
-  return JSON.parse(localStorage.getItem(id));
+  return parse(localStorage.getItem(id));
 }
 
 export function loadThings(idsKey: string): Thing[] {
