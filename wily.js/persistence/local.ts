@@ -36,15 +36,14 @@ export function loadThings(idsKey: string): Thing[] {
   const ids = localStorage.getItem(idsKey);
   var things: Thing[] = [];
   if (ids && ids.length > 0) {
-    things = ids.split(',').map(getThingFromLocalStorage);
+    things = ids.split(',').map(getThingFromLocalStorage) as Thing[];
   }
   things = compact(things);
   return things;
 }
 
-export function getThingFromLocalStorage(id: string) {
-  // TODO: Safe parse
-  return JSON.parse(localStorage.getItem(id));
+export function getThingFromLocalStorage(id: string): Thing {
+  return parse(localStorage.getItem(id)) as Thing;
 }
 
 export var thingPersister: Persister = {

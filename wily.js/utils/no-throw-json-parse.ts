@@ -1,4 +1,4 @@
-export function noThrowJSONParse(s: string, defaultVal = []) {
+export function noThrowJSONParse(s: string, defaultVal = []): unknown {
   var parsed = defaultVal;
   try {
     parsed = JSON.parse(s);

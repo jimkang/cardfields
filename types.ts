@@ -34,9 +34,9 @@ export interface ThingConflictPair {
 }
 
 export interface Persister {
-  write(Thing);
-  get(string): Thing;
-  delete(Thing);
+  write(any);
+  get(string);
+  delete(any);
 }
 
 export interface StoreType<T> {
