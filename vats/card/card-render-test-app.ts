@@ -5,6 +5,7 @@ import { select } from 'd3-selection';
 import { thingPersister, idsPersister, loadThings } from '../../wily.js/persistence/local';
 import curry from 'lodash.curry';
 import { v4 as uuid } from 'uuid';
+import { establish } from '../../wily.js/rendering/establish';
 
 var container = {};
 
@@ -110,15 +111,6 @@ var collectionStore = CollectionStore(idsPersister, thingPersister, loadThings('
 
 var updateCollection = UpdateCollection(collectionStore, Update);
 updateCollection(collectionStore);
-
-function establish(parentSel, childTag, childSelector, initFn) {
-  var childSel = parentSel.select(childSelector);
-  if (childSel.empty()) {
-    childSel = parentSel.append(childTag);
-    initFn(childSel);
-  }
-  return childSel;
-}
 
 
 export default container;
