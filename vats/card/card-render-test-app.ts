@@ -1,30 +1,12 @@
 //import type { Card } from '../../types';
 import { ThingStore, CollectionStore } from '../../wily.js/stores';
-import type { Thing, Persister, ThingStoreType, CollectionStoreType } from '../../types';
+import type { ThingStoreType, CollectionStoreType } from '../../types';
 import { select } from 'd3-selection';
-import { writeThing, deleteThing, getThing, writeIds, getIds } from '../../stores/local-storage';
+import { thingPersister, idsPersister, loadThings } from '../../wily.js/persistence/local';
 import curry from 'lodash.curry';
-import compact from 'lodash.compact';
 import { v4 as uuid } from 'uuid';
 
 var container = {};
-
-var aPersister: Persister = {
-  write: writeThing, delete: deleteThing, get: getThing
-};
-
-var idsPersister = {
-  write: curry(writeIds)('ids__test'),
-  get: curry(getIds)('ids__test'),
-  delete: noOp
-}; 
-
-//function loadStore(id: string) {
-//var thing = getThing(id);
-//if (thing) {
-//return Store(aPersister, thing);
-//}
-//}
 
 // This takes input and updates stores.
 function Update(collectionStore: CollectionStoreType, store: ThingStoreType) {
@@ -49,7 +31,7 @@ function UpdateCollection(collectionStore: CollectionStoreType, ItemUpdate) {
   function updateCollection(collectionStore: CollectionStoreType) {
     renderCollection(collectionStore);
 
-    var itemStores = collectionStore.get().map(thing => ThingStore(aPersister, thing));
+    var itemStores = collectionStore.get().map(thing => ThingStore(thingPersister, thing));
     itemUpdates = itemStores.map(curry(ItemUpdate)(collectionStore));
     itemUpdates.forEach((update, i) => update(itemStores[i]));
   }
@@ -118,36 +100,13 @@ function RenderCollection({ parentSelector }) {
     }
 
     function addThing() {
-      var newStore = ThingStore(aPersister, { id: `thing-${uuid()}`, name: 'Shabadoo' });
+      var newStore = ThingStore(thingPersister, { id: `thing-${uuid()}`, name: 'Shabadoo' });
       collectionStore.add(newStore.get());
     }
   }
 }
 
-function loadThings(idsKeyForProfile: string): Thing[] {
-  const ids = localStorage.getItem(idsKeyForProfile);
-  var things: Thing[] = [];
-  if (ids && ids.length > 0) {
-    things = ids.split(',').map(getThingFromLocalStorage);
-  }
-  things = compact(things);
-  return things;
-}
-
-function getThingFromLocalStorage(id: string) {
-  // TODO: Safe parse
-  return JSON.parse(localStorage.getItem(id));
-}
-
-//var stores = [
-//loadStore('joe') || Store(aPersister, { id: 'joe', name: 'Joe' }),
-//loadStore('bob') || Store(aPersister, { id: 'bob', name: 'Bob' })
-//];
-
-//var collectionStore = CollectionStore(stores.map(s => s.get()));
-var collectionStore = CollectionStore(idsPersister, aPersister, loadThings('ids__test'));
-
-//var updates = stores.map(Update);
+var collectionStore = CollectionStore(idsPersister, thingPersister, loadThings('ids__test'));
 
 var updateCollection = UpdateCollection(collectionStore, Update);
 updateCollection(collectionStore);
@@ -161,7 +120,5 @@ function establish(parentSel, childTag, childSelector, initFn) {
   return childSel;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noOp() {}
 
 export default container;
