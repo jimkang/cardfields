@@ -46,6 +46,7 @@ export interface StoreType<T> {
   setRaw(unknown): void;
   setPart(T): void;
   subscribe: (Store) => void;
+  unsubscribe: (Store) => void;
 }
 
 export interface ThingStoreType extends StoreType<Thing> {

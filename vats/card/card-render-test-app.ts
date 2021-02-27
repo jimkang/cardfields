@@ -3,15 +3,13 @@ import { ThingStore, CollectionStore } from '../../wily.js/stores';
 import type { ThingStoreType, CollectionStoreType } from '../../types';
 import { select } from 'd3-selection';
 import { thingPersister, idsPersister, loadThings } from '../../wily.js/persistence/local';
-import curry from 'lodash.curry';
 import { v4 as uuid } from 'uuid';
 import { establish } from '../../wily.js/rendering/establish';
 
 var container = {};
 
 // This takes input and updates stores.
-function Update(collectionStore: CollectionStoreType, store: ThingStoreType) {
-  var render = Render({ parentSelector: `#${store.get().id}` });
+function Update(render, collectionStore: CollectionStoreType, store: ThingStoreType) {
   store.subscribe(update);
 
   return update;
@@ -21,9 +19,7 @@ function Update(collectionStore: CollectionStoreType, store: ThingStoreType) {
   }
 }
 
-function UpdateCollection(collectionStore: CollectionStoreType, ItemUpdate) {
-  var itemUpdates;
-
+function UpdateCollection(collectionStore: CollectionStoreType) {
   var renderCollection = RenderCollection({ parentSelector: '.root' });
   collectionStore.subscribe(updateCollection);
 
@@ -31,19 +27,15 @@ function UpdateCollection(collectionStore: CollectionStoreType, ItemUpdate) {
 
   function updateCollection(collectionStore: CollectionStoreType) {
     renderCollection(collectionStore);
-
-    var itemStores = collectionStore.get().map(thing => ThingStore(thingPersister, thing));
-    itemUpdates = itemStores.map(curry(ItemUpdate)(collectionStore));
-    itemUpdates.forEach((update, i) => update(itemStores[i]));
   }
 }
 
 // This renders objects and handles UI events.
 function Render({ parentSelector }) {
-  var parentSel = select(parentSelector);
   return render;
 
   function render(collectionStore: CollectionStoreType, store: ThingStoreType) {
+    var parentSel = select(parentSelector);
     var nameSel = establish(parentSel, 'div', `#${store.get().id}`, initName);
     nameSel.text(store.get().name);
 
@@ -101,16 +93,31 @@ function RenderCollection({ parentSelector }) {
     }
 
     function addThing() {
+      // TODO: Should this all be in a downdater?
       var newStore = ThingStore(thingPersister, { id: `thing-${uuid()}`, name: 'Shabadoo' });
+      collectionStore.subscribe(updateNewStore);
       collectionStore.add(newStore.get());
+
+      function updateNewStore() {
+        var newUpdater = createItemUpdater(newStore);
+        newUpdater(newStore);
+        collectionStore.unsubscribe(updateNewStore);
+      }
     }
   }
 }
 
 var collectionStore = CollectionStore(idsPersister, thingPersister, loadThings('ids__test'));
 
-var updateCollection = UpdateCollection(collectionStore, Update);
+var updateCollection = UpdateCollection(collectionStore);
 updateCollection(collectionStore);
+var itemStores = collectionStore.get().map(thing => ThingStore(thingPersister, thing));
+var updateItems = itemStores.map(createItemUpdater);
+updateItems.forEach((update, i) => update(itemStores[i]));
+
+function createItemUpdater(store: ThingStoreType) {
+  return Update(Render({ parentSelector: `#${store.get().id}`}), collectionStore, store);
+}
 
 
 export default container;

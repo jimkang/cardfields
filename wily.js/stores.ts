@@ -28,6 +28,10 @@ export function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, 
     },
     subscribe(fn) {
       subscribers.push(fn);
+    },
+    unsubscribe(fn) {
+      const fnIndex = subscribers.indexOf(fn);
+      subscribers.splice(fnIndex, 1);
     }
   };
 
