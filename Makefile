@@ -3,6 +3,7 @@ include config.mk
 HOMEDIR = $(shell pwd)
 rollup = ./node_modules/.bin/rollup
 sirv = ./node_modules/.bin/sirv
+TSC = node_modules/typescript/bin/tsc
 
 pushall: sync
 	git push origin master
@@ -28,13 +29,13 @@ groups-vat:
 prettier:
 	prettier --single-quote --write "**/*.html"
 
-test:
-	rm -rf tests/fixtures/*
-	node -r ts-node/register tests/initial-cardfields-flow-tests.js
+#test:
+#	rm -rf tests/fixtures/*
+#	node -r ts-node/register tests/initial-cardfields-flow-tests.js
 
-debug-test:
-	rm -rf tests/fixtures/*
-	node inspect -r ts-node/register tests/initial-cardfields-flow-tests.js
+#debug-test:
+#	rm -rf tests/fixtures/*
+#	node inspect -r ts-node/register tests/initial-cardfields-flow-tests.js
 
 sync:
 	rsync -a $(HOMEDIR)/ $(USER)@$(SERVER):/$(APPDIR) \
@@ -55,3 +56,9 @@ vim-tags:
     --exclude=package*.json \
     --exclude=.eslintrc.js \
     .
+
+build-tests:
+	$(TSC) wily.js/stores.ts --outDir wily.js/tests/build
+
+test:
+	node wily.js/tests/store-tests.js
