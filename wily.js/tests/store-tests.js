@@ -2,10 +2,15 @@
 var test = require('tape');
 var assertNoError = require('assert-no-error');
 var { ThingStore } = require('./build/wily.js/stores.js');
+var { MemoryPersister } = require('./fixtures/memory-persister');
+
+var store = ThingStore(MemoryPersister(), 5);
 
 var testCases = [
   {
-    name: 'Create store with value.'
+    name: 'Get.',
+    method: 'get',
+    expected: 5
   }
 ];
 
@@ -20,6 +25,8 @@ function runTest(testCase) {
   test(testCase.name, testStore);
 
   function testStore(t) {
+    var result = store[testCase.method]();
+    t.deepEqual(result, testCase.expected, 'Result is correct.');
     t.end();
     /*
     // This breaks the type checking, but it's worth it for simpler tests.
