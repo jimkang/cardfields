@@ -6,19 +6,33 @@ var { MemoryPersister } = require('./fixtures/memory-persister');
 test('Store subscriptions', testSubscriptions);
 
 function testSubscriptions(t) {
-  t.plan(2);
+  t.plan(3);
 
   var store = ThingStore(MemoryPersister(), 5);
+
+  var cbCallCounts = [0, 0];
+  var cbExpected = [[6, 6], [6]];
 
   t.equal(store.get(), 5, 'get works.');
 
   store.subscribe(cb1);
+  store.subscribe(cb2);
   store.set(6);
 
   function cb1(aStore) {
-    t.equal(aStore.get(), 6, 'Subscriber gets updated value.');
+    t.equal(
+      aStore.get(),
+      cbExpected[cbCallCounts[0]][0],
+      'Subscriber 1 gets updated value.'
+    );
   }
-
+  function cb2(aStore) {
+    t.equal(
+      aStore.get(),
+      cbExpected[cbCallCounts[1]][0],
+      'Subscriber 2 gets updated value.'
+    );
+  }
   /*
     function checkResult(error, value) {
       if (testCase.errorMsg) {
