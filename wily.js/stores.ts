@@ -20,6 +20,7 @@ export function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, 
     },
     set,
     setRaw,
+    setValue,
     setPart(val) {
       if (typeof val !== 'object') {
         throw new Error('setPart cannot be used on a non-object value.');
@@ -48,10 +49,14 @@ export function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, 
   }
 
   function setRaw(val) {
-    console.log('Setting', val);
-    value = val;
+    setValue(val);
     persister.write(value);
     subscribers.forEach(callSubscriber);
+  }
+
+  function setValue(val) {
+    console.log('Setting', val);
+    value = val;
   }
 
   function callSubscriber(subscriber) {
@@ -69,7 +74,7 @@ export function ThingStore(persister: Persister, val: Thing, dehydrate?: (Thing)
     if (value) {
       persister.delete(value.id);
     }
-    base.setRaw(null);
+    base.setValue(null);
   }
 }
 
