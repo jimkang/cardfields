@@ -1,7 +1,7 @@
 import type { ThingStoreType, CollectionStoreType } from '../../types';
 
+// This takes input and updates stores.
 export function Update(render, collectionStore: CollectionStoreType, store: ThingStoreType) {
-  var render = Render({ parentSelector: `#${store.get().id}` });
   store.subscribe(update);
 
   return update;
@@ -11,8 +11,7 @@ export function Update(render, collectionStore: CollectionStoreType, store: Thin
   }
 }
 
-export function UpdateCollection(collectionStore: CollectionStoreType, ItemUpdate, ItemRender, renderCollection) {
-  var itemUpdates;
+export function UpdateCollection(renderCollection, collectionStore: CollectionStoreType) {
 
   collectionStore.subscribe(updateCollection);
 
@@ -20,12 +19,6 @@ export function UpdateCollection(collectionStore: CollectionStoreType, ItemUpdat
 
   function updateCollection(collectionStore: CollectionStoreType) {
     renderCollection(collectionStore);
-
-    var itemStores = collectionStore.get().map(thing => ThingStore(thingPersister, thing));
-    itemUpdates = itemStores.map(curry(ItemUpdate)(ItemRender({ parentSelector: `#${store.get().id}` }), collectionStore));
-;
-    itemUpdates.forEach((update, i) => update(itemStores[i]));
   }
 }
-
 

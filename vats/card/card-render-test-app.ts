@@ -5,30 +5,9 @@ import { select } from 'd3-selection';
 import { thingPersister, idsPersister, loadThings } from '../../wily.js/persistence/local';
 import { v4 as uuid } from 'uuid';
 import { establish } from '../../wily.js/rendering/establish';
+import { Update, UpdateCollection } from '../../wily.js/updaters/basic-updaters';
 
 var container = {};
-
-// This takes input and updates stores.
-function Update(render, collectionStore: CollectionStoreType, store: ThingStoreType) {
-  store.subscribe(update);
-
-  return update;
-
-  function update(store: ThingStoreType) {
-    render(collectionStore, store);
-  }
-}
-
-function UpdateCollection(collectionStore: CollectionStoreType) {
-  var renderCollection = RenderCollection({ parentSelector: '.root' });
-  collectionStore.subscribe(updateCollection);
-
-  return updateCollection;
-
-  function updateCollection(collectionStore: CollectionStoreType) {
-    renderCollection(collectionStore);
-  }
-}
 
 // This renders objects and handles UI events.
 function Render({ parentSelector }) {
@@ -109,7 +88,8 @@ function RenderCollection({ parentSelector }) {
 
 var collectionStore = CollectionStore(idsPersister, thingPersister, loadThings('ids__test'));
 
-var updateCollection = UpdateCollection(collectionStore);
+var renderCollection = RenderCollection({ parentSelector: '.root' });
+var updateCollection = UpdateCollection(renderCollection, collectionStore);
 updateCollection(collectionStore);
 var itemStores = collectionStore.get().map(thing => ThingStore(thingPersister, thing));
 var updateItems = itemStores.map(createItemUpdater);
