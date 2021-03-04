@@ -17,8 +17,8 @@ build:
 run:
 	$(rollup) -c -w
 
-card-render-vat:
-	APP=card make run
+wily-vat:
+	APP=wily make run
 
 stores-vat:
 	APP=stores make run

@@ -12,11 +12,11 @@ var configs = [
     serve: !process.env.APP && serve
   },
   {
-    input: 'vats/card/card-render-test-app.ts',
-    outputFile: 'vats/card/card-render-test-bundle.js',
-    reloadPath: 'vats/card',
-    serve: process.env.APP === 'card' && serve,
-    serveOpts: { rootDir: '.', serveDir: 'vats/card' }
+    input: 'vats/wily/wily-vat.ts',
+    outputFile: 'vats/wily/wily-vat-bundle.js',
+    reloadPath: 'vats/wily',
+    serve: process.env.APP === 'wily' && serve,
+    serveOpts: { rootDir: '.', serveDir: 'vats/wily' }
   },
   {
     input: 'vats/stores/stores-test-app.ts',
