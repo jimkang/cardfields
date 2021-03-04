@@ -12,7 +12,6 @@ export function Update(render, collectionStore: CollectionStoreType, store: Thin
 }
 
 export function UpdateCollection(renderCollection, collectionStore: CollectionStoreType) {
-
   collectionStore.subscribe(updateCollection);
 
   return updateCollection;
