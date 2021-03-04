@@ -31,7 +31,9 @@ export function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, 
     },
     unsubscribe(fn) {
       const fnIndex = subscribers.indexOf(fn);
-      subscribers.splice(fnIndex, 1);
+      if (fnIndex > -1) {
+        subscribers.splice(fnIndex, 1);
+      }
     }
   };
 
