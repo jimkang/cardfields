@@ -44,6 +44,7 @@ export interface StoreType<T> {
   getRaw(): unknown;
   set(T): void;
   setRaw(unknown): void;
+  setValue(unknown): void;
   setPart(T): void;
   subscribe: (Store) => void;
   unsubscribe: (Store) => void;
