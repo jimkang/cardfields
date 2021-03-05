@@ -19,6 +19,14 @@ var configs = [
     serveOpts: { rootDir: '.', serveDir: 'vats/wily' }
   },
   {
+    input: 'vats/profiles/profiles-vat.ts',
+    outputFile: 'vats/profiles/profiles-vat-bundle.js',
+    reloadPath: 'vats/profiles',
+    serve: process.env.APP === 'profiles' && serve,
+    serveOpts: { rootDir: '.', serveDir: 'vats/profiles' }
+  }
+  /*
+  {
     input: 'vats/stores/stores-test-app.ts',
     outputFile: 'vats/stores/stores-test-bundle.js',
     reloadPath: 'vats/stores',
@@ -32,6 +40,7 @@ var configs = [
     serve: process.env.APP === 'groups' && serve,
     serveOpts: { rootDir: '.', serveDir: 'vats/groups' }
   }
+*/
 ].map(createConfig);
 
 export default configs;

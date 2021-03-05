@@ -50,11 +50,13 @@ export var thingPersister: Persister = {
   write: writeThing, delete: deleteThing, get: getThing
 };
 
-export var idsPersister = {
-  write: curry(writeIds)('ids__test'),
-  get: curry(getIds)('ids__test'),
-  delete: noOp
-}; 
+export function IdsPersister(idsKey: string) {
+  return {
+    write: curry(writeIds)(idsKey),
+    get: curry(getIds)(idsKey),
+    delete: noOp
+  }; 
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function noOp() {}

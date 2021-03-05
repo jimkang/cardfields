@@ -9,11 +9,11 @@ import { Update, UpdateCollection } from '../../wily.js/updaters/basic-updaters'
 import { AddThing } from '../../wily.js/downdaters/collection-modifiers';
 
 var container = {};
-
-const idsKey = 'ids__test';
+const idsKey = 'ids__profiles';
 var idsPersister = IdsPersister(idsKey);
+
 var collectionStore = CollectionStore(idsPersister, thingPersister, loadThings(idsKey));
-var addThing = AddThing(collectionStore, createNewThing, thingPersister, createItemUpdater);
+var addThing = AddThing(collectionStore, createNewProfile, thingPersister, createItemUpdater);
 var renderCollection = RenderCollection({ parentSelector: '.root', addThing });
 var updateCollection = UpdateCollection(renderCollection, collectionStore);
 updateCollection(collectionStore);
@@ -31,7 +31,7 @@ function Render({ parentSelector }) {
     var nameSel = establish(parentSel, 'div', `#${store.get().id}`, initName);
     nameSel.text(store.get().name);
 
-    establish(parentSel, 'button', '.remove-thing-button', initRemoveButton);
+    establish(parentSel, 'button', '.remove-profile-button', initRemoveButton);
 
     function initName(sel) {
       sel
@@ -47,7 +47,7 @@ function Render({ parentSelector }) {
 
     function initRemoveButton(sel) {
       sel
-        .attr('class', 'remove-thing-button')
+        .attr('class', 'remove-profile-button')
         .on('click', removeThing)
         .text('Delete');
     }
@@ -61,13 +61,13 @@ function Render({ parentSelector }) {
 
 function RenderCollection({ parentSelector, addThing }) {
   var parentSel = select(parentSelector);
-  var itemRoot = parentSel.select('.item-root');
-  var controlsParent = parentSel.select('.collection-controls');
+  var itemRoot = parentSel.select('.profiles-root');
+  var controlsParent = parentSel.select('.profiles-collection-controls');
 
   return renderCollection;
 
   function renderCollection(collectionStore) {
-    establish(controlsParent, 'button', '.add-thing-button', initAddButton);
+    establish(controlsParent, 'button', '.add-profile-button', initAddButton);
   
     var ids = collectionStore.getRaw();
     var containers = itemRoot.selectAll('.item-container').data(ids, x => x);
@@ -79,11 +79,10 @@ function RenderCollection({ parentSelector, addThing }) {
 
     function initAddButton(sel) {
       sel
-        .attr('class', 'add-thing-button')
-        .text('Add a thing')
+        .attr('class', 'add-profile-button')
+        .text('Add a profile')
         .on('click', addThing);
     }
-
   }
 }
 
@@ -91,7 +90,8 @@ function createItemUpdater(store: ThingStoreType) {
   return Update(Render({ parentSelector: `#${store.get().id}`}), collectionStore, store);
 }
 
-function createNewThing(){
-  return { id: `thing-${uuid()}`, name: 'Shabadoo' };
+function createNewProfile(){
+  return { id: `profile-${uuid()}`, name: 'Shabadoo' };
 }
+
 export default container;
