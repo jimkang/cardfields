@@ -23,6 +23,7 @@ export interface Pile extends Omit<UIThing, 'title'> {
 
 export interface Profile extends UIThing {
   piles: Pile[];
+  active: boolean;
 }
 
 export type StateOptParams = { initCards?: Card[]; initPiles? };

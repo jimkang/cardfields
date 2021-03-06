@@ -9,6 +9,10 @@ export function RenderProfile({ parentSelector }) {
   function render(collectionStore: CollectionStoreType, store: ThingStoreType) {
     var profile: Profile = store.get();
     var parentSel = select(parentSelector);
+
+    var activeSel = establish(parentSel, 'input', `#active-${profile.id}`, curry(initCheck)('active'));
+    activeSel.attr('checked', profile.active ? 'checked' : null);
+
     var nameSel = establish(parentSel, 'div', `#title-${profile.id}`, curry(initEditable)('title'));
     nameSel.text(profile.title);
     
@@ -24,16 +28,24 @@ export function RenderProfile({ parentSelector }) {
         .on('blur', setProp);
 
       function setProp() {
-        // Gah, this [key] notation!
-        store.setPart({ [prop]: select(this).text() });
+        store.setPart({ [prop]: select(this).text() }); 
       }
     }
+
+    function initCheck(prop: string, sel) {
+      sel
+        .attr('id', `${prop}-${profile.id}`)
+        .attr('type', 'checkbox')
+        .attr('class', prop)
+        .on('change', setProp); 
+      function setProp() { // Gah, this [key] notation!
+        store.setPart({ [prop]: this.checked });
+      } } 
 
     function initRemoveButton(sel) {
       sel
         .attr('class', 'remove-profile-button')
-        .on('click', removeThing)
-        .text('Delete');
+        .on('click', removeThing) .text('Delete');
     }
 
     function removeThing() {

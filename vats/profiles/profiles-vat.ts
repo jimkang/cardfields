@@ -25,7 +25,7 @@ function createItemUpdater(store: ThingStoreType) {
 }
 
 function createNewProfile(): Profile {
-  return { id: `profile-${uuid()}`, name: 'Shabadoo', piles: [] };
+  return { id: `profile-${uuid()}`, name: 'Shabadoo', piles: [], active: false };
 }
 
 export default container;
