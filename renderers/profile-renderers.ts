@@ -6,41 +6,43 @@ import curry from 'lodash.curry';
 export function RenderProfile({ parentSelector }) {
   return render;
 
-  function render(collectionStore: CollectionStoreType, store: ThingStoreType) {
+  function render(collectionStore: CollectionStoreType, store: ThingStoreType, activeProfileStore: ThingStoreType) {
     var profile: Profile = store.get();
-    var parentSel = select(parentSelector);
+    const isActive = activeProfileStore.get().profile === store.get().id;
 
-    var activeSel = establish(parentSel, 'input', `#active-${profile.id}`, curry(initCheck)('active'));
-    activeSel.attr('checked', profile.active ? 'checked' : null);
+    var parentSel = select(parentSelector);
+    parentSel.classed('selected', isActive);
+
+    establish(parentSel, 'button', `#profile-${profile.id}`, curry(initActiveButton)('profile'));
 
     var nameSel = establish(parentSel, 'div', `#title-${profile.id}`, curry(initEditable)('title'));
     nameSel.text(profile.title);
     
     var descSel = establish(parentSel, 'div', `#text-${profile.id}`, curry(initEditable)('text'));
     descSel.text(profile.text);
-    establish(parentSel, 'button', '.remove-profile-button', initRemoveButton);
+
+    establish(parentSel, 'button', '.remove-profile-button', initRemoveButton); 
 
     function initEditable(prop: string, sel) {
       sel
         .attr('id', `${prop}-${profile.id}`)
         .attr('class', prop)
-        .attr('contenteditable', true)
-        .on('blur', setProp);
+        .attr('contenteditable', true) .on('blur', setProp);
 
       function setProp() {
-        store.setPart({ [prop]: select(this).text() }); 
-      }
+        store.setPart({ [prop]: select(this).text() }); }
     }
-
-    function initCheck(prop: string, sel) {
+ 
+    function initActiveButton(prop: string, sel) {
       sel
         .attr('id', `${prop}-${profile.id}`)
-        .attr('type', 'checkbox')
         .attr('class', prop)
-        .on('change', setProp); 
-      function setProp() { // Gah, this [key] notation!
-        store.setPart({ [prop]: this.checked });
-      } } 
+        .text('Activate')
+        .on('click', setProp); 
+
+      function setProp() { activeProfileStore.setPart({ [prop]: store.get().id });
+      }
+    } 
 
     function initRemoveButton(sel) {
       sel

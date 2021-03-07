@@ -186,6 +186,10 @@ input {
   grid-gap: calc(2 * var(--atom));
 }
 
+.selected {
+  border: solid green 4px;
+}
+
 @media all and (max-height: 568px) {
   body {
     font-size: 18px;
