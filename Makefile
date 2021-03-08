@@ -23,6 +23,9 @@ wily-vat:
 decks-vat:
 	APP=decks make run
 
+piles-vat:
+	APP=piles make run
+
 stores-vat:
 	APP=stores make run
 
