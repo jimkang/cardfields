@@ -24,13 +24,16 @@ var collectionStore = CollectionStore(
   thingPersister,
   loadThings(idsKey)
 );
+
 var profileStores = collectionStore
   .get()
   .map((thing) => ThingStore(thingPersister, thing));
-var activeProfileStore = ThingStore(thingPersister, {
-  id: 'active-profile',
-  profile: '',
-});
+
+var activeProfileStore = ThingStore(
+  thingPersister,
+  thingPersister.get('active-profile')
+);
+
 var addThing = AddThing(
   collectionStore,
   createNewProfile,
@@ -44,6 +47,7 @@ var renderCollection = RenderProfileCollection({
 });
 
 var updateCollection = UpdateCollection(renderCollection, collectionStore);
+
 updateCollection(collectionStore);
 var updateItems = profileStores.map(createItemUpdater);
 updateItems.forEach((update, i) => update(profileStores[i]));
