@@ -20,8 +20,8 @@ run:
 wily-vat:
 	APP=wily make run
 
-profiles-vat:
-	APP=profiles make run
+decks-vat:
+	APP=decks make run
 
 stores-vat:
 	APP=stores make run

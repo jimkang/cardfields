@@ -1,12 +1,12 @@
 import type { ThingStoreType, CollectionStoreType } from '../types';
 
-export function UpdateProfile(render, collectionStore: CollectionStoreType, activeProfileStore: ThingStoreType, store: ThingStoreType) {
+export function UpdateDeck(render, collectionStore: CollectionStoreType, activeDeckStore: ThingStoreType, store: ThingStoreType) {
   store.subscribe(update);
-  activeProfileStore.subscribe(update);
+  activeDeckStore.subscribe(update);
 
   return update;
 
   function update() {
-    render(collectionStore, store, activeProfileStore);
+    render(collectionStore, store, activeDeckStore);
   }
 }

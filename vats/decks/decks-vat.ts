@@ -1,6 +1,6 @@
 //import type { Card } from '../../types';
 import { ThingStore, CollectionStore } from '../../wily.js/stores';
-import type { Profile, ThingStoreType } from '../../types';
+import type { Deck, ThingStoreType } from '../../types';
 import {
   thingPersister,
   IdsPersister,
@@ -8,15 +8,15 @@ import {
 } from '../../wily.js/persistence/local';
 import { v4 as uuid } from 'uuid';
 import { UpdateCollection } from '../../wily.js/updaters/basic-updaters';
-import { UpdateProfile } from '../../updaters/updaters';
+import { UpdateDeck } from '../../updaters/updaters';
 import { AddThing } from '../../wily.js/downdaters/collection-modifiers';
 import {
-  RenderProfile,
-  RenderProfileCollection,
-} from '../../renderers/profile-renderers';
+  RenderDeck,
+  RenderDeckCollection,
+} from '../../renderers/deck-renderers';
 
 var container = {};
-const idsKey = 'ids__profiles';
+const idsKey = 'ids__decks';
 var idsPersister = IdsPersister(idsKey);
 
 var collectionStore = CollectionStore(
@@ -25,23 +25,23 @@ var collectionStore = CollectionStore(
   loadThings(idsKey)
 );
 
-var profileStores = collectionStore
+var deckStores = collectionStore
   .get()
   .map((thing) => ThingStore(thingPersister, thing));
 
-var activeProfileStore = ThingStore(
+var activeDeckStore = ThingStore(
   thingPersister,
-  thingPersister.get('active-profile')
+  thingPersister.get('active-deck') || { id: 'active-deck', piles: [] }
 );
 
 var addThing = AddThing(
   collectionStore,
-  createNewProfile,
+  createNewDeck,
   thingPersister,
   createItemUpdater
 );
 
-var renderCollection = RenderProfileCollection({
+var renderCollection = RenderDeckCollection({
   parentSelector: '.root',
   addThing,
 });
@@ -49,20 +49,20 @@ var renderCollection = RenderProfileCollection({
 var updateCollection = UpdateCollection(renderCollection, collectionStore);
 
 updateCollection(collectionStore);
-var updateItems = profileStores.map(createItemUpdater);
-updateItems.forEach((update, i) => update(profileStores[i]));
+var updateItems = deckStores.map(createItemUpdater);
+updateItems.forEach((update, i) => update(deckStores[i]));
 
 function createItemUpdater(store: ThingStoreType) {
-  return UpdateProfile(
-    RenderProfile({ parentSelector: `#${store.get().id}` }),
+  return UpdateDeck(
+    RenderDeck({ parentSelector: `#${store.get().id}` }),
     collectionStore,
-    activeProfileStore,
+    activeDeckStore,
     store
   );
 }
 
-function createNewProfile(): Profile {
-  return { id: `profile-${uuid()}`, name: 'Shabadoo', piles: [] };
+function createNewDeck(): Deck {
+  return { id: `deck-${uuid()}`, name: 'Shabadoo', piles: [] };
 }
 
 export default container;

@@ -21,7 +21,7 @@ export interface Pile extends Omit<UIThing, 'title'> {
   cards: Card[];
 }
 
-export interface Profile extends UIThing {
+export interface Deck extends UIThing {
   piles: Pile[];
 }
 

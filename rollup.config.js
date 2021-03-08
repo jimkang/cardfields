@@ -9,22 +9,22 @@ var configs = [
     input: 'main.ts',
     outputFile: 'public/build/bundle.js',
     reloadPath: 'public',
-    serve: !process.env.APP && serve
+    serve: !process.env.APP && serve,
   },
   {
     input: 'vats/wily/wily-vat.ts',
     outputFile: 'vats/wily/wily-vat-bundle.js',
     reloadPath: 'vats/wily',
     serve: process.env.APP === 'wily' && serve,
-    serveOpts: { rootDir: '.', serveDir: 'vats/wily' }
+    serveOpts: { rootDir: '.', serveDir: 'vats/wily' },
   },
   {
-    input: 'vats/profiles/profiles-vat.ts',
-    outputFile: 'vats/profiles/profiles-vat-bundle.js',
-    reloadPath: 'vats/profiles',
-    serve: process.env.APP === 'profiles' && serve,
-    serveOpts: { rootDir: '.', serveDir: 'vats/profiles' }
-  }
+    input: 'vats/decks/decks-vat.ts',
+    outputFile: 'vats/decks/decks-vat-bundle.js',
+    reloadPath: 'vats/decks',
+    serve: process.env.APP === 'decks' && serve,
+    serveOpts: { rootDir: '.', serveDir: 'vats/decks' },
+  },
   /*
   {
     input: 'vats/stores/stores-test-app.ts',
