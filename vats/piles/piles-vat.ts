@@ -1,6 +1,6 @@
 //import type { Card } from '../../types';
 import { ThingStore, CollectionStore } from '../../wily.js/stores';
-import type { Deck, ThingStoreType } from '../../types';
+import type { Deck, ThingStoreType, Persister, Pile } from '../../types';
 import {
   thingPersister,
   IdsPersister,
@@ -8,24 +8,41 @@ import {
 } from '../../wily.js/persistence/local';
 import { v4 as uuid } from 'uuid';
 import { UpdateCollection } from '../../wily.js/updaters/basic-updaters';
-import { UpdateDeck } from '../../updaters/updaters';
+import { UpdateDeck, UpdatePile } from '../../updaters/updaters';
 import { AddThing } from '../../wily.js/downdaters/collection-modifiers';
 import {
   RenderDeck,
   RenderDeckCollection,
 } from '../../renderers/deck-renderers';
+import {
+  RenderPile,
+  //RenderPileCollection,
+} from '../../renderers/pile-renderers';
 
 var container = {};
 const idsKey = 'ids__decks';
 var idsPersister = IdsPersister(idsKey);
 
-var collectionStore = CollectionStore(
+function PilesPersister(deckColStore): Persister {
+  return {
+    write(piles: Pile[]) {
+      deckColStore.setPart({ piles });
+    },
+    delete() {
+      deckColStore.setPart({ piles: [] });
+    },
+    get() {
+      return deckColStore.get().piles;
+    },
+  };
+}
+
+var deckCollectionStore = CollectionStore(
   idsPersister,
   thingPersister,
   loadThings(idsKey)
 );
-
-var deckStores = collectionStore
+var deckStores = deckCollectionStore
   .get()
   .map((thing) => ThingStore(thingPersister, thing));
 
@@ -34,35 +51,59 @@ var activeDeckStore = ThingStore(
   thingPersister.get('active-deck') || { id: 'active-deck', piles: [] }
 );
 
-var addThing = AddThing(
-  collectionStore,
+var addDeck = AddThing(
+  deckCollectionStore,
   createNewDeck,
   thingPersister,
-  createItemUpdater
+  DeckUpdater
 );
 
-var renderCollection = RenderDeckCollection({
+var pilesPersister: Persister = PilesPersister(deckCollectionStore);
+
+var pileCollectionStore = CollectionStore(
+  pilesPersister,
+  thingPersister,
+  activeDeckStore.get().piles // TODO: Make sure this is valid at this time.
+);
+
+var renderDeckCollection = RenderDeckCollection({
   parentSelector: '.root',
-  addThing,
+  addThing: addDeck,
 });
 
-var updateCollection = UpdateCollection(renderCollection, collectionStore);
+var updateDeckCollection = UpdateCollection(
+  renderDeckCollection,
+  deckCollectionStore
+);
 
-updateCollection(collectionStore);
-var updateItems = deckStores.map(createItemUpdater);
+updateDeckCollection(deckCollectionStore);
+var updateItems = deckStores.map(DeckUpdater);
 updateItems.forEach((update, i) => update(deckStores[i]));
 
-function createItemUpdater(store: ThingStoreType) {
+function DeckUpdater(store: ThingStoreType) {
   return UpdateDeck(
     RenderDeck({ parentSelector: `#${store.get().id}` }),
-    collectionStore,
+    deckCollectionStore,
+    activeDeckStore,
+    store
+  );
+}
+
+function PileUpdater(store: ThingStoreType) {
+  return UpdatePile(
+    RenderPile({ parentSelector: `#${store.get().id}` }),
+    pileCollectionStore,
     activeDeckStore,
     store
   );
 }
 
 function createNewDeck(): Deck {
-  return { id: `deck-${uuid()}`, name: 'Shabadoo', piles: [] };
+  return { id: `deck-${uuid()}`, title: 'Shabadoo', piles: [] };
+}
+
+function createNewPile(): Pile {
+  return { id: `pile-${uuid()}`, title: 'New pile', cards: [] };
 }
 
 export default container;

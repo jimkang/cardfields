@@ -8,7 +8,7 @@ import { noThrowJSONParse as parse } from '../utils/no-throw-json-parse';
 export function writeThing(thing: Thing) {
   localStorage.setItem(thing.id, JSON.stringify(thing));
 }
-  
+
 export function deleteThing(id: string) {
   localStorage.removeItem(id);
 }
@@ -47,15 +47,17 @@ export function getThingFromLocalStorage(id: string): Thing {
 }
 
 export var thingPersister: Persister = {
-  write: writeThing, delete: deleteThing, get: getThing
+  write: writeThing,
+  delete: deleteThing,
+  get: getThing,
 };
 
-export function IdsPersister(idsKey: string) {
+export function IdsPersister(idsKey: string): Persister {
   return {
     write: curry(writeIds)(idsKey),
     get: curry(getIds)(idsKey),
-    delete: noOp
-  }; 
+    delete: noOp,
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
