@@ -1,4 +1,4 @@
-import { ThingStore, CollectionStore } from '../wily.js/stores';
+import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
 import type {
   ThingStoreType,
   CollectionStoreType,
@@ -13,6 +13,7 @@ import { UpdateCollection } from '../wily.js/updaters/basic-updaters';
 import { UpdatePile } from '../updaters/updaters';
 import curry from 'lodash.curry';
 import { v4 as uuid } from 'uuid';
+import { clearinghouse as ch } from '../wily.js/stores/clearinghouse';
 
 // TODO: Consider refactoring when you make a third machine.
 export function assemblePilesMachine(containingDeckStore: ThingStoreType) {
@@ -25,14 +26,15 @@ export function assemblePilesMachine(containingDeckStore: ThingStoreType) {
   );
   var pileStores = pileCollectionStore
     .get()
-    .map((thing) => ThingStore(thingPersister, thing));
+    .map((thing) => ch.putStore(ThingStore(thingPersister, thing)));
 
   // Downdaters.
   var addPile = AddThing(
     pileCollectionStore,
     createNewPile,
     thingPersister,
-    curry(PileUpdater)(pileCollectionStore, containingDeckStore)
+    curry(PileUpdater)(pileCollectionStore, containingDeckStore),
+    ch
   );
 
   // Renderers.

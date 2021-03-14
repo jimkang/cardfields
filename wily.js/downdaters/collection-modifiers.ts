@@ -1,15 +1,20 @@
-import { ThingStore } from '../stores';
+import { ThingStore } from '../stores/stores';
 
 export function AddThing(
   collectionStore,
   createNewThing,
   thingPersister,
-  createItemUpdater
+  createItemUpdater,
+  clearinghouse
 ) {
   return addThing;
 
   function addThing() {
     var newStore = ThingStore(thingPersister, createNewThing());
+    if (clearinghouse) {
+      clearinghouse.putStore(newStore);
+    }
+
     // We need to wait for the thing to be registered
     // in the collection before we set up an updater
     // for it because we want it to trigger a render

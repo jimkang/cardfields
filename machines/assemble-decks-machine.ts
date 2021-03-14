@@ -1,6 +1,6 @@
 import type { Deck, ThingStoreType, CollectionStoreType } from '../types';
 
-import { ThingStore, CollectionStore } from '../wily.js/stores';
+import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
 import { v4 as uuid } from 'uuid';
 import {
   thingPersister,
@@ -12,6 +12,7 @@ import { UpdateDeck } from '../updaters/updaters';
 import { AddThing } from '../wily.js/downdaters/collection-modifiers';
 import { RenderDeck, RenderDeckCollection } from '../renderers/deck-renderers';
 import curry from 'lodash.curry';
+import { clearinghouse as ch } from '../wily.js/stores/clearinghouse';
 
 const idsKey = 'ids__decks';
 var idsPersister = IdsPersister(idsKey);
@@ -25,11 +26,13 @@ export function assembleDecksMachine(switchToNewDecks) {
   );
   var deckStores = deckCollectionStore
     .get()
-    .map((thing) => ThingStore(thingPersister, thing));
+    .map((thing) => ch.putStore(ThingStore(thingPersister, thing)));
 
-  var activeDeckIdentifier = ThingStore(
-    thingPersister,
-    thingPersister.get('active-deck') || { id: 'active-deck', deckId: '' }
+  var activeDeckIdentifier = ch.putStore(
+    ThingStore(
+      thingPersister,
+      thingPersister.get('active-deck') || { id: 'active-deck', deckId: '' }
+    )
   );
 
   // Downdaters.
@@ -37,7 +40,8 @@ export function assembleDecksMachine(switchToNewDecks) {
     deckCollectionStore,
     createNewDeck,
     thingPersister,
-    curry(updateDeckMapper)(deckCollectionStore, activeDeckIdentifier)
+    curry(updateDeckMapper)(deckCollectionStore, activeDeckIdentifier),
+    ch
   );
 
   // Renderers.
