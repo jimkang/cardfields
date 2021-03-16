@@ -39,7 +39,7 @@ export function assemblePilesMachine(containingDeckStore: ThingStoreType) {
 
   // Renderers.
   var renderPileCollection = RenderPileCollection({
-    parentSelector: '.pile-root',
+    parentSelector: '.pile-section',
     addThing: addPile,
   });
 
