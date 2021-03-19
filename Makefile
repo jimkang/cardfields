@@ -68,3 +68,6 @@ build-tests:
 
 test:
 	node wily.js/tests/store-tests.js
+
+diagram:
+	cat meta/machines.dot | dot -Tpng -o meta/machines.png

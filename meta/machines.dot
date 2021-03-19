@@ -1,0 +1,44 @@
+digraph {
+  rankdir="LR";
+  graph [fontsize=36];
+  node [fontsize=18];
+  nodesep=0.5;
+  mindist=10.0;
+  mclimit=10.0;
+  splines="curved";
+
+  subgraph cluster_stores {
+    label="Stores";
+    bgcolor="#fde725";
+    DeckCollectionStore [shape=square];
+    activeDeckIdentfier [shape=square];
+
+  }
+
+  subgraph cluster_responders {
+    label="Responders";
+    bgcolor="#a5db36";
+
+    onDeckCollectionChange [shape=square];
+
+    DeckCollectionStore -> onDeckCollectionChange;
+  }
+
+  subgraph cluster_renderers {
+    label="Renderers";
+    bgcolor="#54c568";
+
+    RenderDeckCollection [shape=square];
+
+    onDeckCollectionChange -> RenderDeckCollection [penwidth=3];
+  }
+
+  subgraph cluster_updaters {
+    label="Updaters";
+    bgcolor="#22a884";
+
+    addDeck [shape=square];
+    RenderDeckCollection -> addDeck [penwidth=3, style=dashed];
+    addDeck -> DeckCollectionStore [penwidth=3];
+  }
+}
