@@ -34,8 +34,8 @@ digraph {
     RenderDeckCollection [shape=circle];
     RenderDeck [shape=doublecircle];
 
-    onDeckCollectionChange -> RenderDeckCollection [penwidth=3];
-    onDeckChange -> RenderDeck [penwidth=3];
+    onDeckCollectionChange -> RenderDeckCollection;
+    onDeckChange -> RenderDeck;
   }
 
   subgraph cluster_updaters {
@@ -43,19 +43,19 @@ digraph {
     bgcolor="#22a884";
 
     addDeck [shape=circle];
-    addDeck -> DeckCollectionStore [penwidth=3];
-    RenderDeckCollection -> addDeck [penwidth=3, style=dashed];
-    RenderDeck -> activeDeckIdentifier [penwidth=3, style=dashed, label="setPart"];
-    RenderDeck -> DeckStore [penwidth=3, style=dashed, label="setPart"];
+    addDeck -> DeckCollectionStore;
+    RenderDeckCollection -> addDeck [style=dashed];
+    RenderDeck -> activeDeckIdentifier [style=dashed, label="setPart"];
+    RenderDeck -> DeckStore [style=dashed, label="setPart"];
   }
 
-  subgraph cluster_legend {
-    label="Legend";
-
-    singleEntity [shape=circle, label="Single entity"];
-    multipleEntities [shape=doublecircle, label="Multiple entities"];
-
-    a -> b [penwidth=3, label="Call"];
-    c -> d [penwidth=3, style=dashed, label="Conditional call"];
-  }
+  //subgraph cluster_legend {
+    //label="Legend";
+//
+    //singleEntity [shape=circle, label="Single entity"];
+    //multipleEntities [shape=doublecircle, label="Multiple entities"];
+//
+    //a -> b [label="Call"];
+    //c -> d [style=dashed, label="Conditional call"];
+  //}
 }
