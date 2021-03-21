@@ -12,7 +12,6 @@ digraph {
     bgcolor="#fde725";
     DeckCollectionStore [shape=square];
     activeDeckIdentfier [shape=square];
-
   }
 
   subgraph cluster_responders {
@@ -38,7 +37,7 @@ digraph {
     bgcolor="#22a884";
 
     addDeck [shape=square];
+    addDeck -> DeckCollectionStore [dir=back, penwidth=3];
     RenderDeckCollection -> addDeck [penwidth=3, style=dashed];
-    addDeck -> DeckCollectionStore [penwidth=3];
   }
 }
