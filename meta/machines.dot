@@ -10,34 +10,52 @@ digraph {
   subgraph cluster_stores {
     label="Stores";
     bgcolor="#fde725";
-    DeckCollectionStore [shape=square];
-    activeDeckIdentfier [shape=square];
+    DeckCollectionStore [shape=circle];
+    DeckStore [shape=doublecircle];
+    activeDeckIdentifier [shape=circle];
   }
 
   subgraph cluster_responders {
     label="Responders";
     bgcolor="#a5db36";
 
-    onDeckCollectionChange [shape=square];
+    onDeckCollectionChange [shape=circle];
+    onDeckChange [shape=doublecircle];
 
     DeckCollectionStore -> onDeckCollectionChange;
+    activeDeckIdentifier -> onDeckCollectionChange;
+    DeckStore -> onDeckChange;
   }
 
   subgraph cluster_renderers {
     label="Renderers";
     bgcolor="#54c568";
 
-    RenderDeckCollection [shape=square];
+    RenderDeckCollection [shape=circle];
+    RenderDeck [shape=doublecircle];
 
     onDeckCollectionChange -> RenderDeckCollection [penwidth=3];
+    onDeckChange -> RenderDeck [penwidth=3];
   }
 
   subgraph cluster_updaters {
     label="Updaters";
     bgcolor="#22a884";
 
-    addDeck [shape=square];
-    addDeck -> DeckCollectionStore [dir=back, penwidth=3];
+    addDeck [shape=circle];
+    addDeck -> DeckCollectionStore [penwidth=3];
     RenderDeckCollection -> addDeck [penwidth=3, style=dashed];
+    RenderDeck -> activeDeckIdentifier [penwidth=3, style=dashed, label="setPart"];
+    RenderDeck -> DeckStore [penwidth=3, style=dashed, label="setPart"];
+  }
+
+  subgraph cluster_legend {
+    label="Legend";
+
+    singleEntity [shape=circle, label="Single entity"];
+    multipleEntities [shape=doublecircle, label="Multiple entities"];
+
+    a -> b [penwidth=3, label="Call"];
+    c -> d [penwidth=3, style=dashed, label="Conditional call"];
   }
 }
