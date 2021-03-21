@@ -1,9 +1,10 @@
 digraph {
   rankdir="LR";
-  graph [fontsize=36];
-  node [fontsize=18];
+  graph [fontsize=12, fontname=Helvetica, penwidth=3];
+  node [fontsize=12, fontname=Helvetica];
+  edge [fontsize=12, fontname=Helvetica];
   nodesep=0.5;
-  mindist=10.0;
+  mindist=3.0;
   mclimit=10.0;
   splines="curved";
 
@@ -33,9 +34,12 @@ digraph {
 
     RenderDeckCollection [shape=circle];
     RenderDeck [shape=doublecircle];
+    RenderPileCollection [shape=circle];
+    RenderPile [shape=doublecircle];
 
     onDeckCollectionChange -> RenderDeckCollection;
     onDeckChange -> RenderDeck;
+    RenderDeck -> RenderPileCollection;
   }
 
   subgraph cluster_updaters {
