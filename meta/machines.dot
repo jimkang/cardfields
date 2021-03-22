@@ -24,6 +24,8 @@ digraph {
 
     onDeckCollectionChange [shape=circle];
     onDeckChange [shape=doublecircle];
+    onPileCollectionChange [shape=circle];
+    onPileChange [shape=doublecircle];
 
     DeckCollectionStore -> onDeckCollectionChange;
     activeDeckIdentifier -> onDeckCollectionChange;
@@ -60,6 +62,8 @@ digraph {
     RenderDeckCollection -> addDeck [style=dashed];
     RenderDeck -> activeDeckIdentifier [style=dashed, label="setPart"];
     RenderDeck -> DeckStore [style=dashed, label="setPart"];
+    RenderDeck -> DeckStore [style=dashed, label="del"];
+    RenderDeck -> DeckCollectionStore [style=dashed, label="remove"];
     RenderPileCollection -> addPile [style=dashed];
     RenderPile -> PileCollectionStore [style=dashed, label="remove"];
     RenderPile -> PileStore [style=dashed, label="del"];
