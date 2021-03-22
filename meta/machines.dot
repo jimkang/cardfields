@@ -14,6 +14,8 @@ digraph {
     DeckCollectionStore [shape=circle];
     DeckStore [shape=doublecircle];
     activeDeckIdentifier [shape=circle];
+    PileCollectionStore [shape=circle];
+    PileStore [shape=doublecircle];
   }
 
   subgraph cluster_responders {
@@ -26,6 +28,8 @@ digraph {
     DeckCollectionStore -> onDeckCollectionChange;
     activeDeckIdentifier -> onDeckCollectionChange;
     DeckStore -> onDeckChange;
+    PileCollectionStore -> onPileCollectionChange;
+    PileStore -> onPileChange;
   }
 
   subgraph cluster_renderers {
@@ -40,6 +44,9 @@ digraph {
     onDeckCollectionChange -> RenderDeckCollection;
     onDeckChange -> RenderDeck;
     RenderDeck -> RenderPileCollection;
+
+    onPileCollectionChange -> RenderPileCollection;
+    onPileChange -> RenderPile;
   }
 
   subgraph cluster_updaters {
@@ -47,10 +54,16 @@ digraph {
     bgcolor="#22a884";
 
     addDeck [shape=circle];
+    addPile [shape=circle];
     addDeck -> DeckCollectionStore;
+    addPile -> PileCollectionStore;
     RenderDeckCollection -> addDeck [style=dashed];
     RenderDeck -> activeDeckIdentifier [style=dashed, label="setPart"];
     RenderDeck -> DeckStore [style=dashed, label="setPart"];
+    RenderPileCollection -> addPile [style=dashed];
+    RenderPile -> PileCollectionStore [style=dashed, label="remove"];
+    RenderPile -> PileStore [style=dashed, label="del"];
+    RenderPile -> PileStore [style=dashed, label="setPart"];
   }
 
   //subgraph cluster_legend {
