@@ -2,8 +2,19 @@ import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
 import type { Deck, ThingStoreType, CollectionStoreType } from '../types';
 import curry from 'lodash.curry';
+//import { RenderPileCollection } from './pile-renderers';
+//import { storeRegistry as registry } from '../wily.js/stores/store-registry';
 
-export function RenderDeck({ parentSelector }) {
+export function RenderDeck({
+  parentSelector,
+  renderPileCollection,
+  pileCollectionStore,
+}) {
+  //var renderPileCollection = RenderPileCollection({
+  //parentSelector: `${parentSelector} .pile-collection-container`,
+  //addThing: addPile,
+  //});
+
   return render;
 
   function render(
@@ -40,6 +51,14 @@ export function RenderDeck({ parentSelector }) {
     );
     descSel.text(deck.text);
 
+    establish(
+      parentSel,
+      'div',
+      '.pile-collection-container',
+      initPilesContainer
+    );
+    //renderPileCollection(registry.createCollectionStoreForStores(deck.piles));
+
     establish(parentSel, 'button', '.remove-deck-button', initRemoveButton);
 
     function initEditable(prop: string, sel) {
@@ -71,6 +90,11 @@ export function RenderDeck({ parentSelector }) {
         .attr('class', 'remove-deck-button')
         .on('click', removeThing)
         .text('Delete');
+    }
+
+    function initPilesContainer(sel) {
+      sel.attr('class', 'pile-collection-container');
+      renderPileCollection(pileCollectionStore);
     }
 
     function removeThing() {

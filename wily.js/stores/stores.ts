@@ -97,12 +97,13 @@ export function ThingStore(
 export function CollectionStore(
   idsPersister: Persister,
   thingPersister: Persister,
+  kind: string,
+  parentThingId: string,
   vals: Thing[]
 ): CollectionStoreType {
   var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
 
-  return Object.assign(base, { add, remove });
-
+  return Object.assign(base, { add, remove, kind, parentThingId });
   function dehydrate(things) {
     return pluck(things, 'id');
   }
@@ -124,4 +125,11 @@ export function CollectionStore(
     ids.splice(index, 1);
     base.setRaw(ids);
   }
+}
+
+export function getCollectionStoreId(kind: string, parentThingId: string) {
+  if (parentThingId) {
+    return `ids__${kind}s__of__${parentThingId}`;
+  }
+  return `ids__${kind}s`;
 }

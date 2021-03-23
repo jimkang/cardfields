@@ -1,32 +1,32 @@
 import type { ThingStoreType, CollectionStoreType } from '../types';
 
-export function UpdateDeck(
+export function OnDeckChange(
   render,
   collectionStore: CollectionStoreType,
   activeDeckStore: ThingStoreType,
   store: ThingStoreType
 ) {
-  store.subscribe(update);
-  activeDeckStore.subscribe(update);
+  store.subscribe(onDeckChange);
+  activeDeckStore.subscribe(onDeckChange);
 
-  return update;
+  return onDeckChange;
 
-  function update() {
+  function onDeckChange() {
     render(collectionStore, store, activeDeckStore);
   }
 }
 
-export function UpdatePile(
+export function OnPileChange(
   render,
   collectionStore: CollectionStoreType,
   deckStore: ThingStoreType,
   pileStore: ThingStoreType
 ) {
-  pileStore.subscribe(update);
+  pileStore.subscribe(onPileChange);
 
-  return update;
+  return onPileChange;
 
-  function update() {
+  function onPileChange() {
     render(collectionStore, deckStore, pileStore);
   }
 }

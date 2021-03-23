@@ -4,15 +4,15 @@ export function AddThing(
   collectionStore,
   createNewThing,
   thingPersister,
-  createItemUpdater,
-  clearinghouse
+  createItemResponder,
+  storeRegistry
 ) {
   return addThing;
 
   function addThing() {
     var newStore = ThingStore(thingPersister, createNewThing());
-    if (clearinghouse) {
-      clearinghouse.putStore(newStore);
+    if (storeRegistry) {
+      storeRegistry.putStore(newStore);
     }
 
     // We need to wait for the thing to be registered
@@ -20,13 +20,13 @@ export function AddThing(
     // for it because we want it to trigger a render
     // of the container for the thing before we
     // potentially render the thing itself.
-    collectionStore.subscribe(setUpUpdaterForStore);
+    collectionStore.subscribe(setUpResponderForStore);
     collectionStore.add(newStore.get());
 
-    function setUpUpdaterForStore() {
-      var newUpdater = createItemUpdater(newStore);
-      newUpdater(newStore);
-      collectionStore.unsubscribe(setUpUpdaterForStore);
+    function setUpResponderForStore() {
+      var newResponder = createItemResponder(newStore);
+      newResponder(newStore);
+      collectionStore.unsubscribe(setUpResponderForStore);
     }
   }
 }

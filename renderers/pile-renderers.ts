@@ -8,21 +8,12 @@ export function RenderPile({ parentSelector }) {
 
   function render(
     collectionStore: CollectionStoreType,
-    store: ThingStoreType,
-    activePileStore: ThingStoreType
+    containingDeckStore: ThingStoreType,
+    store: ThingStoreType
   ) {
     var pile: Pile = store.get();
-    const isActive = activePileStore.get().pile === store.get().id;
 
     var parentSel = select(parentSelector);
-    parentSel.classed('selected', isActive);
-
-    establish(
-      parentSel,
-      'button',
-      `#pile-${pile.id}`,
-      curry(initActiveButton)('pile')
-    );
 
     var nameSel = establish(
       parentSel,
@@ -54,18 +45,6 @@ export function RenderPile({ parentSelector }) {
       }
     }
 
-    function initActiveButton(prop: string, sel) {
-      sel
-        .attr('id', `${prop}-${pile.id}`)
-        .attr('class', prop)
-        .text('Activate')
-        .on('click', setProp);
-
-      function setProp() {
-        activePileStore.setPart({ [prop]: store.get().id });
-      }
-    }
-
     function initRemoveButton(sel) {
       sel
         .attr('class', 'remove-pile-button')
@@ -81,13 +60,20 @@ export function RenderPile({ parentSelector }) {
 }
 
 export function RenderPileCollection({ parentSelector, addThing }) {
-  var parentSel = select(parentSelector);
-  var itemRoot = parentSel.select('.piles-root');
-  var controlsParent = parentSel.select('.piles-collection-controls');
-
   return renderCollection;
 
   function renderCollection(collectionStore) {
+    var parentSel = select(parentSelector);
+
+    var itemRoot = establish(parentSel, 'div', '.piles-root', (sel) =>
+      sel.attr('class', 'piles-root')
+    );
+    var controlsParent = establish(
+      parentSel,
+      'div',
+      '.pile-collection-controls',
+      (sel) => sel.attr('class', 'piles-collection-controls')
+    );
     establish(controlsParent, 'button', '.add-pile-button', initAddButton);
 
     var ids = collectionStore.getRaw();
