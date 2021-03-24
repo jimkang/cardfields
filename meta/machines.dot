@@ -1,20 +1,28 @@
 digraph {
-  rankdir="LR";
-  graph [fontsize=12, fontname=Helvetica, penwidth=3];
-  node [fontsize=12, fontname=Helvetica];
-  edge [fontsize=12, fontname=Helvetica];
-  nodesep=0.5;
-  mindist=3.0;
-  mclimit=10.0;
-  splines="curved";
+  graph [fontsize=12, fontname=Ubuntu, penwidth=3];
+  node [fontsize=12, fontname=Ubuntu, shape=circle];
+  edge [fontsize=12, fontname=Ubuntu];
+  nodesep=3;
+  overlap=false;
+  root=onEstablishPilesContainer;
+  dim=4;
+  mode=ipsep;
+  sep=0.4
+
+  // Persisters
+  PilesPersister;
+  PilesPersister -> DeckStore [label="setPart"];
+  PilesPersister -> DeckStore [label="get"];
+  deckIdsPersister -> localStorage [label="setItem"];
+  thingPersister -> localStorage [label="setItem"];
 
   subgraph cluster_stores {
     label="Stores";
     bgcolor="#fde725";
-    DeckCollectionStore [shape=circle];
+    DeckCollectionStore;
     DeckStore [shape=doublecircle];
-    activeDeckIdentifier [shape=circle];
-    PileCollectionStore [shape=circle];
+    activeDeckIdentifier;
+    PileCollectionStore;
     PileStore [shape=doublecircle];
   }
 
@@ -22,26 +30,30 @@ digraph {
     label="Responders";
     bgcolor="#a5db36";
 
-    onDeckCollectionChange [shape=circle];
+    onDeckCollectionChange;
     onDeckChange [shape=doublecircle];
-    onPileCollectionChange [shape=circle];
+    onPileCollectionChange;
     onPileChange [shape=doublecircle];
     onEstablishPilesContainer [shape=doublecircle];
 
     DeckCollectionStore -> onDeckCollectionChange;
+    DeckCollectionStore -> deckIdsPersister [label="write"];
     activeDeckIdentifier -> onDeckCollectionChange;
     DeckStore -> onDeckChange;
+    DeckStore -> thingPersister [style=dashed, label="write"];
     PileCollectionStore -> onPileCollectionChange;
     PileStore -> onPileChange;
+    PileStore -> thingPersister [style=dashed, label="write"];
+    PileCollectionStore -> PilesPersister [style=dashed, label="write"]
   }
 
   subgraph cluster_renderers {
     label="Renderers";
     bgcolor="#54c568";
 
-    RenderDeckCollection [shape=circle];
+    RenderDeckCollection;
     RenderDeck [shape=doublecircle];
-    RenderPileCollection [shape=circle];
+    RenderPileCollection;
     RenderPile [shape=doublecircle];
 
     onDeckCollectionChange -> RenderDeckCollection;
@@ -58,8 +70,8 @@ digraph {
     label="Updaters";
     bgcolor="#22a884";
 
-    addDeck [shape=circle];
-    addPile [shape=circle];
+    addDeck;
+    addPile;
     addDeck -> DeckCollectionStore;
     addPile -> PileCollectionStore;
     RenderDeckCollection -> addDeck [style=dashed];

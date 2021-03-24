@@ -71,4 +71,4 @@ test:
 
 diagram:
 	#cat meta/machines.dot | dot -Tpng -o meta/machines.png
-	cat meta/machines.dot | circo -Tpng -o meta/machines.png
+	cat meta/machines.dot | neato -Tsvg -v -o meta/machines.svg
