@@ -25,6 +25,7 @@ export function AddThing(
 
     function setUpResponderForStore() {
       var newResponder = createItemResponder(newStore);
+      // Trigger the initial render of the new thing.
       newResponder(newStore);
       collectionStore.unsubscribe(setUpResponderForStore);
     }

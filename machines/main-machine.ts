@@ -15,7 +15,8 @@ import {
 } from '../wily.js/persistence/local';
 import { PilesPersister } from '../persisters/piles-persister';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
-import { OnDeckChange, OnPileChange } from '../responders/responders';
+import { OnDeckChange, OnPileChange } from '../responders/store-responders';
+import { OnEstablishPilesContainer } from '../responders/render-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import { RenderDeck, RenderDeckCollection } from '../renderers/deck-renderers';
 import { RenderPile, RenderPileCollection } from '../renderers/pile-renderers';
@@ -125,7 +126,7 @@ function deckResponderMapper(
     pileCollectionStore,
     createNewPile,
     thingPersister,
-    curry(OnPileChange)(pileCollectionStore, deckStore),
+    curry(OnPileChange)(RenderPile(), pileCollectionStore, deckStore),
     registry
   );
 
@@ -144,13 +145,16 @@ function deckResponderMapper(
   var onPileChangeFns = pileStores.map(
     curry(onPileChangeMapper)(pileCollectionStore, deckStore)
   );
-  onPileChangeFns.forEach((update, i) => update(pileStores[i]));
 
   return OnDeckChange(
     RenderDeck({
       parentSelector: `#${deckStore.get().id}`,
       renderPileCollection,
       pileCollectionStore,
+      onEstablishElement: OnEstablishPilesContainer(
+        pileStores,
+        onPileChangeFns
+      ),
     }),
     deckCollectionStore,
     activeDeckIdentifier,
@@ -168,7 +172,7 @@ function onPileChangeMapper(
   store: ThingStoreType
 ) {
   return OnPileChange(
-    RenderPile({ parentSelector: `#${store.get().id}` }),
+    RenderPile(),
     pileCollectionStore,
     containingDeckStore,
     store

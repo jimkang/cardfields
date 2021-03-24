@@ -9,6 +9,7 @@ export function RenderDeck({
   parentSelector,
   renderPileCollection,
   pileCollectionStore,
+  onEstablishElement,
 }) {
   //var renderPileCollection = RenderPileCollection({
   //parentSelector: `${parentSelector} .pile-collection-container`,
@@ -95,6 +96,9 @@ export function RenderDeck({
     function initPilesContainer(sel) {
       sel.attr('class', 'pile-collection-container');
       renderPileCollection(pileCollectionStore);
+      onEstablishElement(sel.node());
+      // Should never need this again.
+      onEstablishElement = null;
     }
 
     function removeThing() {

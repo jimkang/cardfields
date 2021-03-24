@@ -26,6 +26,7 @@ digraph {
     onDeckChange [shape=doublecircle];
     onPileCollectionChange [shape=circle];
     onPileChange [shape=doublecircle];
+    onEstablishPilesContainer [shape=doublecircle];
 
     DeckCollectionStore -> onDeckCollectionChange;
     activeDeckIdentifier -> onDeckCollectionChange;
@@ -45,7 +46,9 @@ digraph {
 
     onDeckCollectionChange -> RenderDeckCollection;
     onDeckChange -> RenderDeck;
-    RenderDeck -> RenderPileCollection;
+    RenderDeck -> onEstablishPilesContainer [style=dashed, label="(one-time)"];
+    onEstablishPilesContainer -> RenderPileCollection;
+    onEstablishPilesContainer -> RenderPile;
 
     onPileCollectionChange -> RenderPileCollection;
     onPileChange -> RenderPile;

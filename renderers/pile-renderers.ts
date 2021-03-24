@@ -3,7 +3,7 @@ import { establish } from '../wily.js/rendering/establish';
 import type { Pile, ThingStoreType, CollectionStoreType } from '../types';
 import curry from 'lodash.curry';
 
-export function RenderPile({ parentSelector }) {
+export function RenderPile() {
   return render;
 
   function render(
@@ -12,7 +12,7 @@ export function RenderPile({ parentSelector }) {
     store: ThingStoreType
   ) {
     var pile: Pile = store.get();
-
+    const parentSelector = `#${pile.id}`;
     var parentSel = select(parentSelector);
 
     var nameSel = establish(
