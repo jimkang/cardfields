@@ -83,6 +83,7 @@ export function RenderPileCollection({ parentSelector, addThing }) {
       .enter()
       .append('li')
       .classed('item-container', true)
+      .classed('pile', true)
       .attr('id', (x) => x);
 
     function initAddButton(sel) {
