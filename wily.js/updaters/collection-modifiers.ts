@@ -16,7 +16,7 @@ export function AddThing(
     }
 
     // We need to wait for the thing to be registered
-    // in the collection before we set up an updater
+    // in the collection before we set up a responder
     // for it because we want it to trigger a render
     // of the container for the thing before we
     // potentially render the thing itself.

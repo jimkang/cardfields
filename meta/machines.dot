@@ -73,7 +73,7 @@ digraph {
     addDeck;
     addPile;
     addDeck -> DeckCollectionStore;
-    addPile -> PileCollectionStore;
+    addPile -> PileCollectionStore [label="add"];
     RenderDeckCollection -> addDeck [style=dashed];
     RenderDeck -> activeDeckIdentifier [style=dashed, label="setPart"];
     RenderDeck -> DeckStore [style=dashed, label="setPart"];
