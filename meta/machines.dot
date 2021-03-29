@@ -8,28 +8,23 @@ digraph {
   dim=4;
   mode=ipsep;
   sep=0.4
-
+    bgcolor="#fde725";
+    
   // Persisters
-  PilesPersister;
   PilesPersister -> DeckStore [label="setPart"];
   PilesPersister -> DeckStore [label="get"];
   deckIdsPersister -> localStorage [label="setItem"];
   thingPersister -> localStorage [label="setItem"];
 
-  subgraph cluster_stores {
-    label="Stores";
-    bgcolor="#fde725";
+    // Stores
     DeckCollectionStore;
     DeckStore [shape=doublecircle];
     activeDeckIdentifier;
     PileCollectionStore;
     PileStore [shape=doublecircle];
-  }
 
-  subgraph cluster_responders {
-    label="Responders";
-    bgcolor="#a5db36";
 
+    // Responders
     onDeckCollectionChange;
     onDeckChange [shape=doublecircle];
     onPileCollectionChange;
@@ -45,12 +40,9 @@ digraph {
     PileStore -> onPileChange;
     PileStore -> thingPersister [style=dashed, label="write"];
     PileCollectionStore -> PilesPersister [style=dashed, label="write"]
-  }
 
-  subgraph cluster_renderers {
-    label="Renderers";
-    bgcolor="#54c568";
 
+    // Renderers
     RenderDeckCollection;
     RenderDeck [shape=doublecircle];
     RenderPileCollection;
@@ -64,14 +56,8 @@ digraph {
 
     onPileCollectionChange -> RenderPileCollection;
     onPileChange -> RenderPile;
-  }
 
-  subgraph cluster_updaters {
-    label="Updaters";
-    bgcolor="#22a884";
-
-    addDeck;
-    addPile;
+    // Updaters
     addDeck -> DeckCollectionStore;
     addPile -> PileCollectionStore [label="add"];
     RenderDeckCollection -> addDeck [style=dashed];
@@ -84,14 +70,3 @@ digraph {
     RenderPile -> PileStore [style=dashed, label="del"];
     RenderPile -> PileStore [style=dashed, label="setPart"];
   }
-
-  //subgraph cluster_legend {
-    //label="Legend";
-//
-    //singleEntity [shape=circle, label="Single entity"];
-    //multipleEntities [shape=doublecircle, label="Multiple entities"];
-//
-    //a -> b [label="Call"];
-    //c -> d [style=dashed, label="Conditional call"];
-  //}
-}
