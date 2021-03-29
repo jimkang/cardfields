@@ -46,7 +46,7 @@ export function assembleMainMachine(switchToNewDecks) {
     .get()
     .map((thing) =>
       registry.makeStoreHappen(thing.id, () =>
-        ThingStore(thingPersister, thing)
+        ThingStore(thingPersister, thing) // Rehydrate
       )
     );
 
@@ -110,7 +110,7 @@ function deckResponderMapper(
         thingPersister,
         'pile',
         null,
-        loadThings(pileIdsKey)
+        loadThings(pileIdsKey) // This should come from the deck!
       )
   );
 

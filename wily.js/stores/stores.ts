@@ -104,11 +104,13 @@ export function CollectionStore(
   var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
 
   return Object.assign(base, { add, remove, kind, parentThingId });
+
   function dehydrate(things) {
     return pluck(things, 'id');
   }
 
   function rehydrate(ids) {
+    // TODO: Call base get/rehydrate
     return ids.map(thingPersister.get);
   }
 
