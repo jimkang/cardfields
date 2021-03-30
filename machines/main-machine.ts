@@ -22,6 +22,8 @@ import { RenderDeck, RenderDeckCollection } from '../renderers/deck-renderers';
 import { RenderPile, RenderPileCollection } from '../renderers/pile-renderers';
 import curry from 'lodash.curry';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
+import { DehydrateDeck, RehydrateDeck } from '../things/deck';
+import { rehydratePile } from '../things/pile';
 
 const deckIdsKey = 'ids__decks';
 const pileIdsKey = 'ids__piles';
@@ -34,11 +36,11 @@ export function assembleMainMachine(switchToNewDecks) {
     null,
     () =>
       CollectionStore(
-        deckIdsPersister,
-        thingPersister,
-        'deck',
-        null,
-        loadThings(deckIdsKey)
+        {
+          idsPersister: deckIdsPersister, thingPersister, kind: 'deck', parentThingId: null,
+          vals: loadThings(deckIdsKey),
+          itemRehydrate: RehydrateDeck(thingPersister)
+        }      
       )
   );
 
@@ -46,7 +48,7 @@ export function assembleMainMachine(switchToNewDecks) {
     .get()
     .map((thing) =>
       registry.makeStoreHappen(thing.id, () =>
-        ThingStore(thingPersister, thing) // Rehydrate
+        ThingStore(thingPersister, thing, DehydrateDeck(thingPersister), RehydrateDeck(thingPersister))
       )
     );
 
@@ -106,11 +108,10 @@ function deckResponderMapper(
     null,
     () =>
       CollectionStore(
-        pilesPersister,
-        thingPersister,
-        'pile',
-        null,
-        loadThings(pileIdsKey) // This should come from the deck!
+        {
+          idsPersister: pilesPersister, thingPersister, kind: 'pile', parentThingId: null, 
+          vals: deckStore.get().piles
+        }      
       )
   );
 

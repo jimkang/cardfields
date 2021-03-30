@@ -95,12 +95,8 @@ export function ThingStore(
 }
 
 export function CollectionStore(
-  idsPersister: Persister,
-  thingPersister: Persister,
-  kind: string,
-  parentThingId: string,
-  vals: Thing[]
-): CollectionStoreType {
+{ idsPersister, thingPersister, kind, parentThingId, vals, itemRehydrate }:
+{ idsPersister: Persister; thingPersister: Persister; kind: string; parentThingId: string; vals: Thing[]; itemRehydrate?: (item: unknown) => unknown): CollectionStoreType {
   var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
 
   return Object.assign(base, { add, remove, kind, parentThingId });
@@ -110,8 +106,11 @@ export function CollectionStore(
   }
 
   function rehydrate(ids) {
-    // TODO: Call base get/rehydrate
-    return ids.map(thingPersister.get);
+    var items = ids.map(thingPersister.get);
+    if (itemRehydrate) {
+      items = items.map(itemRehydrate);
+    }
+    return items;
   }
 
   function add(thing: Thing) {
