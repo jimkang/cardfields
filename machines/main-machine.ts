@@ -109,7 +109,10 @@ function deckResponderMapper(
     () =>
       CollectionStore(
         {
-          idsPersister: pilesPersister, thingPersister, kind: 'pile', parentThingId: null, 
+          idsPersister: pilesPersister,
+          thingPersister,
+          kind: 'pile',
+          parentThingId: deckStore.get().id,
           vals: deckStore.get().piles
         }      
       )
