@@ -1,72 +1,102 @@
 digraph {
   graph [fontsize=12, fontname=Ubuntu, penwidth=3];
-  node [fontsize=12, fontname=Ubuntu, shape=circle];
-  edge [fontsize=12, fontname=Ubuntu];
-  nodesep=3;
+  node [fontsize=12, fontname=Ubuntu, shape=circle, style=filled, color="#ffffff"];
+  edge [fontsize=12, fontname=Ubuntu, color="#ffffff", fontcolor="#ffffff", penwidth=2];
+  nodesep=1;
   overlap=false;
-  root=onEstablishPilesContainer;
+  root=thingPersister;
   dim=4;
   mode=ipsep;
   sep=0.4
-    bgcolor="#fde725";
+  bgcolor="#000418";
     
   // Persisters
+  CardsPersister [fillcolor="0.06 0.9 0.8"];
+  PilesPersister [fillcolor="0.06 0.9 0.8"];
+  deckIdsPersister [fillcolor="0.06 0.9 0.8"];
+  thingPersister [fillcolor="0.06 0.9 0.8"];
+  CardsPersister -> PileStore [label="setPart"];
+  CardsPersister -> PileStore [label="get"];
   PilesPersister -> DeckStore [label="setPart"];
   PilesPersister -> DeckStore [label="get"];
   deckIdsPersister -> localStorage [label="setItem"];
   thingPersister -> localStorage [label="setItem"];
+  
+  localStorage [fillcolor="#aaaaaa"];
 
-    // Stores
-    DeckCollectionStore;
-    DeckStore [shape=doublecircle];
-    activeDeckIdentifier;
-    PileCollectionStore;
-    PileStore [shape=doublecircle];
+  // Stores
+  DeckCollectionStore [fillcolor="0.6 0.7 0.7"];
+  DeckStore [shape=doublecircle, fillcolor="0.6 0.7 0.7"];
+  activeDeckIdentifier [fillcolor="0.6 0.7 0.7"];
+  PileCollectionStore [fillcolor="0.6 0.7 0.7"];
+  PileStore [shape=doublecircle, fillcolor="0.6 0.7 0.7"];
+  CardCollectionStore [fillcolor="0.6 0.7 0.7"];
+  CardStore [shape=doublecircle, fillcolor="0.6 0.7 0.7"];
 
+  // Responders
+  onDeckCollectionChange [fillcolor="0.14 0.85 0.95"];
+  onDeckChange [shape=doublecircle, fillcolor="0.14 0.85 0.95"];
+  onPileCollectionChange [fillcolor="0.14 0.85 0.95"];
+  onPileChange [shape=doublecircle, fillcolor="0.14 0.85 0.95"];
+  onEstablishPilesContainer [shape=doublecircle, fillcolor="0.14 0.85 0.95"];
+  onCardCollectionChange [fillcolor="0.14 0.85 0.95"];
+  onCardChange [shape=doublecircle, fillcolor="0.14 0.85 0.95"];
+  onEstablishCardsContainer [shape=doublecircle, fillcolor="0.14 0.85 0.95"];
+  
+  DeckCollectionStore -> onDeckCollectionChange;
+  DeckCollectionStore -> deckIdsPersister [label="write"];
+  activeDeckIdentifier -> onDeckCollectionChange;
+  DeckStore -> onDeckChange;
+  DeckStore -> thingPersister [style=dashed, label="write"];
+  PileCollectionStore -> onPileCollectionChange;
+  PileStore -> onPileChange;
+  PileStore -> thingPersister [style=dashed, label="write"];
+  PileCollectionStore -> PilesPersister [style=dashed, label="write"];
+  CardCollectionStore -> onCardCollectionChange;
+  CardStore -> onCardChange;
+  CardStore -> thingPersister [style=dashed, label="write"];
+  CardCollectionStore -> CardsPersister [style=dashed, label="write"];
 
-    // Responders
-    onDeckCollectionChange;
-    onDeckChange [shape=doublecircle];
-    onPileCollectionChange;
-    onPileChange [shape=doublecircle];
-    onEstablishPilesContainer [shape=doublecircle];
-
-    DeckCollectionStore -> onDeckCollectionChange;
-    DeckCollectionStore -> deckIdsPersister [label="write"];
-    activeDeckIdentifier -> onDeckCollectionChange;
-    DeckStore -> onDeckChange;
-    DeckStore -> thingPersister [style=dashed, label="write"];
-    PileCollectionStore -> onPileCollectionChange;
-    PileStore -> onPileChange;
-    PileStore -> thingPersister [style=dashed, label="write"];
-    PileCollectionStore -> PilesPersister [style=dashed, label="write"]
-
-
-    // Renderers
-    RenderDeckCollection;
-    RenderDeck [shape=doublecircle];
-    RenderPileCollection;
-    RenderPile [shape=doublecircle];
-
-    onDeckCollectionChange -> RenderDeckCollection;
-    onDeckChange -> RenderDeck;
-    RenderDeck -> onEstablishPilesContainer [style=dashed, label="(one-time)"];
-    onEstablishPilesContainer -> RenderPileCollection;
-    onEstablishPilesContainer -> RenderPile;
-
-    onPileCollectionChange -> RenderPileCollection;
-    onPileChange -> RenderPile;
-
-    // Updaters
-    addDeck -> DeckCollectionStore;
-    addPile -> PileCollectionStore [label="add"];
-    RenderDeckCollection -> addDeck [style=dashed];
-    RenderDeck -> activeDeckIdentifier [style=dashed, label="setPart"];
-    RenderDeck -> DeckStore [style=dashed, label="setPart"];
-    RenderDeck -> DeckStore [style=dashed, label="del"];
-    RenderDeck -> DeckCollectionStore [style=dashed, label="remove"];
-    RenderPileCollection -> addPile [style=dashed];
-    RenderPile -> PileCollectionStore [style=dashed, label="remove"];
-    RenderPile -> PileStore [style=dashed, label="del"];
-    RenderPile -> PileStore [style=dashed, label="setPart"];
-  }
+  // Renderers
+  RenderDeckCollection [fillcolor="0.35 0.7 0.7"];
+  RenderDeck [shape=doublecircle, fillcolor="0.35 0.7 0.7"];
+  RenderPileCollection [fillcolor="0.35 0.7 0.7"];
+  RenderPile [shape=doublecircle, fillcolor="0.35 0.7 0.7"];
+  RenderCardCollection [fillcolor="0.35 0.7 0.7"];
+  RenderCard [shape=doublecircle, fillcolor="0.35 0.7 0.7"];
+  
+  onDeckCollectionChange -> RenderDeckCollection;
+  onDeckChange -> RenderDeck;
+  RenderDeck -> onEstablishPilesContainer [style=dashed, label="(one-time)"];
+  RenderPile -> onEstablishCardsContainer [style=dashed, label="(one-time)"];
+  onEstablishPilesContainer -> RenderPileCollection;
+  onEstablishPilesContainer -> RenderPile;
+  onEstablishCardsContainer -> RenderCardCollection;
+  onEstablishCardsContainer -> RenderCard;
+  
+  onPileCollectionChange -> RenderPileCollection;
+  onPileChange -> RenderPile;
+  onCardCollectionChange -> RenderCardCollection;
+  onCardChange -> RenderCard;
+  
+  // Updaters
+  addDeck [fillcolor="0 0.9 0.6"];
+  addPile [fillcolor="0 0.9 0.6"];
+  addCard [fillcolor="0 0.9 0.6"];
+  addDeck -> DeckCollectionStore;
+  addPile -> PileCollectionStore [label="add"]
+  addCard -> CardCollectionStore [label="add"];
+  RenderDeckCollection -> addDeck [style=dashed];
+  RenderDeck -> activeDeckIdentifier [style=dashed, label="setPart"];
+  RenderDeck -> DeckStore [style=dashed, label="setPart"];
+  RenderDeck -> DeckStore [style=dashed, label="del"];
+  RenderDeck -> DeckCollectionStore [style=dashed, label="remove"];
+  RenderPileCollection -> addPile [style=dashed];
+  RenderPile -> PileCollectionStore [style=dashed, label="remove"];
+  RenderPile -> PileStore [style=dashed, label="del"];
+  RenderPile -> PileStore [style=dashed, label="setPart"];
+  RenderCardCollection -> addCard [style=dashed];
+  RenderCard -> CardCollectionStore [style=dashed, label="remove"];
+  RenderCard -> CardStore [style=dashed, label="del"];
+  RenderCard -> CardStore [style=dashed, label="setPart"]
+}
