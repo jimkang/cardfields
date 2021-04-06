@@ -1,11 +1,16 @@
 import type { ThingStoreType, CollectionStoreType } from '../types';
 
-export function OnDeckChange(
+export function OnDeckChange({
   render,
-  collectionStore: CollectionStoreType,
-  activeDeckStore: ThingStoreType,
-  store: ThingStoreType
-) {
+  collectionStore,
+  activeDeckStore,
+  store,
+}: {
+  render;
+  collectionStore: CollectionStoreType;
+  activeDeckStore: ThingStoreType;
+  store: ThingStoreType;
+}) {
   store.subscribe(onDeckChange);
   activeDeckStore.subscribe(onDeckChange);
 

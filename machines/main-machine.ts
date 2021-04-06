@@ -1,11 +1,5 @@
-import type {
-  Deck,
-  Pile,
-  ThingStoreType,
-  CollectionStoreType,
-  Persister,
-} from '../types';
-
+import type { Deck, Pile, ThingStoreType, CollectionStoreType } from '../types';
+import { OnEstablishPilesContainer } from '../responders/render-responders';
 import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
 import { v4 as uuid } from 'uuid';
 import {
@@ -13,20 +7,17 @@ import {
   IdsPersister,
   loadThings,
 } from '../wily.js/persistence/local';
-import { PilesPersister } from '../persisters/piles-persister';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
 import { OnDeckChange, OnPileChange } from '../responders/store-responders';
-import { OnEstablishPilesContainer } from '../responders/render-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import { RenderDeck, RenderDeckCollection } from '../renderers/deck-renderers';
 import { RenderPile, RenderPileCollection } from '../renderers/pile-renderers';
 import curry from 'lodash.curry';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
 import { DehydrateDeck, RehydrateDeck } from '../things/deck';
-import { rehydratePile } from '../things/pile';
-
+import { assembleSubMachine } from './sub-machine';
+import { PilesPersister } from '../persisters/piles-persister';
 const deckIdsKey = 'ids__decks';
-const pileIdsKey = 'ids__piles';
 var deckIdsPersister = IdsPersister(deckIdsKey);
 
 export function assembleMainMachine(switchToNewDecks) {
@@ -35,20 +26,26 @@ export function assembleMainMachine(switchToNewDecks) {
     'deck',
     null,
     () =>
-      CollectionStore(
-        {
-          idsPersister: deckIdsPersister, thingPersister, kind: 'deck', parentThingId: null,
-          vals: loadThings(deckIdsKey),
-          itemRehydrate: RehydrateDeck(thingPersister)
-        }      
-      )
+      CollectionStore({
+        idsPersister: deckIdsPersister,
+        thingPersister,
+        kind: 'deck',
+        parentThingId: null,
+        vals: loadThings(deckIdsKey),
+        itemRehydrate: RehydrateDeck(thingPersister),
+      })
   );
 
   var deckStores = deckCollectionStore
     .get()
     .map((thing) =>
       registry.makeStoreHappen(thing.id, () =>
-        ThingStore(thingPersister, thing, DehydrateDeck(thingPersister), RehydrateDeck(thingPersister))
+        ThingStore(
+          thingPersister,
+          thing,
+          DehydrateDeck(thingPersister),
+          RehydrateDeck(thingPersister)
+        )
       )
     );
 
@@ -64,7 +61,7 @@ export function assembleMainMachine(switchToNewDecks) {
     deckCollectionStore,
     createNewDeck,
     thingPersister,
-    curry(deckResponderMapper)(deckCollectionStore, activeDeckIdentifier),
+    curry(setUpDeckStoreDependents)(deckCollectionStore, activeDeckIdentifier),
     registry
   );
 
@@ -82,7 +79,7 @@ export function assembleMainMachine(switchToNewDecks) {
   updateDeckCollection(deckCollectionStore);
 
   var updateDeckFns = deckStores.map(
-    curry(deckResponderMapper)(deckCollectionStore, activeDeckIdentifier)
+    curry(setUpDeckStoreDependents)(deckCollectionStore, activeDeckIdentifier)
   );
   updateDeckFns.forEach((update, i) => update(deckStores[i]));
 
@@ -91,94 +88,49 @@ export function assembleMainMachine(switchToNewDecks) {
   }
 }
 
-function createNewDeck(): Deck {
-  return { id: `deck-${uuid()}`, title: 'Shabadoo', piles: [] };
-}
 
-// Kind of setting up a sub-machine here.
-function deckResponderMapper(
+function setUpDeckStoreDependents(
   deckCollectionStore: CollectionStoreType,
   activeDeckIdentifier: ThingStoreType,
   deckStore: ThingStoreType
 ) {
-  var pilesPersister: Persister = PilesPersister(deckStore);
-
-  var pileCollectionStore = registry.makeCollectionStoreHappen(
-    'pile',
-    null,
-    () =>
-      CollectionStore(
-        {
-          idsPersister: pilesPersister,
-          thingPersister,
-          kind: 'pile',
-          parentThingId: deckStore.get().id,
-          vals: deckStore.get().piles
-        }      
-      )
-  );
-
-  var pileStores = pileCollectionStore
-    .get()
-    .map((thing) =>
-      registry.makeStoreHappen(thing.id, () =>
-        ThingStore(thingPersister, thing)
-      )
-    );
-
-  var addPile = AddThing(
-    pileCollectionStore,
-    createNewPile,
-    thingPersister,
-    curry(OnPileChange)(RenderPile(), pileCollectionStore, deckStore),
-    registry
-  );
-
-  var renderPileCollection = RenderPileCollection({
-    parentSelector: `#${deckStore.get().id} .pile-collection-container`,
-    addThing: addPile,
-    renderPileCollection,
-    pileCollectionStore,
+  var {
+    renderCollection,
+    collectionStore,
+    itemStores,
+    onItemChangeMapper,
+  } = assembleSubMachine({
+    parentStore: deckStore,
+    CollectionPersister: PilesPersister,
+    kind: 'pile',
+    createNewThing: createNewPile,
+    RenderCollection: RenderPileCollection,
+    RenderItem: RenderPile,
+    ItemChangeResponder: OnPileChange
   });
 
-  var onPileCollectionChange = OnCollectionChange(
-    renderPileCollection,
-    pileCollectionStore
+  var onPileChangeFns = itemStores.map(
+    curry(onItemChangeMapper)(collectionStore, deckStore)
   );
-  onPileCollectionChange(pileCollectionStore);
-  var onPileChangeFns = pileStores.map(
-    curry(onPileChangeMapper)(pileCollectionStore, deckStore)
-  );
+  // Deck item renderer.
+  var render = RenderDeck({
+    parentSelector: `#${deckStore.get().id}`,
+    renderPileCollection: renderCollection,
+    pileCollectionStore: collectionStore,
+    onEstablishElement: OnEstablishPilesContainer(itemStores, onPileChangeFns),
+  });
+  return OnDeckChange({
+    render,
+    collectionStore: deckCollectionStore,
+    activeDeckStore: activeDeckIdentifier,
+    store: deckStore,
+  });
+}
 
-  return OnDeckChange(
-    RenderDeck({
-      parentSelector: `#${deckStore.get().id}`,
-      renderPileCollection,
-      pileCollectionStore,
-      onEstablishElement: OnEstablishPilesContainer(
-        pileStores,
-        onPileChangeFns
-      ),
-    }),
-    deckCollectionStore,
-    activeDeckIdentifier,
-    deckStore
-  );
+function createNewDeck(): Deck {
+  return { id: `deck-${uuid()}`, title: 'New deck', piles: [] };
 }
 
 function createNewPile(): Pile {
   return { id: `pile-${uuid()}`, title: 'New pile', cards: [] };
-}
-
-function onPileChangeMapper(
-  pileCollectionStore: CollectionStoreType,
-  containingDeckStore: ThingStoreType,
-  store: ThingStoreType
-) {
-  return OnPileChange(
-    RenderPile(),
-    pileCollectionStore,
-    containingDeckStore,
-    store
-  );
 }

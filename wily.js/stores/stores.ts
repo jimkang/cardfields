@@ -94,9 +94,21 @@ export function ThingStore(
   }
 }
 
-export function CollectionStore(
-{ idsPersister, thingPersister, kind, parentThingId, vals, itemRehydrate }:
-{ idsPersister: Persister; thingPersister: Persister; kind: string; parentThingId: string; vals: Thing[]; itemRehydrate?: (item: unknown) => unknown): CollectionStoreType {
+export function CollectionStore({
+  idsPersister,
+  thingPersister,
+  kind,
+  parentThingId,
+  vals,
+  itemRehydrate,
+}: {
+  idsPersister: Persister;
+  thingPersister: Persister;
+  kind: string;
+  parentThingId: string;
+  vals: Thing[];
+  itemRehydrate?: (item: unknown) => unknown;
+}): CollectionStoreType {
   var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
 
   return Object.assign(base, { add, remove, kind, parentThingId });

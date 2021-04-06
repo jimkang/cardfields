@@ -1,4 +1,4 @@
-import type { Pile, Persister, ThingStoreType } from '../types';
+import type { Pile, Persister, ThingStoreType, Deck } from '../types';
 
 export function PilesPersister(deckStore: ThingStoreType): Persister {
   return {
@@ -11,7 +11,7 @@ export function PilesPersister(deckStore: ThingStoreType): Persister {
       deckStore.setPart({ piles: [] });
     },
     get() {
-      return deckStore.getRaw().piles;
+      return (deckStore.getRaw() as Deck).piles;
     },
   };
 }
