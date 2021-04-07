@@ -18,37 +18,8 @@ import { DehydrateDeck, RehydrateDeck } from '../things/deck';
 import { assembleSubMachine } from './sub-machine';
 import { PilesPersister } from '../persisters/piles-persister';
 const deckIdsKey = 'ids__decks';
-var deckIdsPersister = IdsPersister(deckIdsKey);
 
 export function assembleMainMachine(switchToNewDecks) {
-  // Stores.
-  var deckCollectionStore = registry.makeCollectionStoreHappen(
-    'deck',
-    null,
-    () =>
-      CollectionStore({
-        idsPersister: deckIdsPersister,
-        thingPersister,
-        kind: 'deck',
-        parentThingId: null,
-        vals: loadThings(deckIdsKey),
-        itemRehydrate: RehydrateDeck(thingPersister),
-      })
-  );
-
-  var deckStores = deckCollectionStore
-    .get()
-    .map((thing) =>
-      registry.makeStoreHappen(thing.id, () =>
-        ThingStore(
-          thingPersister,
-          thing,
-          DehydrateDeck(thingPersister),
-          RehydrateDeck(thingPersister)
-        )
-      )
-    );
-
   var activeDeckIdentifier = registry.makeStoreHappen('active-deck', () =>
     ThingStore(
       thingPersister,
@@ -56,32 +27,24 @@ export function assembleMainMachine(switchToNewDecks) {
     )
   );
 
-  // Updaters.
-  var addDeck = AddThing(
-    deckCollectionStore,
-    createNewDeck,
-    thingPersister,
-    curry(setUpDeckStoreDependents)(deckCollectionStore, activeDeckIdentifier),
-    registry
-  );
-
-  // Renderers.
-  var renderDeckCollection = RenderDeckCollection({
-    parentSelector: '.root',
-    addThing: addDeck,
+  var {
+    collectionStore,
+    itemStores,
+  } = assembleSubMachine({
+    parentStore: activeDeckIdentifier,
+    CollectionPersister: () => IdsPersister(deckIdsKey),
+    kind: 'deck',
+    createNewThing: createNewDeck,
+    RenderCollection: RenderDeckCollection,
+    RenderItem: RenderDeck,
+    ItemChangeResponder: OnDeckChange,
+    itemRehydrate: RehydrateDeck(thingPersister),
   });
 
-  // Responders.
-  var updateDeckCollection = OnCollectionChange(
-    renderDeckCollection,
-    deckCollectionStore
+  var onDeckChangeFns = itemStores.map(
+    curry(setUpDeckStoreDependents)(collectionStore, activeDeckIdentifier)
   );
-  updateDeckCollection(deckCollectionStore);
-
-  var updateDeckFns = deckStores.map(
-    curry(setUpDeckStoreDependents)(deckCollectionStore, activeDeckIdentifier)
-  );
-  updateDeckFns.forEach((update, i) => update(deckStores[i]));
+  onDeckChangeFns.forEach((update, i) => update(itemStores[i]));
 
   if (switchToNewDecks) {
     activeDeckIdentifier.subscribe(switchToNewDecks);
@@ -106,7 +69,8 @@ function setUpDeckStoreDependents(
     createNewThing: createNewPile,
     RenderCollection: RenderPileCollection,
     RenderItem: RenderPile,
-    ItemChangeResponder: OnPileChange
+    ItemChangeResponder: OnPileChange,
+    parentThingId: deckStore.get().id
   });
 
   var onPileChangeFns = itemStores.map(

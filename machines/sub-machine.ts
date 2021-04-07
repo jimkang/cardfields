@@ -2,7 +2,6 @@ import { ThingStoreType, Persister, Thing, CollectionStoreType } from '../types'
 import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
 import { thingPersister } from '../wily.js/persistence/local';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
-import { OnPileChange } from '../responders/store-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import curry from 'lodash.curry';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
@@ -14,7 +13,9 @@ export function assembleSubMachine({
   createNewThing,
   RenderCollection,
   RenderItem,
-  ItemChangeResponder
+  ItemChangeResponder,
+  parentThingId,
+  itemRehydrate
 }: {
   parentStore: ThingStoreType;
   CollectionPersister: (parentStore: ThingStoreType) => Persister;
@@ -22,7 +23,9 @@ export function assembleSubMachine({
   createNewThing;
   RenderCollection;
   RenderItem;
-  ItemChangeResponder
+    ItemChangeResponder;
+    parentThingId?: string;
+    itemRehydrate?: (val: any) => Thing;
 },
 ) {
   // Persister.
@@ -34,8 +37,9 @@ export function assembleSubMachine({
       idsPersister,
       thingPersister,
       kind,
-      parentThingId: parentStore.get().id,
-      vals: parentStore.get().piles,
+      parentThingId,
+      vals: parentStore.get()[`${kind}s`],
+      itemRehydrate
     })
   );
 
@@ -53,7 +57,7 @@ export function assembleSubMachine({
     collectionStore,
     createNewThing,
     thingPersister,
-    curry(OnPileChange)(RenderItem(), collectionStore, parentStore),
+    curry(ItemChangeResponder)(RenderItem(), collectionStore, parentStore),
     registry
   );
 
