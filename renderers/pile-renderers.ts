@@ -3,6 +3,8 @@ import { establish } from '../wily.js/rendering/establish';
 import type { Pile, ThingStoreType, CollectionStoreType } from '../types';
 import curry from 'lodash.curry';
 
+const collectionControlsClass = 'piles-collection-controls';
+
 export function RenderPile() {
   return render;
 
@@ -71,8 +73,8 @@ export function RenderPileCollection({ parentSelector, addThing }) {
     var controlsParent = establish(
       parentSel,
       'div',
-      '.pile-collection-controls',
-      (sel) => sel.attr('class', 'piles-collection-controls')
+      `.${collectionControlsClass}`,
+      (sel) => sel.attr('class', collectionControlsClass)
     );
     establish(controlsParent, 'button', '.add-pile-button', initAddButton);
 
