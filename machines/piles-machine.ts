@@ -1,4 +1,4 @@
-import { ThingStoreType, Persister, Thing, CollectionStoreType } from '../types';
+import { ThingStoreType, Persister, Thing, CollectionStoreType, Pile } from '../types';
 import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
 import { thingPersister } from '../wily.js/persistence/local';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
@@ -6,34 +6,25 @@ import { OnPileChange } from '../responders/store-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import curry from 'lodash.curry';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
+import { PilesPersister } from '../persisters/piles-persister';
+import { v4 as uuid } from 'uuid';
+import { RenderPile, RenderPileCollection } from '../renderers/pile-renderers';
 
-export function assembleSubMachine({
+export function assemblePilesMachine({
   parentStore,
-  CollectionPersister,
-  kind,
-  createNewThing,
-  RenderCollection,
-  RenderItem,
-  ItemChangeResponder
 }: {
-  parentStore: ThingStoreType;
-  CollectionPersister: (parentStore: ThingStoreType) => Persister;
-  kind: string;
-  createNewThing;
-  RenderCollection;
-  RenderItem;
-  ItemChangeResponder
+    parentStore: ThingStoreType;
 },
 ) {
-  // Persister.
-  var idsPersister: Persister = CollectionPersister(parentStore);
+  // Persister
+  var idsPersister: Persister = PilesPersister(parentStore);
 
   // CollectionStore.
   var collectionStore = registry.makeCollectionStoreHappen('pile', null, () =>
     CollectionStore({
       idsPersister,
       thingPersister,
-      kind,
+      kind: 'pile',
       parentThingId: parentStore.get().id,
       vals: parentStore.get().piles,
     })
@@ -51,14 +42,14 @@ export function assembleSubMachine({
   // Updater.
   var addThing = AddThing(
     collectionStore,
-    createNewThing,
+    createNewPile,
     thingPersister,
-    curry(OnPileChange)(RenderItem(), collectionStore, parentStore),
+    curry(OnPileChange)(RenderPile(), collectionStore, parentStore),
     registry
   );
 
   // Renderer.
-  var renderCollection = RenderCollection({
+  var renderCollection = RenderPileCollection({
     parentSelector: `#${parentStore.get().id} .pile-collection-container`,
     addThing
   });
@@ -79,11 +70,15 @@ export function assembleSubMachine({
     containingItemStore: ThingStoreType,
     store: ThingStoreType
   ) {
-    return ItemChangeResponder(
-      RenderItem(),
+    return OnPileChange(
+      RenderPile(),
       collectionStore,
       containingItemStore,
       store
     );
   }
+}
+
+function createNewPile(): Pile {
+  return { id: `pile-${uuid()}`, title: 'New pile', cards: [] };
 }
