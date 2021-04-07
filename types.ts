@@ -57,4 +57,6 @@ export interface ThingStoreType extends StoreType<Thing> {
 export interface CollectionStoreType extends StoreType<Thing[]> {
   add(Thing): void;
   remove(Thing): void;
+  kind: string;
+  parentThingId: string;
 }

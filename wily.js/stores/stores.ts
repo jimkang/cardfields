@@ -1,9 +1,20 @@
-import type { Thing, Persister, ThingStoreType, CollectionStoreType, StoreType } from '../types';
+import type {
+  Thing,
+  Persister,
+  ThingStoreType,
+  CollectionStoreType,
+  StoreType,
+} from '../../types';
 import pluck from 'lodash.pluck';
 
 var resolved = Promise.resolve();
 
-export function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, rehydrate?: (any) => T): StoreType<T> {
+export function Store<T>(
+  persister: Persister,
+  val: T,
+  dehydrate?: (T) => void,
+  rehydrate?: (any) => T
+): StoreType<T> {
   var value;
   var subscribers = [];
   set(val);
@@ -35,7 +46,7 @@ export function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, 
       if (fnIndex > -1) {
         subscribers.splice(fnIndex, 1);
       }
-    }
+    },
   };
 
   return store;
@@ -64,9 +75,14 @@ export function Store<T>(persister: Persister, val: T, dehydrate?: (T) => void, 
   }
 }
 
-export function ThingStore(persister: Persister, val: Thing, dehydrate?: (Thing) => void, rehydrate?: (any) => Thing): ThingStoreType {
+export function ThingStore(
+  persister: Persister,
+  val: Thing,
+  dehydrate?: (Thing) => void,
+  rehydrate?: (any) => Thing
+): ThingStoreType {
   var base = Store<Thing>(persister, val, dehydrate, rehydrate);
-  
+
   return Object.assign(base, { del });
 
   function del() {
@@ -78,19 +94,37 @@ export function ThingStore(persister: Persister, val: Thing, dehydrate?: (Thing)
   }
 }
 
-export function CollectionStore(idsPersister: Persister, thingPersister: Persister, vals: Thing[]): CollectionStoreType {
+export function CollectionStore({
+  idsPersister,
+  thingPersister,
+  kind,
+  parentThingId,
+  vals,
+  itemRehydrate,
+}: {
+  idsPersister: Persister;
+  thingPersister: Persister;
+  kind: string;
+  parentThingId: string;
+  vals: Thing[];
+  itemRehydrate?: (item: unknown) => unknown;
+}): CollectionStoreType {
   var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
 
-  return Object.assign(base, { add, remove });
+  return Object.assign(base, { add, remove, kind, parentThingId });
 
   function dehydrate(things) {
     return pluck(things, 'id');
   }
 
   function rehydrate(ids) {
-    return ids.map(thingPersister.get);
+    var items = ids.map(thingPersister.get);
+    if (itemRehydrate) {
+      items = items.map(itemRehydrate);
+    }
+    return items;
   }
-  
+
   function add(thing: Thing) {
     // TODO: Dupes
     var ids = base.getRaw() as string[];
@@ -104,4 +138,11 @@ export function CollectionStore(idsPersister: Persister, thingPersister: Persist
     ids.splice(index, 1);
     base.setRaw(ids);
   }
+}
+
+export function getCollectionStoreId(kind: string, parentThingId: string) {
+  if (parentThingId) {
+    return `ids__${kind}s__of__${parentThingId}`;
+  }
+  return `ids__${kind}s`;
 }

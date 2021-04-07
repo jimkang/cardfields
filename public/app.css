@@ -190,6 +190,14 @@ input {
   border: solid green 4px;
 }
 
+[contenteditable=true] {
+  border: 2px dashed #444;
+}
+
+.pile {
+  background-color: #df3;
+}
+
 @media all and (max-height: 568px) {
   body {
     font-size: 18px;
