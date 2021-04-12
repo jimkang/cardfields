@@ -2,10 +2,12 @@ import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
 import type { Pile, ThingStoreType, CollectionStoreType } from '../types';
 import curry from 'lodash.curry';
+import { cardsContainerClass, pilesContainerClass, pilesControlsClass } from '../consts';
 
-const collectionControlsClass = 'piles-collection-controls';
-
-export function RenderPile() {
+export function RenderPile({
+  onEstablishChildContainer,
+  renderCardCollection,
+  cardCollectionStore }) {
   return render;
 
   function render(
@@ -33,6 +35,8 @@ export function RenderPile() {
     );
     descSel.text(pile.text);
 
+    establish(parentSel, 'div', `.${pilesContainerClass}`, initCardsContainer);
+
     establish(parentSel, 'button', '.remove-pile-button', initRemoveButton);
 
     function initEditable(prop: string, sel) {
@@ -54,6 +58,16 @@ export function RenderPile() {
         .text('Delete');
     }
 
+    function initCardsContainer(sel) {
+      sel.attr('class', cardsContainerClass);
+      renderCardCollection(cardCollectionStore);
+      if (onEstablishChildContainer) {
+        onEstablishChildContainer(sel.node());
+        // Should never need this again.
+        onEstablishChildContainer = null;
+      }
+    }
+
     function removeThing() {
       collectionStore.remove(pile);
       store.del();
@@ -73,8 +87,8 @@ export function RenderPileCollection({ parentSelector, addThing }) {
     var controlsParent = establish(
       parentSel,
       'div',
-      `.${collectionControlsClass}`,
-      (sel) => sel.attr('class', collectionControlsClass)
+      `.${pilesControlsClass}`,
+      (sel) => sel.attr('class', pilesControlsClass)
     );
     establish(controlsParent, 'button', '.add-pile-button', initAddButton);
 

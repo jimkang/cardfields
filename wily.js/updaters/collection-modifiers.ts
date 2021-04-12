@@ -1,16 +1,9 @@
-import { ThingStore } from '../stores/stores';
-
 export function AddThing(
-  collectionStore,
-  createNewThing,
-  thingPersister,
-  createItemResponder,
-  storeRegistry
-) {
+  { collectionStore, createNewThingInStore, createItemResponder, storeRegistry }: { collectionStore; createNewThingInStore; thingPersister; createItemResponder; storeRegistry; }) {
   return addThing;
 
   function addThing() {
-    var newStore = ThingStore(thingPersister, createNewThing());
+    var newStore = createNewThingInStore();
     if (storeRegistry) {
       storeRegistry.putStore(newStore);
     }

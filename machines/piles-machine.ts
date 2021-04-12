@@ -1,4 +1,10 @@
-import { ThingStoreType, Persister, Thing, CollectionStoreType, Pile } from '../types';
+import {
+  ThingStoreType,
+  Persister,
+  Thing,
+  CollectionStoreType,
+  Pile,
+} from '../types';
 import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
 import { thingPersister } from '../wily.js/persistence/local';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
@@ -6,18 +12,21 @@ import { OnPileChange } from '../responders/store-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import curry from 'lodash.curry';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
-import { PilesPersister } from '../persisters/piles-persister';
+import { PiggybackPersister } from '../persisters/piggyback-persister';
 import { v4 as uuid } from 'uuid';
 import { RenderPile, RenderPileCollection } from '../renderers/pile-renderers';
+import { pilesContainerClass } from '../consts';
+import { OnEstablishPilesContainer } from '../responders/render-responders';
+import { assembleCardsMachine } from './cards-machine';
+import { DehydratePile, RehydratePile } from '../things/pile';
 
 export function assemblePilesMachine({
   parentStore,
 }: {
-    parentStore: ThingStoreType;
-},
-) {
+  parentStore: ThingStoreType;
+  }) {
   // Persister
-  var idsPersister: Persister = PilesPersister(parentStore);
+  var idsPersister: Persister = PiggybackPersister(parentStore, 'piles');
 
   // CollectionStore.
   var collectionStore = registry.makeCollectionStoreHappen('pile', null, () =>
@@ -33,25 +42,21 @@ export function assemblePilesMachine({
   // Item stores.
   var itemStores = collectionStore
     .get()
-    .map((thing: Thing) =>
-      registry.makeStoreHappen(thing.id, () =>
-        ThingStore(thingPersister, thing)
-      )
-    );
+    .map(createPileStore)
 
   // Updater.
-  var addThing = AddThing(
+  var addThing = AddThing({
     collectionStore,
-    createNewPile,
+    createNewThingInStore: () => createPileStore(createNewPile()),
     thingPersister,
-    curry(OnPileChange)(RenderPile(), collectionStore, parentStore),
-    registry
-  );
+    createItemResponder: setUpPileStoreDependents,
+    storeRegistry: registry,
+  });
 
   // Renderer.
   var renderCollection = RenderPileCollection({
-    parentSelector: `#${parentStore.get().id} .pile-collection-container`,
-    addThing
+    parentSelector: `#${parentStore.get().id} .${pilesContainerClass}`,
+    addThing,
   });
 
   // Responder.
@@ -63,20 +68,45 @@ export function assemblePilesMachine({
   // Init containers.
   onCollectionChange(collectionStore);
 
-  return { renderCollection, collectionStore, itemStores, onItemChangeMapper };
+  // Item responders.
+  var onItemChangeFns = itemStores.map(
+    setUpPileStoreDependents
+  );
 
-  function onItemChangeMapper(
-    collectionStore: CollectionStoreType,
-    containingItemStore: ThingStoreType,
-    store: ThingStoreType
+  return { renderCollection, collectionStore, itemStores, onItemChangeFns };
+
+  function setUpPileStoreDependents(
+    pileStore: ThingStoreType
   ) {
-    return OnPileChange(
-      RenderPile(),
+    // Cards machine.
+    var {
       collectionStore,
-      containingItemStore,
-      store
-    );
+      itemStores,
+      onItemChangeFns,
+    } = assembleCardsMachine({
+      parentStore: pileStore,
+    });
+    // Pile item renderer.
+    var render = RenderPile({
+      renderCardCollection: () => { },
+      cardCollectionStore: collectionStore,
+      onEstablishChildContainer: OnEstablishPilesContainer(
+        itemStores,
+        onItemChangeFns
+      ),
+    });
+    return OnPileChange({
+      render,
+      collectionStore,
+      deckStore: parentStore,
+      pileStore,
+    });
   }
+}
+
+function createPileStore(pile: Pile) {
+  return registry.makeStoreHappen(pile.id, () => ThingStore(thingPersister, pile, DehydratePile(thingPersister), RehydratePile(thingPersister))
+  );
 }
 
 function createNewPile(): Pile {

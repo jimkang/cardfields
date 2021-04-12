@@ -9,6 +9,8 @@ import pluck from 'lodash.pluck';
 
 var resolved = Promise.resolve();
 
+// Values are always stored dehydrate and handed out
+// rehydrated.
 export function Store<T>(
   persister: Persister,
   val: T,
@@ -20,12 +22,7 @@ export function Store<T>(
   set(val);
 
   var store: StoreType<T> = {
-    get() {
-      if (rehydrate) {
-        return rehydrate(value);
-      }
-      return value;
-    },
+    get,
     getRaw() {
       return value;
     },
@@ -36,7 +33,9 @@ export function Store<T>(
       if (typeof val !== 'object') {
         throw new Error('setPart cannot be used on a non-object value.');
       }
-      set(Object.assign(value, val));
+      // Since we are calling set, which takes a hydrated
+      // value, we must use get() to get one.
+      set(Object.assign(get(), val));
     },
     subscribe(fn) {
       subscribers.push(fn);
@@ -50,6 +49,13 @@ export function Store<T>(
   };
 
   return store;
+
+  function get() {
+    if (rehydrate) {
+      return rehydrate(value);
+    }
+    return value;
+  }
 
   function set(val) {
     if (dehydrate) {
