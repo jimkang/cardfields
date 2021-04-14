@@ -1,6 +1,6 @@
-import type { Deck, ThingStoreType, CollectionStoreType } from '../types';
+import type { Deck, CollectionStoreType, Thing, StoreType } from '../types';
 import { OnEstablishPilesContainer } from '../responders/render-responders';
-import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
+import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { v4 as uuid } from 'uuid';
 import {
   thingPersister,
@@ -39,7 +39,7 @@ export function assembleMainMachine(switchToNewDecks) {
     .map(createDeckStore);
 
   var activeDeckIdentifier = registry.makeStoreHappen('active-deck', () =>
-    ThingStore(
+    Store<Thing>(
       thingPersister,
       thingPersister.get('active-deck') || { id: 'active-deck', deckId: '' }
     )
@@ -81,10 +81,10 @@ export function assembleMainMachine(switchToNewDecks) {
 }
 
 function createDeckStore(deck: Deck) {
-  return registry.makeStoreHappen(deck.id, () => ThingStore(
+  return registry.makeStoreHappen(deck.id, () => Store<Thing>(
     thingPersister,
     deck,
-    DehydrateDeck(thingPersister),
+    DehydrateDeck(),
     RehydrateDeck(thingPersister)
   )
   );
@@ -92,8 +92,8 @@ function createDeckStore(deck: Deck) {
 
 function setUpDeckStoreDependents(
   deckCollectionStore: CollectionStoreType,
-  activeDeckIdentifier: ThingStoreType,
-  deckStore: ThingStoreType
+  activeDeckIdentifier: StoreType<Thing>,
+  deckStore: StoreType<Thing>
 ) {
   var {
     renderCollection,
@@ -116,6 +116,7 @@ function setUpDeckStoreDependents(
   });
   return OnDeckChange({
     render,
+    renderCollection,
     collectionStore: deckCollectionStore,
     activeDeckStore: activeDeckIdentifier,
     store: deckStore,

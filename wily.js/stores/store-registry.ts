@@ -1,8 +1,8 @@
-import type { ThingStoreType, CollectionStoreType } from '../../types';
+import type { CollectionStoreType, StoreType, Thing } from '../../types';
 import { getCollectionStoreId } from '../stores/stores';
 
 export function StoreRegistry() {
-  var storesById: Record<string, ThingStoreType> = {};
+  var storesById: Record<string, StoreType<Thing>> = {};
   var collectionStoresById: Record<string, CollectionStoreType> = {};
   // TODO: Use this, make all CollectionStore construction use this.
 
@@ -17,11 +17,11 @@ export function StoreRegistry() {
     makeCollectionStoreHappen,
   };
 
-  function getStore(id: string): ThingStoreType {
+  function getStore(id: string): StoreType<Thing> {
     return storesById[id];
   }
 
-  function makeStoreHappen(id: string, construct: () => ThingStoreType) {
+  function makeStoreHappen(id: string, construct: () => StoreType<Thing>) {
     var store = getStore(id);
     if (store) {
       return store;
@@ -32,7 +32,7 @@ export function StoreRegistry() {
     return store;
   }
 
-  function putStore(store: ThingStoreType): ThingStoreType {
+  function putStore(store: StoreType<Thing>): StoreType<Thing> {
     storesById[store.get().id] = store;
     return store;
   }

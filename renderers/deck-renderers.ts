@@ -1,6 +1,6 @@
 import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
-import type { Deck, ThingStoreType, CollectionStoreType } from '../types';
+import type { Deck, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 import { pilesContainerClass } from '../consts';
 //import { RenderPileCollection } from './pile-renderers';
@@ -22,8 +22,8 @@ export function RenderDeck({
 
   function render(
     collectionStore: CollectionStoreType,
-    store: ThingStoreType,
-    activeDeckIdentfier: ThingStoreType
+    store: StoreType<Thing>,
+    activeDeckIdentfier: StoreType<Thing>
   ) {
     var deck: Deck = store.get();
     const isActive = activeDeckIdentfier.get().deck === store.get().id;

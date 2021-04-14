@@ -1,9 +1,9 @@
-import type { Persister, ThingStoreType } from '../types';
+import type { Persister, StoreType, Thing } from '../types';
 
 // This might be causing piles to be an object
 // instead of an array!
 export function PiggybackPersister(
-  parentStore: ThingStoreType,
+  parentStore: StoreType<Thing>,
   collectionProp: string
 ): Persister {
   return {

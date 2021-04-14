@@ -1,15 +1,24 @@
-import type { ThingStoreType, CollectionStoreType } from '../types';
+import {
+  Card,
+  CollectionStoreType,
+  Deck,
+  Pile,
+  StoreType,
+  Thing,
+} from '../types';
 
 export function OnDeckChange({
   render,
+  renderCollection,
   collectionStore,
   activeDeckStore,
   store,
 }: {
   render;
+  renderCollection;
   collectionStore: CollectionStoreType;
-  activeDeckStore: ThingStoreType;
-  store: ThingStoreType;
+  activeDeckStore: StoreType<Thing>;
+  store: StoreType<Deck>;
 }) {
   store.subscribe(onDeckChange);
   activeDeckStore.subscribe(onDeckChange);
@@ -17,6 +26,11 @@ export function OnDeckChange({
   return onDeckChange;
 
   function onDeckChange() {
+    if (store.isDeleted()) {
+      renderCollection(collectionStore);
+      return;
+    }
+
     render(collectionStore, store, activeDeckStore);
   }
 }
@@ -24,21 +38,28 @@ export function OnDeckChange({
 // TODO: Generic OnThingChange.
 export function OnPileChange({
   render,
+  renderCollection,
   collectionStore,
   deckStore,
   pileStore,
 }: {
   render;
+  renderCollection;
   collectionStore: CollectionStoreType;
-  deckStore: ThingStoreType;
-  pileStore: ThingStoreType;
+  deckStore: StoreType<Deck>;
+  pileStore: StoreType<Pile>;
 }) {
   pileStore.subscribe(onPileChange);
 
   return onPileChange;
 
-  function onPileChange() {
-    render(collectionStore, deckStore, pileStore);
+  function onPileChange(store: StoreType<Thing>) {
+    if (store.isDeleted()) {
+      renderCollection(collectionStore);
+      return;
+    }
+
+    render(collectionStore, deckStore, store);
   }
 }
 
@@ -50,8 +71,8 @@ export function OnCardChange({
 }: {
   render;
   collectionStore: CollectionStoreType;
-  pileStore: ThingStoreType;
-  cardStore: ThingStoreType;
+  pileStore: StoreType<Pile>;
+  cardStore: StoreType<Card>;
 }) {
   cardStore.subscribe(onCardChange);
 

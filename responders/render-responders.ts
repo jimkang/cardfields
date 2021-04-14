@@ -1,8 +1,8 @@
 import { cardsContainerClass, pilesContainerClass } from '../consts';
-import type { ThingStoreType } from '../types';
+import { StoreType, Thing } from '../types';
 
 export function OnEstablishPilesContainer(
-  pileStores: ThingStoreType[],
+  pileStores: StoreType<Thing>[],
   onPileChangeFns
 ) {
   return onEstablishElement;
@@ -15,7 +15,7 @@ export function OnEstablishPilesContainer(
 }
 
 export function OnEstablishCardsCardsContainer(
-  cardStores: ThingStoreType[],
+  cardStores: StoreType<Thing>[],
   onCardChangeFns
 ) {
   return onEstablishElement;

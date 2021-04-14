@@ -5,7 +5,7 @@ export function RehydrateDeck(thingPersister: Persister) {
 
   // These functions should not mess with val.
   function rehydrateDeck(val): Deck {
-    if (!val.piles) {
+    if (val === null || !val.piles) {
       return val;
     }
 
@@ -27,21 +27,25 @@ export function RehydrateDeck(thingPersister: Persister) {
   }
 }
 
-export function DehydrateDeck(thingPersister: Persister) {
+export function DehydrateDeck() {
   return dehydrateDeck;
 
   function dehydrateDeck(val): Deck {
-    if (!val.piles) {
+    if (val === null || !val.piles) {
       return val;
     }
 
-    if (val.piles.length > 0 && typeof val.piles[0] === 'string') {
-      throw new Error(
-        'dehydratePile called on possibly already-dehydrated pile.'
-      );
+    if (val.piles.length > 0) {
+      if (typeof val.piles[0] === 'string') {
+        throw new Error(
+          'dehydrateDeck called on possibly already-dehydrated deck.'
+        );
+      }
+      if (val.piles[0] === null || val.piles[0] === undefined) {
+        throw new Error('dehydrateDeck called on deck with invalid pile.');
+      }
     }
 
-    // TODO: Maybe deep copy?
     var dehydrated = Object.assign({}, val, {
       piles: val.piles.map((pile) => pile.id),
     });

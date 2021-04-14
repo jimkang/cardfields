@@ -1,12 +1,13 @@
 //import type { Card } from '../../types';
-import { ThingStore, CollectionStore } from '../../wily.js/stores';
-import type { ThingStoreType, CollectionStoreType } from '../../types';
+import { CollectionStore } from '../../wily.js/stores/stores';
 import { select } from 'd3-selection';
 import { thingPersister, IdsPersister, loadThings } from '../../wily.js/persistence/local';
 import { v4 as uuid } from 'uuid';
 import { establish } from '../../wily.js/rendering/establish';
 import { Update, UpdateCollection } from '../../wily.js/updaters/basic-updaters';
 import { AddThing } from '../../wily.js/downdaters/collection-modifiers';
+import { CollectionStoreType, StoreType, Thing } from '../../types';
+import { Store } from '../../wily.js/stores/stores';
 
 var container = {};
 
@@ -17,7 +18,7 @@ var addThing = AddThing(collectionStore, createNewThing, thingPersister, createI
 var renderCollection = RenderCollection({ parentSelector: '.root', addThing });
 var updateCollection = UpdateCollection(renderCollection, collectionStore);
 updateCollection(collectionStore);
-var itemStores = collectionStore.get().map(thing => ThingStore(thingPersister, thing));
+var itemStores = collectionStore.get().map(thing => Store<Thing>(thingPersister, thing));
 var updateItems = itemStores.map(createItemUpdater);
 updateItems.forEach((update, i) => update(itemStores[i]));
 
@@ -25,7 +26,7 @@ updateItems.forEach((update, i) => update(itemStores[i]));
 function Render({ parentSelector }) {
   return render;
 
-  function render(collectionStore: CollectionStoreType, store: ThingStoreType) {
+  function render(collectionStore: CollectionStoreType, store: StoreType<Thing>) {
 
     var parentSel = select(parentSelector);
     var nameSel = establish(parentSel, 'div', `#${store.get().id}`, initName);
@@ -87,7 +88,7 @@ function RenderCollection({ parentSelector, addThing }) {
   }
 }
 
-function createItemUpdater(store: ThingStoreType) {
+function createItemUpdater(store: StoreType<Thing>) {
   return Update(Render({ parentSelector: `#${store.get().id}`}), collectionStore, store);
 }
 

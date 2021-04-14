@@ -1,6 +1,6 @@
 import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
-import type { Card, ThingStoreType, CollectionStoreType } from '../types';
+import type { Card, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 import { cardsControlsClass } from '../consts';
 
@@ -9,8 +9,8 @@ export function RenderCard() {
 
   function render(
     collectionStore: CollectionStoreType,
-    containingPileStore: ThingStoreType,
-    store: ThingStoreType
+    containingPileStore: StoreType<Thing>,
+    store: StoreType<Thing>
   ) {
     var card: Card = store.get();
     const parentSelector = `#${card.id}`;

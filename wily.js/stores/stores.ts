@@ -1,7 +1,6 @@
 import type {
   Thing,
   Persister,
-  ThingStoreType,
   CollectionStoreType,
   StoreType,
 } from '../../types';
@@ -19,6 +18,8 @@ export function Store<T>(
 ): StoreType<T> {
   var value;
   var subscribers = [];
+  var deleted = false;
+
   set(val);
 
   var store: StoreType<T> = {
@@ -36,6 +37,10 @@ export function Store<T>(
       // Since we are calling set, which takes a hydrated
       // value, we must use get() to get one.
       set(Object.assign(get(), val));
+    },
+    del,
+    isDeleted() {
+      return deleted;
     },
     subscribe(fn) {
       subscribers.push(fn);
@@ -76,27 +81,13 @@ export function Store<T>(
     value = val;
   }
 
+  function del() {
+    persister.delete(value);
+    deleted = true;
+  }
+
   function callSubscriber(subscriber) {
     resolved.then(() => subscriber(store));
-  }
-}
-
-export function ThingStore(
-  persister: Persister,
-  val: Thing,
-  dehydrate?: (Thing) => void,
-  rehydrate?: (any) => Thing
-): ThingStoreType {
-  var base = Store<Thing>(persister, val, dehydrate, rehydrate);
-
-  return Object.assign(base, { del });
-
-  function del() {
-    var value: Thing = base.get();
-    if (value) {
-      persister.delete(value.id);
-    }
-    base.setValue(null);
   }
 }
 

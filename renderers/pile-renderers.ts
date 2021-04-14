@@ -1,21 +1,29 @@
 import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
-import type { Pile, ThingStoreType, CollectionStoreType } from '../types';
+import type { Pile, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
-import { cardsContainerClass, pilesContainerClass, pilesControlsClass } from '../consts';
+import {
+  cardsContainerClass,
+  pilesContainerClass,
+  pilesControlsClass,
+} from '../consts';
 
 export function RenderPile({
   onEstablishChildContainer,
   renderCardCollection,
-  cardCollectionStore }) {
+  cardCollectionStore,
+}) {
   return render;
 
   function render(
     collectionStore: CollectionStoreType,
-    containingDeckStore: ThingStoreType,
-    store: ThingStoreType
+    containingDeckStore: StoreType<Thing>,
+    store: StoreType<Thing>
   ) {
     var pile: Pile = store.get();
+    if (!pile) {
+      throw new Error('renderPile passed an empty pile.');
+    }
     const parentSelector = `#${pile.id}`;
     var parentSel = select(parentSelector);
 

@@ -1,16 +1,9 @@
-import {
-  ThingStoreType,
-  Persister,
-  Thing,
-  CollectionStoreType,
-  Card,
-} from '../types';
-import { ThingStore, CollectionStore } from '../wily.js/stores/stores';
+import { Persister, Thing, Card, StoreType } from '../types';
+import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { thingPersister } from '../wily.js/persistence/local';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
 import { OnCardChange } from '../responders/store-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
-import curry from 'lodash.curry';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
 import { PiggybackPersister } from '../persisters/piggyback-persister';
 import { v4 as uuid } from 'uuid';
@@ -19,20 +12,24 @@ import { RenderCard, RenderCardCollection } from '../renderers/card-renderers';
 export function assembleCardsMachine({
   parentStore,
 }: {
-  parentStore: ThingStoreType;
+  parentStore: StoreType<Thing>;
 }) {
   // Persister
   var idsPersister: Persister = PiggybackPersister(parentStore, 'cards');
 
+  const parentThingId = parentStore.get().id;
   // CollectionStore.
-  var collectionStore = registry.makeCollectionStoreHappen('card', null, () =>
-    CollectionStore({
-      idsPersister,
-      thingPersister,
-      kind: 'card',
-      parentThingId: parentStore.get().id,
-      vals: parentStore.get().cards,
-    })
+  var collectionStore = registry.makeCollectionStoreHappen(
+    'card',
+    parentThingId,
+    () =>
+      CollectionStore({
+        idsPersister,
+        thingPersister,
+        kind: 'card',
+        parentThingId,
+        vals: parentStore.get().cards,
+      })
   );
 
   // Item stores.
@@ -40,14 +37,14 @@ export function assembleCardsMachine({
     .get()
     .map((thing: Thing) =>
       registry.makeStoreHappen(thing.id, () =>
-        ThingStore(thingPersister, thing)
+        Store<Thing>(thingPersister, thing)
       )
     );
 
   // Updater.
   var addThing = AddThing({
     collectionStore,
-    createNewThing: createNewCard,
+    createNewThingInStore: createNewCard,
     thingPersister,
     createItemResponder: onItemChangeMapper,
     storeRegistry: registry,
@@ -73,7 +70,7 @@ export function assembleCardsMachine({
 
   return { renderCollection, collectionStore, itemStores, onItemChangeFns };
 
-  function onItemChangeMapper(store: ThingStoreType) {
+  function onItemChangeMapper(store: StoreType<Thing>) {
     return OnCardChange({
       render: RenderCard(),
       collectionStore,

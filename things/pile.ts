@@ -5,7 +5,7 @@ export function RehydratePile(thingPersister: Persister) {
 
   // These functions should not mess with val.
   function rehydratePile(val): Pile {
-    if (!val.cards) {
+    if (val === null || !val.cards) {
       return val;
     }
 
@@ -26,11 +26,11 @@ export function RehydratePile(thingPersister: Persister) {
   }
 }
 
-export function DehydratePile(thingPersister: Persister) {
+export function DehydratePile() {
   return dehydratePile;
 
   function dehydratePile(val): Pile {
-    if (!val.cards) {
+    if (val === null || !val.cards) {
       return val;
     }
 

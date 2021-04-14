@@ -48,10 +48,8 @@ export interface StoreType<T> {
   setPart(T): void;
   subscribe: (Store) => void;
   unsubscribe: (Store) => void;
-}
-
-export interface ThingStoreType extends StoreType<Thing> {
   del(): void;
+  isDeleted: () => boolean;
 }
 
 export interface CollectionStoreType extends StoreType<Thing[]> {

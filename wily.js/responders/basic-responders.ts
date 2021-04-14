@@ -1,15 +1,15 @@
-import type { ThingStoreType, CollectionStoreType } from '../../types';
+import type { CollectionStoreType, StoreType, Thing } from '../../types';
 
 export function OnThingChange(
   render,
   collectionStore: CollectionStoreType,
-  store: ThingStoreType
+  store: StoreType<Thing>
 ) {
   store.subscribe(onThingChange);
 
   return onThingChange;
 
-  function onThingChange(store: ThingStoreType) {
+  function onThingChange(store: StoreType<Thing>) {
     render(collectionStore, store);
   }
 }

@@ -2,7 +2,7 @@ var test = require('tape');
 var { ThingStore } = require('./build/wily.js/stores.js');
 var { MemoryPersister } = require('./fixtures/memory-persister');
 
-var store = ThingStore(MemoryPersister(), 5);
+var store = Store < Thing > (MemoryPersister(), 5);
 
 var cbCallCounts = [0, 0];
 var cbExpected = [[6], [6, 7, 8]];

@@ -9,8 +9,13 @@ export function writeThing(thing: Thing) {
   localStorage.setItem(thing.id, JSON.stringify(thing));
 }
 
-export function deleteThing(id: string) {
-  localStorage.removeItem(id);
+export function deleteThing(thing: Thing) {
+  localStorage.removeItem(thing.id);
+}
+
+// TODO: Validate?
+export function getThing(id: string) {
+  return parse(localStorage.getItem(id));
 }
 
 export function getIds(idsKey: string): string[] {
@@ -25,11 +30,6 @@ export function getIds(idsKey: string): string[] {
 export function writeIds(idsKey: string, ids: string[]) {
   const idsString = ids.join(',');
   localStorage.setItem(idsKey, idsString);
-}
-
-// TODO: Validate?
-export function getThing(id: string) {
-  return parse(localStorage.getItem(id));
 }
 
 export function loadThings(idsKey: string): Thing[] {
@@ -56,9 +56,10 @@ export function IdsPersister(idsKey: string): Persister {
   return {
     write: curry(writeIds)(idsKey),
     get: curry(getIds)(idsKey),
-    delete: noOp,
+    delete: deleteIdsKey,
   };
-}
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-function noOp() {}
+  function deleteIdsKey() {
+    localStorage.removeItem(idsKey);
+  }
+}
