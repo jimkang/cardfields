@@ -8,8 +8,8 @@ import { storeRegistry as registry } from '../wily.js/stores/store-registry';
 import { PiggybackPersister } from '../persisters/piggyback-persister';
 import { v4 as uuid } from 'uuid';
 import { RenderPile, RenderPileCollection } from '../renderers/pile-renderers';
-import { pilesContainerClass } from '../consts';
-import { OnEstablishPilesContainer } from '../responders/render-responders';
+import { cardsContainerClass, pilesContainerClass } from '../consts';
+import { OnEstablishContainerForChildren } from '../responders/render-responders';
 import { assembleCardsMachine } from './cards-machine';
 import { DehydratePile, RehydratePile } from '../things/pile';
 import curry from 'lodash.curry';
@@ -81,9 +81,10 @@ export function assemblePilesMachine({
     var render = RenderPile({
       renderCardCollection: cardsMachine.renderCollection,
       cardCollectionStore: cardsMachine.collectionStore,
-      onEstablishChildContainer: OnEstablishPilesContainer(
+      onEstablishChildContainer: OnEstablishContainerForChildren(
         cardsMachine.itemStores,
-        cardsMachine.onItemChangeFns
+        cardsMachine.onItemChangeFns,
+        cardsContainerClass
       ),
     });
     return OnPileChange({

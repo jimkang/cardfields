@@ -1,5 +1,5 @@
 import type { Deck, CollectionStoreType, Thing, StoreType } from '../types';
-import { OnEstablishPilesContainer } from '../responders/render-responders';
+import { OnEstablishContainerForChildren } from '../responders/render-responders';
 import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { v4 as uuid } from 'uuid';
 import {
@@ -15,6 +15,8 @@ import curry from 'lodash.curry';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
 import { DehydrateDeck, RehydrateDeck } from '../things/deck';
 import { assemblePilesMachine } from './piles-machine';
+import { pilesContainerClass } from '../consts';
+
 const deckIdsKey = 'ids__decks';
 var deckIdsPersister = IdsPersister(deckIdsKey);
 
@@ -71,11 +73,11 @@ export function assembleMainMachine(switchToNewDecks) {
   });
 
   // Responders.
-  var updateDeckCollection = OnCollectionChange(
+  var onCollectionChange = OnCollectionChange(
     renderDeckCollection,
     deckCollectionStore
   );
-  updateDeckCollection(deckCollectionStore);
+  onCollectionChange(deckCollectionStore);
 
   var onDeckChangeFns = deckStores.map(
     curry(setUpDeckStoreDependents)(deckCollectionStore, activeDeckIdentifier)
@@ -119,9 +121,10 @@ function setUpDeckStoreDependents(
     parentSelector: `#${deckStore.get().id}`,
     renderPileCollection: renderCollection,
     pileCollectionStore: collectionStore,
-    onEstablishChildContainer: OnEstablishPilesContainer(
+    onEstablishChildContainer: OnEstablishContainerForChildren(
       itemStores,
-      onItemChangeFns
+      onItemChangeFns,
+      pilesContainerClass
     ),
   });
   return OnDeckChange({
