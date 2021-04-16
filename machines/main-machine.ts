@@ -31,24 +31,31 @@ export function assembleMainMachine(switchToNewDecks) {
         parentThingId: null,
         vals: loadThings(deckIdsKey),
         itemRehydrate: RehydrateDeck(thingPersister),
+        alreadyPersisted: true,
+        initValIsAlreadyDehydrated: false,
       })
   );
 
   var deckStores = deckCollectionStore
     .get()
-    .map(createDeckStore);
+    .map(curry(createStoreForDeck)(false));
 
+  var activeDeckVal = thingPersister.get('active-deck');
   var activeDeckIdentifier = registry.makeStoreHappen('active-deck', () =>
     Store<Thing>(
       thingPersister,
-      thingPersister.get('active-deck') || { id: 'active-deck', deckId: '' }
+      activeDeckVal || { id: 'active-deck', deckId: '' },
+      null,
+      null,
+      !!activeDeckVal,
+      true
     )
   );
 
   // Updaters.
   var addDeck = AddThing({
     collectionStore: deckCollectionStore,
-    createNewThingInStore: () => createDeckStore(createNewDeck()),
+    createNewThingInStore: () => createStoreForDeck(true, createNewDeck()),
     thingPersister,
     createItemResponder: curry(setUpDeckStoreDependents)(
       deckCollectionStore,
@@ -80,13 +87,16 @@ export function assembleMainMachine(switchToNewDecks) {
   }
 }
 
-function createDeckStore(deck: Deck) {
-  return registry.makeStoreHappen(deck.id, () => Store<Thing>(
-    thingPersister,
-    deck,
-    DehydrateDeck(),
-    RehydrateDeck(thingPersister)
-  )
+function createStoreForDeck(isNew: boolean, deck: Deck) {
+  return registry.makeStoreHappen(deck.id, () =>
+    Store<Thing>(
+      thingPersister,
+      deck,
+      DehydrateDeck(),
+      RehydrateDeck(thingPersister),
+      !isNew,
+      false
+    )
   );
 }
 

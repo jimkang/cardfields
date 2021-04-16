@@ -1,5 +1,17 @@
-export function AddThing(
-  { collectionStore, createNewThingInStore, createItemResponder, storeRegistry }: { collectionStore; createNewThingInStore; thingPersister; createItemResponder; storeRegistry; }) {
+import { StoreType, Thing } from '../../types';
+
+export function AddThing({
+  collectionStore,
+  createNewThingInStore,
+  createItemResponder,
+  storeRegistry,
+}: {
+  collectionStore;
+  createNewThingInStore: () => StoreType<Thing>;
+  thingPersister;
+  createItemResponder;
+  storeRegistry;
+}) {
   return addThing;
 
   function addThing() {

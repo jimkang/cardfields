@@ -1,4 +1,4 @@
-import { Persister, Thing, Card, StoreType } from '../types';
+import { Persister, Thing, Card, StoreType, Pile } from '../types';
 import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { thingPersister } from '../wily.js/persistence/local';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
@@ -8,6 +8,7 @@ import { storeRegistry as registry } from '../wily.js/stores/store-registry';
 import { PiggybackPersister } from '../persisters/piggyback-persister';
 import { v4 as uuid } from 'uuid';
 import { RenderCard, RenderCardCollection } from '../renderers/card-renderers';
+import curry from 'lodash.curry';
 
 export function assembleCardsMachine({
   parentStore,
@@ -28,23 +29,19 @@ export function assembleCardsMachine({
         thingPersister,
         kind: 'card',
         parentThingId,
-        vals: parentStore.get().cards,
+        vals: (parentStore.getRaw() as Pile).cards,
+        alreadyPersisted: true,
+        initValIsAlreadyDehydrated: true,
       })
   );
 
   // Item stores.
-  var itemStores = collectionStore
-    .get()
-    .map((thing: Thing) =>
-      registry.makeStoreHappen(thing.id, () =>
-        Store<Thing>(thingPersister, thing)
-      )
-    );
+  var itemStores = collectionStore.get().map(curry(createStoreForCard)(false));
 
   // Updater.
   var addThing = AddThing({
     collectionStore,
-    createNewThingInStore: createNewCard,
+    createNewThingInStore: () => createStoreForCard(true, createNewCard()),
     thingPersister,
     createItemResponder: onItemChangeMapper,
     storeRegistry: registry,
@@ -78,6 +75,13 @@ export function assembleCardsMachine({
       cardStore: store,
     });
   }
+}
+
+function createStoreForCard(isNew: boolean, card: Card) {
+  //console.log('registry', registry);
+  return registry.makeStoreHappen(card.id, () =>
+    Store<Thing>(thingPersister, card, null, null, !isNew, false)
+  );
 }
 
 function createNewCard(): Card {

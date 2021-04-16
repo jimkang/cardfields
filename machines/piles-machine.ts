@@ -12,6 +12,7 @@ import { pilesContainerClass } from '../consts';
 import { OnEstablishPilesContainer } from '../responders/render-responders';
 import { assembleCardsMachine } from './cards-machine';
 import { DehydratePile, RehydratePile } from '../things/pile';
+import curry from 'lodash.curry';
 
 export function assemblePilesMachine({
   parentStore,
@@ -32,17 +33,20 @@ export function assemblePilesMachine({
         thingPersister,
         kind: 'pile',
         parentThingId,
-        vals: parentStore.get().piles,
+        vals: (parentStore.getRaw() as Deck).piles,
+        itemRehydrate: RehydratePile(thingPersister),
+        alreadyPersisted: true,
+        initValIsAlreadyDehydrated: true,
       })
   );
 
   // Item stores.
-  var itemStores = collectionStore.get().map(createPileStore);
+  var itemStores = collectionStore.get().map(curry(createStoreForPile)(false));
 
   // Updater.
   var addThing = AddThing({
     collectionStore,
-    createNewThingInStore: () => createPileStore(createNewPile()),
+    createNewThingInStore: () => createStoreForPile(true, createNewPile()),
     thingPersister,
     createItemResponder: setUpPileStoreDependents,
     storeRegistry: registry,
@@ -75,7 +79,7 @@ export function assemblePilesMachine({
     });
     // Pile item renderer.
     var render = RenderPile({
-      renderCardCollection: () => {},
+      renderCardCollection: cardsMachine.renderCollection,
       cardCollectionStore: cardsMachine.collectionStore,
       onEstablishChildContainer: OnEstablishPilesContainer(
         cardsMachine.itemStores,
@@ -92,13 +96,15 @@ export function assemblePilesMachine({
   }
 }
 
-function createPileStore(pile: Pile) {
+function createStoreForPile(isNew: boolean, pile: Pile) {
   return registry.makeStoreHappen(pile.id, () =>
     Store<Thing>(
       thingPersister,
       pile,
       DehydratePile(),
-      RehydratePile(thingPersister)
+      RehydratePile(thingPersister),
+      !isNew,
+      false
     )
   );
 }

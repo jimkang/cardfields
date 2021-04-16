@@ -14,13 +14,25 @@ export function Store<T>(
   persister: Persister,
   val: T,
   dehydrate?: (T) => void,
-  rehydrate?: (any) => T
+  rehydrate?: (any) => T,
+  alreadyPersisted?: boolean,
+  initValIsAlreadyDehydrated?: boolean
 ): StoreType<T> {
   var value;
   var subscribers = [];
   var deleted = false;
 
-  set(val);
+  var transformedVal: unknown = val;
+  if (!initValIsAlreadyDehydrated && dehydrate) {
+    transformedVal = dehydrate(val);
+  }
+
+  if (!alreadyPersisted) {
+    persister.write(transformedVal);
+  }
+
+  // No need to tell subscribers; there are none right now.
+  setValue(transformedVal);
 
   var store: StoreType<T> = {
     get,
@@ -98,6 +110,8 @@ export function CollectionStore({
   parentThingId,
   vals,
   itemRehydrate,
+  alreadyPersisted,
+  initValIsAlreadyDehydrated,
 }: {
   idsPersister: Persister;
   thingPersister: Persister;
@@ -105,8 +119,17 @@ export function CollectionStore({
   parentThingId: string;
   vals: Thing[];
   itemRehydrate?: (item: unknown) => unknown;
+  alreadyPersisted?: boolean;
+  initValIsAlreadyDehydrated?: boolean;
 }): CollectionStoreType {
-  var base = Store<Thing[]>(idsPersister, vals, dehydrate, rehydrate);
+  var base = Store<Thing[]>(
+    idsPersister,
+    vals,
+    dehydrate,
+    rehydrate,
+    alreadyPersisted,
+    initValIsAlreadyDehydrated
+  );
 
   return Object.assign(base, { add, remove, kind, parentThingId });
 
