@@ -17,18 +17,11 @@ var renderPortControls = RenderPortControls(
 );
 renderPortControls();
 
-renderExportZone();
-
 function changePiles(activeDeckIdentifier: StoreType<Thing>) {
   // TODO: Tear down previous machine.
   //var deckStore: ThingStoreType = registry.getStore(
   //activeDeckIdentifier.get().deck
   //);
-}
-
-function renderExportZone() {
-  document.querySelector('.export-zone-container').innerHTML =
-    '<button>Export everything</button>';
 }
 
 export default container;

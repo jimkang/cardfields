@@ -76,6 +76,7 @@ export function assemblePilesMachine({
     // Cards machine.
     var cardsMachine = assembleCardsMachine({
       parentStore: pileStore,
+      pilesStore: collectionStore,
     });
     // Pile item renderer.
     var render = RenderPile({

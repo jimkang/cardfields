@@ -1,4 +1,4 @@
-import { Persister, Thing, Card, StoreType, Pile } from '../types';
+import { Persister, Thing, Card, StoreType, Pile, CollectionStoreType } from '../types';
 import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { thingPersister } from '../wily.js/persistence/local';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
@@ -12,8 +12,10 @@ import curry from 'lodash.curry';
 
 export function assembleCardsMachine({
   parentStore,
+  pilesStore,
 }: {
   parentStore: StoreType<Thing>;
+    pilesStore: CollectionStoreType;
 }) {
   // Persister
   var idsPersister: Persister = PiggybackPersister(parentStore, 'cards');
@@ -72,6 +74,7 @@ export function assembleCardsMachine({
       render: RenderCard(),
       collectionStore,
       pileStore: parentStore,
+      pilesStore,
       cardStore: store,
     });
   }

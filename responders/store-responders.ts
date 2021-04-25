@@ -67,11 +67,13 @@ export function OnCardChange({
   render,
   collectionStore,
   pileStore,
+  pilesStore,
   cardStore,
 }: {
   render;
   collectionStore: CollectionStoreType;
   pileStore: StoreType<Pile>;
+  pilesStore: CollectionStoreType;
   cardStore: StoreType<Card>;
 }) {
   cardStore.subscribe(onCardChange);
@@ -79,6 +81,6 @@ export function OnCardChange({
   return onCardChange;
 
   function onCardChange() {
-    render(collectionStore, pileStore, cardStore);
+    render(collectionStore, pileStore, pilesStore, cardStore);
   }
 }

@@ -3,6 +3,7 @@ import { establish } from '../wily.js/rendering/establish';
 import type { Card, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 import { cardsControlsClass } from '../consts';
+import accessor from 'accessor';
 
 export function RenderCard() {
   return render;
@@ -10,6 +11,7 @@ export function RenderCard() {
   function render(
     collectionStore: CollectionStoreType,
     containingPileStore: StoreType<Thing>,
+    pilesStore: CollectionStoreType,
     store: StoreType<Thing>
   ) {
     var card: Card = store.get();
@@ -35,6 +37,9 @@ export function RenderCard() {
     // TODO: Picture.
 
     establish(parentSel, 'button', '.remove-card-button', initRemoveButton);
+    establish(parentSel, 'button', '.move-card-button', initMoveButton);
+
+    establish(parentSel, 'div', '.move-view', initMoveView);
 
     function initEditable(prop: string, sel) {
       sel
@@ -55,9 +60,38 @@ export function RenderCard() {
         .text('Delete');
     }
 
+    function initMoveButton(sel) {
+      sel
+        .attr('class', 'move-card-button')
+        .on('click', showMoveView)
+        .text('Move');
+    }
+
+    function initMoveView(sel) {
+      sel.attr('class', 'move-view hidden');
+      sel.append('h3').text('Move to this pile');
+      sel.append('span').attr('class', 'button-container');
+    }
+
     function removeThing() {
       collectionStore.remove(card);
       store.del();
+    }
+
+    function showMoveView() {
+      var viewSel = parentSel.select('.move-view');
+      var buttonRoot = viewSel.select('.button-container');
+      buttonRoot
+        .selectAll('button')
+        .data(pilesStore.get(), accessor('id'))
+        .join('button')
+        .text(accessor('title'))
+        .on('click', moveToPile);
+      viewSel.classed('hidden', false);
+    }
+
+    function moveToPile() {
+      console.log('Hey');
     }
   }
 }
