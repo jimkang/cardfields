@@ -25,6 +25,16 @@ export interface Deck extends UIThing {
   piles: Pile[];
 }
 
+export interface CardRef {
+  card: Card;
+  homePile: Pile;
+}
+
+export interface View extends Omit<UIThing, 'title'> {
+  title: string;
+  cardRefs: CardRef[];
+}
+
 export type StateOptParams = { initCards?: Card[]; initPiles? };
 
 export interface ThingConflictPair {
