@@ -121,7 +121,7 @@ export function RenderCardCollection({ parentSelector, addThing }) {
     establish(controlsParent, 'button', '.add-card-button', initAddButton);
 
     var ids = collectionStore.getRaw();
-    var containers = itemRoot.selectAll('.item-container').data(ids, (x) => x);
+    var containers = itemRoot.selectAll('.cards-root > .item-container').data(ids, (x) => x);
     containers.exit().remove();
     containers
       .enter()

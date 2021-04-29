@@ -2,11 +2,7 @@ import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
 import type { Pile, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
-import {
-  cardsContainerClass,
-  pilesContainerClass,
-  pilesControlsClass,
-} from '../consts';
+import { cardsContainerClass, pilesControlsClass } from '../consts';
 
 export function RenderPile({
   onEstablishChildContainer,
@@ -43,7 +39,7 @@ export function RenderPile({
     );
     descSel.text(pile.text);
 
-    establish(parentSel, 'div', `.${pilesContainerClass}`, initCardsContainer);
+    establish(parentSel, 'div', `.${cardsContainerClass}`, initCardsContainer);
 
     establish(parentSel, 'button', '.remove-pile-button', initRemoveButton);
 
@@ -101,7 +97,10 @@ export function RenderPileCollection({ parentSelector, addThing }) {
     establish(controlsParent, 'button', '.add-pile-button', initAddButton);
 
     var ids = collectionStore.getRaw();
-    var containers = itemRoot.selectAll('.item-container').data(ids, (x) => x);
+    // Be careful about only messing with direct children!
+    var containers = itemRoot
+      .selectAll('.piles-root > .item-container')
+      .data(ids, (x) => x);
     containers.exit().remove();
     containers
       .enter()
@@ -109,6 +108,7 @@ export function RenderPileCollection({ parentSelector, addThing }) {
       .classed('item-container', true)
       .classed('pile', true)
       .attr('id', (x) => x);
+    // No update selection; nothing ever needs to be updated.
 
     function initAddButton(sel) {
       sel

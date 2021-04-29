@@ -54,13 +54,7 @@ export function RenderDeck({
     );
     descSel.text(deck.text);
 
-    establish(
-      parentSel,
-      'div',
-      `.${pilesContainerClass}`,
-      initPilesContainer
-    );
-    //renderPileCollection(registry.createCollectionStoreForStores(deck.piles));
+    establish(parentSel, 'div', `.${pilesContainerClass}`, initPilesContainer);
 
     establish(parentSel, 'button', '.remove-deck-button', initRemoveButton);
 
@@ -121,7 +115,10 @@ export function RenderDeckCollection({ parentSelector, addThing }) {
     establish(controlsParent, 'button', '.add-deck-button', initAddButton);
 
     var ids = collectionStore.getRaw();
-    var containers = itemRoot.selectAll('.item-container').data(ids, (x) => x);
+    // Be careful about only messing with direct children!
+    var containers = itemRoot
+      .selectAll('.decks-root > .item-container')
+      .data(ids, (x) => x);
     containers.exit().remove();
     containers
       .enter()
