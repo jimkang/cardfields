@@ -1,9 +1,10 @@
 import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
-import type { Card, CollectionStoreType, StoreType, Thing } from '../types';
+import type { Card, CollectionStoreType, Pile, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 import { cardsControlsClass } from '../consts';
 import accessor from 'accessor';
+import { storeRegistry } from '../wily.js/stores/store-registry';
 
 export function RenderCard() {
   return render;
@@ -11,7 +12,7 @@ export function RenderCard() {
   function render(
     collectionStore: CollectionStoreType,
     containingPileStore: StoreType<Thing>,
-    pilesStore: CollectionStoreType,
+    pileCollectionStore: CollectionStoreType,
     store: StoreType<Thing>
   ) {
     var card: Card = store.get();
@@ -83,15 +84,21 @@ export function RenderCard() {
       var buttonRoot = viewSel.select('.button-container');
       buttonRoot
         .selectAll('button')
-        .data(pilesStore.get(), accessor('id'))
+        .data(pileCollectionStore.get(), accessor('id'))
         .join('button')
         .text(accessor('title'))
         .on('click', moveToPile);
       viewSel.classed('hidden', false);
     }
 
-    function moveToPile() {
-      console.log('Hey');
+    // This is technically an updater. Maybe it should go in that directory.
+    function moveToPile(pile: Pile) {
+      var destCardCollectionStore = storeRegistry.getCollectionStore(
+        'card',
+        pile.id
+      );
+      collectionStore.remove(card);
+      destCardCollectionStore.add(card);
     }
   }
 }
