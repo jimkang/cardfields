@@ -194,6 +194,11 @@ input {
   border: 2px dashed #444;
 }
 
+.decks-root {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .pile {
   background-color: #df3;
 }
