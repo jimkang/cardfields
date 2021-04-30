@@ -65,13 +65,11 @@ export function OnPileChange({
 
 export function OnCardChange({
   render,
-  collectionStore,
   pileStore,
   pilesStore,
   cardStore,
 }: {
-  render;
-  collectionStore: CollectionStoreType;
+    render;
   pileStore: StoreType<Pile>;
   pilesStore: CollectionStoreType;
   cardStore: StoreType<Card>;
@@ -81,6 +79,6 @@ export function OnCardChange({
   return onCardChange;
 
   function onCardChange() {
-    render(collectionStore, pileStore, pilesStore, cardStore);
+    render(`#${pileStore.get().id}`, pileStore, pilesStore, cardStore);
   }
 }

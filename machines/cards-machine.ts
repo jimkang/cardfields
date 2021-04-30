@@ -72,7 +72,6 @@ export function assembleCardsMachine({
   function onItemChangeMapper(store: StoreType<Thing>) {
     return OnCardChange({
       render: RenderCard(),
-      collectionStore,
       pileStore: parentStore,
       pilesStore,
       cardStore: store,

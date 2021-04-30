@@ -10,13 +10,13 @@ export function RenderCard() {
   return render;
 
   function render(
-    collectionStore: CollectionStoreType,
+    parentSelectorBase: string,
     containingPileStore: StoreType<Thing>,
     pileCollectionStore: CollectionStoreType,
     store: StoreType<Thing>
   ) {
     var card: Card = store.get();
-    const parentSelector = `#${card.id}`;
+    const parentSelector = `${parentSelectorBase} .${card.id}`;
     var parentSel = select(parentSelector);
 
     var nameSel = establish(
@@ -75,11 +75,15 @@ export function RenderCard() {
     }
 
     function removeThing() {
+      var collectionStore = storeRegistry.getCollectionStore('card', containingPileStore.get().id);
       collectionStore.remove(card);
       store.del();
     }
 
     function showMoveView() {
+      if (!pileCollectionStore) {
+        return;
+      }
       var viewSel = parentSel.select('.move-view');
       var buttonRoot = viewSel.select('.button-container');
       buttonRoot
@@ -97,6 +101,7 @@ export function RenderCard() {
         'card',
         pile.id
       );
+      var collectionStore = storeRegistry.getCollectionStore('card', containingPileStore.get().id);
       collectionStore.remove(card);
       destCardCollectionStore.add(card);
     }
@@ -128,7 +133,7 @@ export function RenderCardCollection({ parentSelector, addThing }) {
       .append('li')
       .classed('item-container', true)
       .classed('card', true)
-      .attr('id', (x) => x);
+      .attr('class', (x) => `${x} item-container card`);
 
     function initAddButton(sel) {
       sel

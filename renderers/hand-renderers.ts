@@ -1,5 +1,8 @@
 import { select } from 'd3-selection';
+import { CardRef, StoreType, Thing, View } from '../types';
 import { establish } from '../wily.js/rendering/establish';
+import { RenderCard } from './card-renderers';
+import { storeRegistry } from '../wily.js/stores/store-registry';
 
 export function RenderHandControls(
   parentSelector,
@@ -49,6 +52,29 @@ export function RenderHandControls(
       }
       hideHandButtonSel.classed('hidden', true);
       showHandButtonSel.classed('hidden', false);
+    }
+  }
+}
+
+export function RenderHand() {
+  var renderCard = RenderCard();
+
+  return render;
+
+  function render({ viewStore, parentSelector }: { viewStore: StoreType<Thing>, parentSelector: string }) {
+    var parentSel = select(parentSelector);
+    var view: View = viewStore.get();
+    console.log(view.cardRefs);
+    view.cardRefs.forEach(renderCardFromRef)
+    // TODO: Make a container for each card.
+
+    function renderCardFromRef(cardRef: CardRef) {
+      renderCard(
+        parentSel,
+        storeRegistry.getStore(cardRef.homePile.id),
+        null,
+        storeRegistry.getStore(cardRef.card.id)
+      );
     }
   }
 }
