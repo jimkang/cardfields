@@ -3,7 +3,7 @@ import { StoreType, Thing } from '../../types';
 //import { thingPersister } from '../../wily.js/persistence/local';
 import { RenderPortControls } from '../../renderers/import-export-renderers';
 import { RenderHandControls } from '../../renderers/hand-renderers';
-
+import { assembleViewMachine } from '../../machines/view-machine'
 import {
   exportFromLocalStorage,
   importToLocalStorage,
@@ -34,6 +34,7 @@ function changePiles(activeDeckIdentifier: StoreType<Thing>) {
 
 function onShowHand() {
   console.log('hey');
+  assembleViewMachine({ id: 'view-hand', title: 'Hand', cardRefs: [] });
 }
 
 export default container;
