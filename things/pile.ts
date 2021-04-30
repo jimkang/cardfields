@@ -1,21 +1,49 @@
-import type { Card, Pile } from '../types';
-import curry from 'lodash.curry';
-import pluck from 'lodash.pluck';
+import type { Persister, Pile } from '../types';
 
-export function rehydratePile(allCards: Card[], deserializedButRaw): Pile {
-  var rehydrated: Pile = Object.assign({}, deserializedButRaw);
-  rehydrated.cards = deserializedButRaw.cards.map(curry(getActualCard)(allCards));
-  return rehydrated;
+export function RehydratePile(thingPersister: Persister) {
+  return rehydratePile;
+
+  // These functions should not mess with val.
+  function rehydratePile(val): Pile {
+    if (val === null || !val.cards) {
+      return val;
+    }
+
+    if (val.cards.length > 0 && typeof val.cards[0] === 'object') {
+      throw new Error(
+        'rehydratePile called on possibly already-rehydrated pile.'
+      );
+    }
+
+    var rehydrated = Object.assign({}, val, {
+      cards: val.cards.map(getCardForId),
+    });
+    return rehydrated;
+  }
+
+  function getCardForId(id: string) {
+    return thingPersister.get(id);
+  }
 }
 
-export function dehydratePile(pile: Pile): object {
-  var persistable = Object.assign({}, pile);
-  delete persistable.cards;
-  persistable.cards = pluck(pile.cards, 'id');
-  return persistable;
-}
+export function DehydratePile() {
+  return dehydratePile;
 
-function getActualCard(allCards: Card[], id: string) {
-  return allCards.find(card => card.id === id);
-}
+  function dehydratePile(val): Pile {
+    if (val === null || !val.cards) {
+      return val;
+    }
 
+    if (val.cards.length > 0 && typeof val.cards[0] === 'string') {
+      throw new Error(
+        'dehydratePile called on possibly already-dehydrated pile.'
+      );
+    }
+
+    // TODO: Maybe deep copy?
+    var dehydrated = Object.assign({}, val, {
+      cards: val.cards.map((card) => card.id),
+    });
+    return dehydrated;
+  }
+}

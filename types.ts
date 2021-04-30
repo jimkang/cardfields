@@ -1,45 +1,28 @@
-import type { Writable } from 'svelte/store';
-
 export interface Thing {
   id: string;
+}
+
+export interface UIThing extends Thing {
   text?: string;
   title?: string;
   secretText?: string;
   picture?: string;
-  tags: string[];
+  tags?: string[];
   color?: string;
 }
 
-export interface Card extends Omit<Thing, 'text'> {
+export interface Card extends Omit<UIThing, 'text'> {
   text: string;
   // TODO: History
 }
 
-export interface Pile extends Omit<Thing, 'title'> {
+export interface Pile extends Omit<UIThing, 'title'> {
   title: string;
   cards: Card[];
 }
 
-export interface ThingStore<ThingType> extends Writable<ThingType> {
-  delete: () => void;
-}
-
-export interface CardStoreType extends ThingStore<Card> {
-  delete: () => void;
-}
-
-export type StoreCtor<T, StoreT extends ThingStore<T>> = (object, T) => StoreT;
-
-export interface StoreIssuerType<T, StoreT> {
-  getStore: (T) => StoreT;
-  getStoreForId: (string) => StoreT;
-  removeWithId: (string) => void;
-}
-
-export interface PileStoreType extends ThingStore<Pile> {
-  delete: () => void;
-  addCard: (card: Card) => void;
-  removeCard: (card: Card) => void;
+export interface Deck extends UIThing {
+  piles: Pile[];
 }
 
 export type StateOptParams = { initCards?: Card[]; initPiles? };
@@ -48,4 +31,30 @@ export interface ThingConflictPair {
   id: string; // Only needs to be unique to the import.
   incumbent: Thing;
   challenger: Thing;
+}
+
+export interface Persister {
+  write(any);
+  get(string);
+  delete(any);
+}
+
+export interface StoreType<T> {
+  get();
+  getRaw(): unknown;
+  set(T): void;
+  setRaw(unknown): void;
+  setValue(unknown): void;
+  setPart(T): void;
+  subscribe: (Store) => void;
+  unsubscribe: (Store) => void;
+  del(): void;
+  isDeleted: () => boolean;
+}
+
+export interface CollectionStoreType extends StoreType<Thing[]> {
+  add(Thing): void;
+  remove(Thing): void;
+  kind: string;
+  parentThingId: string;
 }

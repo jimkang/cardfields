@@ -186,6 +186,23 @@ input {
   grid-gap: calc(2 * var(--atom));
 }
 
+.selected {
+  border: solid green 4px;
+}
+
+[contenteditable=true] {
+  border: 2px dashed #444;
+}
+
+.decks-root {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pile {
+  background-color: #df3;
+}
+
 @media all and (max-height: 568px) {
   body {
     font-size: 18px;
