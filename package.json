@@ -79,7 +79,6 @@
     "render-as-nested-list": "^1.0.1",
     "render-dl-link": "^1.0.0",
     "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-svelte": "^7.0.0",
     "route-state": "^2.0.5",
     "seedrandom": "^3.0.1",
     "standard-bail": "^2.0.1",
