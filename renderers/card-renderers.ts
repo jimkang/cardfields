@@ -1,18 +1,15 @@
 import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
-import type { Card, CollectionStoreType, Pile, StoreType, Thing } from '../types';
+import type { Card, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 import { cardsControlsClass } from '../consts';
 import accessor from 'accessor';
-import { storeRegistry } from '../wily.js/stores/store-registry';
 
 export function RenderCard() {
   return render;
 
   function render(
     collectionStore: CollectionStoreType,
-    containingPileStore: StoreType<Thing>,
-    pileCollectionStore: CollectionStoreType,
     store: StoreType<Thing>
   ) {
     var card: Card = store.get();
@@ -38,9 +35,6 @@ export function RenderCard() {
     // TODO: Picture.
 
     establish(parentSel, 'button', '.remove-card-button', initRemoveButton);
-    establish(parentSel, 'button', '.move-card-button', initMoveButton);
-
-    establish(parentSel, 'div', '.move-view', initMoveView);
 
     function initEditable(prop: string, sel) {
       sel
@@ -61,44 +55,9 @@ export function RenderCard() {
         .text('Delete');
     }
 
-    function initMoveButton(sel) {
-      sel
-        .attr('class', 'move-card-button')
-        .on('click', showMoveView)
-        .text('Move');
-    }
-
-    function initMoveView(sel) {
-      sel.attr('class', 'move-view hidden');
-      sel.append('h3').text('Move to this pile');
-      sel.append('span').attr('class', 'button-container');
-    }
-
     function removeThing() {
       collectionStore.remove(card);
       store.del();
-    }
-
-    function showMoveView() {
-      var viewSel = parentSel.select('.move-view');
-      var buttonRoot = viewSel.select('.button-container');
-      buttonRoot
-        .selectAll('button')
-        .data(pileCollectionStore.get(), accessor('id'))
-        .join('button')
-        .text(accessor('title'))
-        .on('click', moveToPile);
-      viewSel.classed('hidden', false);
-    }
-
-    // This is technically an updater. Maybe it should go in that directory.
-    function moveToPile(pile: Pile) {
-      var destCardCollectionStore = storeRegistry.getCollectionStore(
-        'card',
-        pile.id
-      );
-      collectionStore.remove(card);
-      destCardCollectionStore.add(card);
     }
   }
 }
@@ -121,14 +80,16 @@ export function RenderCardCollection({ parentSelector, addThing }) {
     establish(controlsParent, 'button', '.add-card-button', initAddButton);
 
     var ids = collectionStore.getRaw();
-    var containers = itemRoot.selectAll('.cards-root > .item-container').data(ids, (x) => x);
+    var containers = itemRoot
+      .selectAll('.cards-root > .item-container')
+      .data(ids, accessor('identity'));
     containers.exit().remove();
     containers
       .enter()
       .append('li')
       .classed('item-container', true)
       .classed('card', true)
-      .attr('id', (x) => x);
+      .attr('id', accessor('identity'));
 
     function initAddButton(sel) {
       sel

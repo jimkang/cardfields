@@ -1,40 +1,33 @@
-import { Persister, Thing, Card, StoreType, Pile, CollectionStoreType } from '../types';
+import { Thing, Card, StoreType } from '../types';
 import { CollectionStore, Store } from '../wily.js/stores/stores';
-import { thingPersister } from '../wily.js/persistence/local';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
 import { OnCardChange } from '../responders/store-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
-import { PiggybackPersister } from '../persisters/piggyback-persister';
+import {
+  thingPersister,
+  IdsPersister,
+  loadThings,
+} from '../wily.js/persistence/local';
 import { v4 as uuid } from 'uuid';
 import { RenderCard, RenderCardCollection } from '../renderers/card-renderers';
 import curry from 'lodash.curry';
 
-export function assembleCardsMachine({
-  parentStore,
-  pilesStore,
-}: {
-  parentStore: StoreType<Thing>;
-    pilesStore: CollectionStoreType;
-}) {
-  // Persister
-  var idsPersister: Persister = PiggybackPersister(parentStore, 'cards');
+const cardIdsKey = 'ids__cards';
+var cardIdsPersister = IdsPersister(cardIdsKey);
 
-  const parentThingId = parentStore.get().id;
+export function assembleCardsMachine() {
   // CollectionStore.
-  var collectionStore = registry.makeCollectionStoreHappen(
-    'card',
-    parentThingId,
-    () =>
-      CollectionStore({
-        idsPersister,
-        thingPersister,
-        kind: 'card',
-        parentThingId,
-        vals: (parentStore.getRaw() as Pile).cards,
-        alreadyPersisted: true,
-        initValIsAlreadyDehydrated: true,
-      })
+  var collectionStore = registry.makeCollectionStoreHappen('card', null, () =>
+    CollectionStore({
+      idsPersister: cardIdsPersister,
+      thingPersister,
+      kind: 'card',
+      parentThingId: null,
+      vals: loadThings(cardIdsKey),
+      alreadyPersisted: true,
+      initValIsAlreadyDehydrated: false,
+    })
   );
 
   // Item stores.
@@ -51,7 +44,7 @@ export function assembleCardsMachine({
 
   // Renderer.
   var renderCollection = RenderCardCollection({
-    parentSelector: `#${parentStore.get().id} .card-collection-container`,
+    parentSelector: '#cards-root .card-collection-container',
     addThing,
   });
 
@@ -66,6 +59,7 @@ export function assembleCardsMachine({
 
   // Item responders.
   var onItemChangeFns = itemStores.map(onItemChangeMapper);
+  onItemChangeFns.forEach((responder, i) => responder(itemStores[i]));
 
   return { renderCollection, collectionStore, itemStores, onItemChangeFns };
 
@@ -73,20 +67,17 @@ export function assembleCardsMachine({
     return OnCardChange({
       render: RenderCard(),
       collectionStore,
-      pileStore: parentStore,
-      pilesStore,
       cardStore: store,
     });
   }
 }
 
 function createStoreForCard(isNew: boolean, card: Card) {
-  //console.log('registry', registry);
   return registry.makeStoreHappen(card.id, () =>
     Store<Thing>(thingPersister, card, null, null, !isNew, false)
   );
 }
 
 function createNewCard(): Card {
-  return { id: `card-${uuid()}`, title: 'New card', text: 'This is a card.' };
+  return { id: `card-${uuid()}`, title: 'New card', text: '' };
 }
