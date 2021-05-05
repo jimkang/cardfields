@@ -1,14 +1,14 @@
 var container = {};
 export default container;
 
-import { assembleCardsMachine } from './machines/cards-machine';
+import { assemblePlanesMachine } from './machines/planes-machine';
 import { RenderPortControls } from './renderers/import-export-renderers';
 import {
   exportFromLocalStorage,
   importToLocalStorage,
 } from './persisters/import-export';
 
-assembleCardsMachine();
+assemblePlanesMachine();
 
 var renderPortControls = RenderPortControls(
   '.port-controls',

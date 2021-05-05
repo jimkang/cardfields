@@ -4,7 +4,9 @@ import {
   Pile,
   StoreType,
   Thing,
+  UIThing,
 } from '../types';
+import { thingPersister } from '../wily.js/persistence/local';
 
 export function OnDeckChange({
   render,
@@ -76,6 +78,10 @@ export function OnThingChange({
   return onThingChange;
 
   function onThingChange() {
-    render(collectionStore, thingStore);
+    var thing: UIThing = thingStore.get();
+    // TODO: Stop accepting undefined once existing data is upgraded.
+    if (thing.visible === true || thing.visible === undefined) {
+      render(collectionStore, thingStore);
+    }
   }
 }

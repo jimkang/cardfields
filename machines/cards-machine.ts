@@ -79,5 +79,5 @@ function createStoreForCard(isNew: boolean, card: Card) {
 }
 
 function createNewCard(): Card {
-  return { id: `card-${uuid()}`, title: 'New card', text: '' };
+  return { id: `card-${uuid()}`, title: 'New card', text: '', visible: true };
 }

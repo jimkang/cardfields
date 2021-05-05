@@ -9,12 +9,21 @@ export interface UIThing extends Thing {
   picture?: string;
   tags?: string[];
   color?: string;
+  visible: boolean;
 }
 
 export interface Card extends Omit<UIThing, 'text'> {
   text: string;
   // TODO: History
 }
+
+export interface Plane extends Omit<UIThing, 'title'> {
+  title: string;
+  cardPts: CardPt[];
+}
+
+export type CardPt = { cardId: string; pt: Pt }
+export type Pt = [number, number, number];
 
 export interface Pile extends Omit<UIThing, 'title'> {
   title: string;
