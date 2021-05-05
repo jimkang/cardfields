@@ -1,7 +1,7 @@
 import { Thing, Card, StoreType } from '../types';
 import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
-import { OnCardChange } from '../responders/store-responders';
+import { OnThingChange } from '../responders/store-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import { storeRegistry as registry } from '../wily.js/stores/store-registry';
 import {
@@ -64,10 +64,10 @@ export function assembleCardsMachine() {
   return { renderCollection, collectionStore, itemStores, onItemChangeFns };
 
   function onItemChangeMapper(store: StoreType<Thing>) {
-    return OnCardChange({
+    return OnThingChange({
       render: RenderCard(),
       collectionStore,
-      cardStore: store,
+      thingStore: store,
     });
   }
 }

@@ -1,5 +1,4 @@
 import {
-  Card,
   CollectionStoreType,
   Deck,
   Pile,
@@ -63,20 +62,20 @@ export function OnPileChange({
   }
 }
 
-export function OnCardChange({
+export function OnThingChange({
   render,
   collectionStore,
-  cardStore,
+  thingStore,
 }: {
   render;
   collectionStore: CollectionStoreType;
-  cardStore: StoreType<Card>;
+    thingStore: StoreType<Thing>;
 }) {
-  cardStore.subscribe(onCardChange);
+  thingStore.subscribe(onThingChange);
 
-  return onCardChange;
+  return onThingChange;
 
-  function onCardChange() {
-    render(collectionStore, cardStore);
+  function onThingChange() {
+    render(collectionStore, thingStore);
   }
 }
