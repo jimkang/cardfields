@@ -72,7 +72,7 @@ export function assembleCardsMachine() {
   }
 }
 
-function createStoreForCard(isNew: boolean, card: Card) {
+export function createStoreForCard(isNew: boolean, card: Card) {
   return registry.makeStoreHappen(card.id, () =>
     Store<Thing>(thingPersister, card, null, null, !isNew, false)
   );

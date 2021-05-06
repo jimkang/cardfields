@@ -6,7 +6,6 @@ import {
   Thing,
   UIThing,
 } from '../types';
-import { thingPersister } from '../wily.js/persistence/local';
 
 export function OnDeckChange({
   render,
@@ -71,7 +70,7 @@ export function OnThingChange({
 }: {
   render;
   collectionStore: CollectionStoreType;
-    thingStore: StoreType<Thing>;
+  thingStore: StoreType<Thing>;
 }) {
   thingStore.subscribe(onThingChange);
 

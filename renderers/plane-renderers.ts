@@ -5,7 +5,7 @@ import curry from 'lodash.curry';
 import { planeControlsClass } from '../consts';
 import accessor from 'accessor';
 
-export function RenderPlane(storeRegistry) {
+export function RenderPlane({ storeRegistry, onEstablishChildContainer }) {
   return render;
 
   function render(
@@ -35,6 +35,19 @@ export function RenderPlane(storeRegistry) {
     establish(parentSel, 'button', '.remove-plane-button', initRemoveButton);
 
     var boardSel = establish(parentSel, 'svg', `#${plane.id}`, initBoard);
+    boardSel
+      .select('.plane-root')
+      .selectAll('.card-container')
+      .data(plane.cardPts, accessor('cardId'))
+      .join('foreignObject')
+      .attr(
+        'class',
+        (cardPt) => `card-container container-${cardPt.cardId}`,
+        true
+      )
+      .attr('x', accessor({ path: 'pt/0' }))
+      .attr('y', accessor({ path: 'pt/1' }));
+    // TODO: z
 
     function initEditable(prop: string, sel) {
       sel
@@ -56,9 +69,7 @@ export function RenderPlane(storeRegistry) {
     }
 
     function initBoard(sel) {
-      sel.attr('id', plane.id)
-        .append('g')
-        .classed('plane-root', true);
+      sel.attr('id', plane.id).append('g').classed('plane-root', true);
     }
 
     function removeThing() {

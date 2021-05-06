@@ -15,11 +15,17 @@ import {
   RenderPlaneCollection,
 } from '../renderers/plane-renderers';
 import curry from 'lodash.curry';
+import { createStoreForCard } from './cards-machine';
+
+const cardIdsKey = 'ids__cards';
+var cardIdsPersister = IdsPersister(cardIdsKey);
 
 const planeIdsKey = 'ids__planes';
 var planeIdsPersister = IdsPersister(planeIdsKey);
 
 export function assemblePlanesMachine() {
+  setUpCardStores();
+
   var planes: Plane[] = loadThings(planeIdsKey) as Plane[];
   var alreadyPersisted = true;
   // If no planes, create the default plane.
@@ -81,7 +87,7 @@ export function assemblePlanesMachine() {
 
   function onItemChangeMapper(store: StoreType<Thing>) {
     return OnThingChange({
-      render: RenderPlane(storeRegistry),
+      render: RenderPlane({ storeRegistry }),
       collectionStore,
       thingStore: store,
     });
@@ -108,5 +114,32 @@ function createDefaultPlane(): Plane {
   var plane = createNewPlane();
   plane.title = 'Default plane';
   // TODO: Set up cardPts.
+  var cards = storeRegistry.getCollectionStore('card', null).get();
+  for (var i = 0; i < cards.length; ++i) {
+    plane.cardPts.push({
+      cardId: cards[i].id,
+      pt: [(i % 8) * 200, ~~(i / 8) * 200, 0],
+    });
+  }
   return plane;
+}
+
+function setUpCardStores() {
+  var collectionStore = storeRegistry.makeCollectionStoreHappen(
+    'card',
+    null,
+    () =>
+      CollectionStore({
+        idsPersister: cardIdsPersister,
+        thingPersister,
+        kind: 'card',
+        parentThingId: null,
+        vals: loadThings(cardIdsKey),
+        alreadyPersisted: true,
+        initValIsAlreadyDehydrated: false,
+      })
+  );
+
+  // Item stores.
+  var itemStores = collectionStore.get().map(curry(createStoreForCard)(false));
 }
