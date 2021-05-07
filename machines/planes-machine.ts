@@ -1,7 +1,7 @@
-import { Thing, Plane, StoreType } from '../types';
 import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
 import { OnThingChange } from '../responders/store-responders';
+import { OnEstablishCardContainer } from '../responders/render-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import { storeRegistry } from '../wily.js/stores/store-registry';
 import {
@@ -15,13 +15,19 @@ import {
   RenderPlaneCollection,
 } from '../renderers/plane-renderers';
 import curry from 'lodash.curry';
-import { createStoreForCard } from './cards-machine';
+import { renderCard } from '../renderers/card-renderers';
+import { Card, Plane, StoreType, Thing } from '../types';
 
 const cardIdsKey = 'ids__cards';
 var cardIdsPersister = IdsPersister(cardIdsKey);
 
 const planeIdsKey = 'ids__planes';
 var planeIdsPersister = IdsPersister(planeIdsKey);
+
+var onEstablishCardContainer = OnEstablishCardContainer(
+  storeRegistry,
+  renderCard
+);
 
 export function assemblePlanesMachine() {
   setUpCardStores();
@@ -87,7 +93,7 @@ export function assemblePlanesMachine() {
 
   function onItemChangeMapper(store: StoreType<Thing>) {
     return OnThingChange({
-      render: RenderPlane({ storeRegistry }),
+      render: RenderPlane({ onEstablishCardContainer }),
       collectionStore,
       thingStore: store,
     });
@@ -141,5 +147,11 @@ function setUpCardStores() {
   );
 
   // Item stores.
-  var itemStores = collectionStore.get().map(curry(createStoreForCard)(false));
+  collectionStore.get().map(curry(createStoreForCard)(false));
+}
+
+export function createStoreForCard(isNew: boolean, card: Card) {
+  return storeRegistry.makeStoreHappen(card.id, () =>
+    Store<Thing>(thingPersister, card, null, null, !isNew, false)
+  );
 }

@@ -1,4 +1,4 @@
-import { StoreType, Thing } from '../types';
+import { StoreType, Thing, CardPt } from '../types';
 
 export function OnEstablishContainerForChildren(
   stores: StoreType<Thing>[],
@@ -11,5 +11,20 @@ export function OnEstablishContainerForChildren(
     if (el.classList.contains(containerClass)) {
       onChangeFns.forEach((onItemChange, i) => onItemChange(stores[i]));
     }
+  }
+}
+
+export function OnEstablishCardContainer(
+  storeRegistry,
+  renderCard: (CollectionStoreType, StoreType, object) => void
+) {
+  return onEstablishCardContainer;
+
+  function onEstablishCardContainer(cardPt: CardPt) {
+    renderCard(
+      storeRegistry.getCollectionStore('card', null),
+      storeRegistry.getStore(cardPt.cardId),
+      this
+    );
   }
 }

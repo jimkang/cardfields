@@ -5,7 +5,7 @@ import curry from 'lodash.curry';
 import { planeControlsClass } from '../consts';
 import accessor from 'accessor';
 
-export function RenderPlane({ storeRegistry, onEstablishChildContainer }) {
+export function RenderPlane({ onEstablishCardContainer }) {
   return render;
 
   function render(
@@ -35,16 +35,31 @@ export function RenderPlane({ storeRegistry, onEstablishChildContainer }) {
     establish(parentSel, 'button', '.remove-plane-button', initRemoveButton);
 
     var boardSel = establish(parentSel, 'svg', `#${plane.id}`, initBoard);
-    boardSel
+    var containerSel = boardSel
       .select('.plane-root')
       .selectAll('.card-container')
-      .data(plane.cardPts, accessor('cardId'))
-      .join('foreignObject')
+      .data(plane.cardPts, accessor('cardId'));
+
+    containerSel.exit().remove();
+
+    var newContainerSel = containerSel
+      .enter()
+      .append('foreignObject')
       .attr(
         'class',
         (cardPt) => `card-container container-${cardPt.cardId}`,
         true
-      )
+      );
+
+    newContainerSel
+      // Never forget! A parent element with this namespace
+      // is necessary for html elements in a foreignObject to
+      // be sized correctly.
+      .append('xhtml:div')
+      .each(onEstablishCardContainer);
+
+    newContainerSel
+      .merge(containerSel)
       .attr('x', accessor({ path: 'pt/0' }))
       .attr('y', accessor({ path: 'pt/1' }));
     // TODO: z

@@ -2,65 +2,67 @@ import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
 import type { Card, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
-import { cardsControlsClass } from '../consts';
-import accessor from 'accessor';
 
-export function RenderCard() {
-  return render;
+export function renderCard(
+  collectionStore: CollectionStoreType,
+  store: StoreType<Thing>,
+  parentEl: object
+) {
+  if (!store) {
+    console.error(new Error('Store missing'));
+    return;
+  }
 
-  function render(
-    collectionStore: CollectionStoreType,
-    store: StoreType<Thing>
-  ) {
-    var card: Card = store.get();
-    const parentSelector = `#${card.id}`;
-    var parentSel = select(parentSelector);
+  var card: Card = store.get();
+  var parentSel = select(parentEl);
 
-    var nameSel = establish(
-      parentSel,
-      'div',
-      `#title-${card.id}`,
-      curry(initEditable)('title')
-    );
-    nameSel.text(card.title);
+  var nameSel = establish(
+    parentSel,
+    'div',
+    `#title-${card.id}`,
+    curry(initEditable)('title')
+  );
+  nameSel.text(card.title);
 
-    var descSel = establish(
-      parentSel,
-      'div',
-      `#text-${card.id}`,
-      curry(initEditable)('text')
-    );
-    descSel.text(card.text);
+  var descSel = establish(
+    parentSel,
+    'div',
+    `#text-${card.id}`,
+    curry(initEditable)('text')
+  );
+  descSel.text(card.text);
 
-    // TODO: Picture.
+  // TODO: Picture.
 
-    establish(parentSel, 'button', '.remove-card-button', initRemoveButton);
+  establish(parentSel, 'button', '.remove-card-button', initRemoveButton);
 
-    function initEditable(prop: string, sel) {
-      sel
-        .attr('id', `${prop}-${card.id}`)
-        .attr('class', prop)
-        .attr('contenteditable', true)
-        .on('blur', setProp);
+  function initEditable(prop: string, sel) {
+    sel
+      .attr('id', `${prop}-${card.id}`)
+      .attr('class', prop)
+      .attr('contenteditable', true)
+      .on('blur', setProp);
 
-      function setProp() {
-        store.setPart({ [prop]: select(this).text() });
-      }
-    }
-
-    function initRemoveButton(sel) {
-      sel
-        .attr('class', 'remove-card-button')
-        .on('click', removeThing)
-        .text('Delete');
-    }
-
-    function removeThing() {
-      collectionStore.remove(card);
-      store.del();
+    function setProp() {
+      store.setPart({ [prop]: select(this).text() });
     }
   }
+
+  function initRemoveButton(sel) {
+    sel
+      .attr('class', 'remove-card-button')
+      .on('click', removeThing)
+      .text('Delete');
+  }
+
+  function removeThing() {
+    collectionStore.remove(card);
+    store.del();
+  }
 }
+
+/*
+TODO: Put cardsControls at top level.
 
 export function RenderCardCollection({ parentSelector, addThing }) {
   return renderCollection;
@@ -97,5 +99,5 @@ export function RenderCardCollection({ parentSelector, addThing }) {
         .text('Add a card')
         .on('click', addThing);
     }
-  }
 }
+*/

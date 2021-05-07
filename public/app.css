@@ -203,6 +203,16 @@ input {
   background-color: #df3;
 }
 
+.card-container {
+  width: 200px;
+  height: 200px;
+}
+
+.plane svg {
+  width: 1000px;
+  height: 1000px;
+}
+
 @media all and (max-height: 568px) {
   body {
     font-size: 18px;
