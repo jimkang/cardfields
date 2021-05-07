@@ -1,10 +1,17 @@
 import { select, event } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
-import type { Plane, CollectionStoreType, StoreType, Thing } from '../types';
+import type {
+  Plane,
+  CollectionStoreType,
+  StoreType,
+  Thing,
+  CardPt,
+} from '../types';
 import curry from 'lodash.curry';
 import { planeControlsClass } from '../consts';
 import accessor from 'accessor';
 import { zoom } from 'd3-zoom';
+import { drag } from 'd3-drag';
 
 export function RenderPlane({ onEstablishCardContainer }) {
   return render;
@@ -66,8 +73,24 @@ export function RenderPlane({ onEstablishCardContainer }) {
     newContainerSel
       .merge(containerSel)
       .attr('x', accessor({ path: 'pt/0' }))
-      .attr('y', accessor({ path: 'pt/1' }));
+      .attr('y', accessor({ path: 'pt/1' }))
+      .call(drag().on('drag', onDrag).on('end', onDragEnd));
     // TODO: z
+
+    function onDrag() {
+      select(this).attr('x', event.x).attr('y', event.y);
+    }
+
+    function onDragEnd(cardPt: CardPt) {
+      var cardPts: CardPt[] = store.get().cardPts;
+      var changeTarget: CardPt = cardPts.find(
+        (cp) => cp.cardId === cardPt.cardId
+      );
+      changeTarget.pt = [event.x, event.y, changeTarget.pt[2]];
+      // Is it good enough to have to set the entire
+      // cardPts prop? Should there be a 'persist' method?
+      store.setPartSilent({ cardPts });
+    }
 
     function initEditable(prop: string, sel) {
       sel

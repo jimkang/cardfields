@@ -50,6 +50,15 @@ export function Store<T>(
       // value, we must use get() to get one.
       set(Object.assign(get(), val));
     },
+    setPartSilent(val) {
+      if (typeof val !== 'object') {
+        throw new Error('setPart cannot be used on a non-object value.');
+      }
+      // Since we are calling set, which takes a hydrated
+      // value, we must use get() to get one.
+      setValue(Object.assign(get(), val));
+      persister.write(value);
+    },
     del,
     isDeleted() {
       return deleted;

@@ -22,7 +22,7 @@ export interface Plane extends Omit<UIThing, 'title'> {
   cardPts: CardPt[];
 }
 
-export type CardPt = { cardId: string; pt: Pt }
+export type CardPt = { cardId: string; pt: Pt };
 export type Pt = [number, number, number];
 
 export interface Pile extends Omit<UIThing, 'title'> {
@@ -55,6 +55,7 @@ export interface StoreType<T> {
   setRaw(unknown): void;
   setValue(unknown): void;
   setPart(T): void;
+  setPartSilent(T): void;
   subscribe: (Store) => void;
   unsubscribe: (Store) => void;
   del(): void;
