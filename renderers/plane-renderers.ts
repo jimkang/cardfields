@@ -1,9 +1,10 @@
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
 import type { Plane, CollectionStoreType, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 import { planeControlsClass } from '../consts';
 import accessor from 'accessor';
+import { zoom } from 'd3-zoom';
 
 export function RenderPlane({ onEstablishCardContainer }) {
   return render;
@@ -35,8 +36,12 @@ export function RenderPlane({ onEstablishCardContainer }) {
     establish(parentSel, 'button', '.remove-plane-button', initRemoveButton);
 
     var boardSel = establish(parentSel, 'svg', `#${plane.id}`, initBoard);
-    var containerSel = boardSel
-      .select('.plane-root')
+    var zoomRootSel = establish(boardSel, 'g', '.zoom-root', initZoom);
+    var planeRoot = establish(zoomRootSel, 'g', '.plane-root', (sel) =>
+      sel.classed('plane-root', true)
+    );
+
+    var containerSel = planeRoot
       .selectAll('.card-container')
       .data(plane.cardPts, accessor('cardId'));
 
@@ -84,7 +89,17 @@ export function RenderPlane({ onEstablishCardContainer }) {
     }
 
     function initBoard(sel) {
-      sel.attr('id', plane.id).append('g').classed('plane-root', true);
+      sel.attr('id', plane.id);
+    }
+
+    function initZoom(sel) {
+      sel.attr('class', 'zoom-root');
+      var zoomer = zoom().on('zoom', onZoom);
+      boardSel.call(zoomer);
+    }
+
+    function onZoom() {
+      zoomRootSel.attr('transform', event.transform);
     }
 
     function removeThing() {
