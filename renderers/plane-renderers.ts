@@ -49,7 +49,7 @@ export function RenderPlane({ onEstablishCardContainer }) {
     );
 
     var containerSel = planeRoot
-      .selectAll('.card-container')
+      .selectAll('.card')
       .data(plane.cardPts, accessor('cardId'));
 
     containerSel.exit().remove();
@@ -57,11 +57,7 @@ export function RenderPlane({ onEstablishCardContainer }) {
     var newContainerSel = containerSel
       .enter()
       .append('foreignObject')
-      .attr(
-        'class',
-        (cardPt) => `card-container container-${cardPt.cardId}`,
-        true
-      );
+      .attr('class', (cardPt) => `card container-${cardPt.cardId}`, true);
 
     newContainerSel
       // Never forget! A parent element with this namespace

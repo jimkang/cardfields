@@ -109,8 +109,8 @@ input {
   padding: calc(1 * var(--atom));
   display: grid;
   row-gap: calc(1 * var(--atom));
-  max-width: var(--card-width);
-  max-height: calc(40 * var(--atom));
+  width: var(--card-width);
+  height: calc(40 * var(--atom));
   overflow-y: scroll;
   font-size: calc(2 * var(--atom));
 }
@@ -203,10 +203,6 @@ input {
   background-color: #df3;
 }
 
-.card-container {
-  width: 200px;
-  height: 200px;
-}
 
 .plane svg {
   width: 1000px;
