@@ -41,6 +41,7 @@ export function renderCard(
       .attr('id', `${prop}-${card.id}`)
       .attr('class', prop)
       .attr('contenteditable', true)
+      .on('mousedown', stopPropagation)
       .on('blur', setProp);
 
     function setProp() {
@@ -101,3 +102,7 @@ export function RenderCardCollection({ parentSelector, addThing }) {
     }
 }
 */
+
+function stopPropagation() {
+  event.stopPropagation();
+}
