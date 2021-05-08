@@ -57,7 +57,8 @@ export function RenderPlane({ onEstablishCardContainer }) {
     var newContainerSel = containerSel
       .enter()
       .append('foreignObject')
-      .attr('class', (cardPt) => `card container-${cardPt.cardId}`, true);
+      .attr('class', (cardPt) => `card container-${cardPt.cardId}`, true)
+      .call(drag().on('drag', onDrag).on('end', onDragEnd));
 
     newContainerSel
       // Never forget! A parent element with this namespace
@@ -69,8 +70,7 @@ export function RenderPlane({ onEstablishCardContainer }) {
     newContainerSel
       .merge(containerSel)
       .attr('x', accessor({ path: 'pt/0' }))
-      .attr('y', accessor({ path: 'pt/1' }))
-      .call(drag().on('drag', onDrag).on('end', onDragEnd));
+      .attr('y', accessor({ path: 'pt/1' }));
     // TODO: z
 
     function onDrag() {
