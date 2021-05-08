@@ -1,69 +1,68 @@
 import { select } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
-import type { Card, CollectionStoreType, StoreType, Thing } from '../types';
+import type { Card, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 
-export function renderCard(
-  collectionStore: CollectionStoreType,
-  store: StoreType<Thing>,
-  parentEl: object = null
-) {
-  if (!store) {
-    console.error(new Error('Store missing'));
-    return;
-  }
-
-  var card: Card = store.get();
-  var parentSel;
-  if (parentEl) {
-    parentSel = select(parentEl);
-  } else {
-    parentSel = select(`.container-${card.id}`);
-  }
-
-  var nameSel = establish(
-    parentSel,
-    'div',
-    `#title-${card.id}`,
-    curry(initEditable)('title')
-  );
-  nameSel.text(card.title);
-
-  var descSel = establish(
-    parentSel,
-    'div',
-    `#text-${card.id}`,
-    curry(initEditable)('text')
-  );
-  descSel.text(card.text);
-
-  // TODO: Picture.
-
-  establish(parentSel, 'button', '.remove-card-button', initRemoveButton);
-
-  function initEditable(prop: string, sel) {
-    sel
-      .attr('id', `${prop}-${card.id}`)
-      .attr('class', prop)
-      .attr('contenteditable', true)
-      .on('mousedown', stopPropagation)
-      .on('blur', setProp);
-
-    function setProp() {
-      store.setPart({ [prop]: select(this).text() });
+export function RenderCard({ deleteCard }) {
+  return renderCard;
+  // TODO: renderCard type
+  function renderCard(store: StoreType<Thing>, parentEl: object = null) {
+    if (!store) {
+      console.error(new Error('Store missing'));
+      return;
     }
-  }
 
-  function initRemoveButton(sel) {
-    sel
-      .attr('class', 'remove-card-button')
-      .on('click', removeThing)
-      .text('Delete');
-  }
+    var card: Card = store.get();
+    var parentSel;
+    if (parentEl) {
+      parentSel = select(parentEl);
+    } else {
+      parentSel = select(`.container-${card.id}`);
+    }
 
-  function removeThing() {
-    collectionStore.remove(card);
-    store.del();
+    var nameSel = establish(
+      parentSel,
+      'div',
+      `#title-${card.id}`,
+      curry(initEditable)('title')
+    );
+    nameSel.text(card.title);
+
+    var descSel = establish(
+      parentSel,
+      'div',
+      `#text-${card.id}`,
+      curry(initEditable)('text')
+    );
+    descSel.text(card.text);
+
+    // TODO: Picture.
+
+    establish(parentSel, 'button', '.remove-card-button', initRemoveButton);
+
+    function initEditable(prop: string, sel) {
+      sel
+        .attr('id', `${prop}-${card.id}`)
+        .attr('class', prop)
+        .attr('contenteditable', true)
+        .on('mousedown', stopPropagation)
+        .on('blur', setProp);
+
+      function setProp() {
+        store.setPart({ [prop]: select(this).text() });
+      }
+    }
+
+    function initRemoveButton(sel) {
+      sel
+        .attr('class', 'remove-card-button')
+        .on('click', onDeleteClick)
+        .text('Delete');
+    }
+
+    function onDeleteClick() {
+      deleteCard(card);
+    }
   }
 }
 

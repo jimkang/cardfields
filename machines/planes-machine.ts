@@ -15,14 +15,17 @@ import {
   RenderPlaneCollection,
 } from '../renderers/plane-renderers';
 import curry from 'lodash.curry';
-import { renderCard } from '../renderers/card-renderers';
+import { RenderCard } from '../renderers/card-renderers';
 import { Card, CollectionStoreType, Plane, StoreType, Thing } from '../types';
+import { DeleteCard } from '../updaters/updaters';
 
 const cardIdsKey = 'ids__cards';
 var cardIdsPersister = IdsPersister(cardIdsKey);
 
 const planeIdsKey = 'ids__planes';
 var planeIdsPersister = IdsPersister(planeIdsKey);
+
+var renderCard = RenderCard({ deleteCard: DeleteCard({ storeRegistry }) });
 
 var onEstablishCardContainer = OnEstablishCardContainer(
   storeRegistry,
@@ -36,7 +39,7 @@ export function assemblePlanesMachine() {
   var alreadyPersisted = true;
   // If no planes, create the default plane.
   if (planes.length < 1) {
-    let plane = createDefaultPlane();
+    let plane = createNewPlane('Default plane');
     // Creating the store also persists it.
     createStoreForPlane(true, plane);
     planes.push(plane);
@@ -131,20 +134,15 @@ function createStoreForPlane(isNew: boolean, plane: Plane) {
   );
 }
 
-function createNewPlane(): Plane {
-  return {
+function createNewPlane(title = 'New plane'): Plane {
+  var plane = {
     id: `plane-${uuid()}`,
-    title: 'New plane',
+    title,
     text: '',
     cardPts: [],
     visible: true,
   };
-}
 
-function createDefaultPlane(): Plane {
-  var plane = createNewPlane();
-  plane.title = 'Default plane';
-  // TODO: Set up cardPts.
   var cards = storeRegistry.getCollectionStore('card', null).get();
   for (var i = 0; i < cards.length; ++i) {
     plane.cardPts.push({

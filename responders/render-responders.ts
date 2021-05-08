@@ -16,15 +16,11 @@ export function OnEstablishContainerForChildren(
 
 export function OnEstablishCardContainer(
   storeRegistry,
-  renderCard: (CollectionStoreType, StoreType, object) => void
+  renderCard: (StoreType, object) => void
 ) {
   return onEstablishCardContainer;
 
   function onEstablishCardContainer(cardPt: CardPt) {
-    renderCard(
-      storeRegistry.getCollectionStore('card', null),
-      storeRegistry.getStore(cardPt.cardId),
-      this
-    );
+    renderCard(storeRegistry.getStore(cardPt.cardId), this);
   }
 }
