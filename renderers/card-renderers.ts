@@ -6,7 +6,7 @@ import curry from 'lodash.curry';
 export function renderCard(
   collectionStore: CollectionStoreType,
   store: StoreType<Thing>,
-  parentEl: object
+  parentEl: object = null
 ) {
   if (!store) {
     console.error(new Error('Store missing'));
@@ -14,7 +14,12 @@ export function renderCard(
   }
 
   var card: Card = store.get();
-  var parentSel = select(parentEl);
+  var parentSel;
+  if (parentEl) {
+    parentSel = select(parentEl);
+  } else {
+    parentSel = select(`.container-${card.id}`);
+  }
 
   var nameSel = establish(
     parentSel,

@@ -16,7 +16,7 @@ import {
 } from '../renderers/plane-renderers';
 import curry from 'lodash.curry';
 import { renderCard } from '../renderers/card-renderers';
-import { Card, Plane, StoreType, Thing } from '../types';
+import { Card, CollectionStoreType, Plane, StoreType, Thing } from '../types';
 
 const cardIdsKey = 'ids__cards';
 var cardIdsPersister = IdsPersister(cardIdsKey);
@@ -30,7 +30,7 @@ var onEstablishCardContainer = OnEstablishCardContainer(
 );
 
 export function assemblePlanesMachine() {
-  setUpCardStores();
+  var cardCollectionStore: CollectionStoreType = setUpCardStores();
 
   var planes: Plane[] = loadThings(planeIdsKey) as Plane[];
   var alreadyPersisted = true;
@@ -92,11 +92,36 @@ export function assemblePlanesMachine() {
   return { renderCollection, collectionStore, itemStores, onItemChangeFns };
 
   function onItemChangeMapper(store: StoreType<Thing>) {
+    // Card updaters.
+    var addCard = AddThing({
+      collectionStore: cardCollectionStore,
+      createNewThingInStore: createNewCardInStore,
+      thingPersister,
+      createItemResponder: createCardResponder,
+      storeRegistry,
+    });
+
     return OnThingChange({
-      render: RenderPlane({ onEstablishCardContainer }),
+      render: RenderPlane({ onEstablishCardContainer, addCard }),
       collectionStore,
       thingStore: store,
     });
+
+    function createNewCardInStore() {
+      var newCard = createNewCard();
+      store.setPart({
+        cardPts: store
+          .get()
+          .cardPts.concat([{ cardId: newCard.id, pt: [0, 0, 0] }]),
+      });
+      return createStoreForCard(true, newCard);
+    }
+  }
+
+  function createCardResponder() {
+    return function respondToCardCreation(store: StoreType<Card>) {
+      renderCard(cardCollectionStore, store);
+    };
   }
 }
 
@@ -148,10 +173,15 @@ function setUpCardStores() {
 
   // Item stores.
   collectionStore.get().map(curry(createStoreForCard)(false));
+  return collectionStore;
 }
 
 export function createStoreForCard(isNew: boolean, card: Card) {
   return storeRegistry.makeStoreHappen(card.id, () =>
     Store<Thing>(thingPersister, card, null, null, !isNew, false)
   );
+}
+
+function createNewCard(): Card {
+  return { id: `card-${uuid()}`, title: 'New card', text: '', visible: true };
 }

@@ -8,12 +8,12 @@ import type {
   CardPt,
 } from '../types';
 import curry from 'lodash.curry';
-import { planeControlsClass } from '../consts';
+import { cardsControlsClass, planeControlsClass } from '../consts';
 import accessor from 'accessor';
 import { zoom } from 'd3-zoom';
 import { drag } from 'd3-drag';
 
-export function RenderPlane({ onEstablishCardContainer }) {
+export function RenderPlane({ onEstablishCardContainer, addCard }) {
   return render;
 
   function render(
@@ -41,6 +41,14 @@ export function RenderPlane({ onEstablishCardContainer }) {
     descSel.text(plane.text);
 
     establish(parentSel, 'button', '.remove-plane-button', initRemoveButton);
+
+    var controlsParent = establish(
+      parentSel,
+      'div',
+      `.${cardsControlsClass}`,
+      (sel) => sel.attr('class', cardsControlsClass)
+    );
+    establish(controlsParent, 'button', '.add-card-button', initAddButton);
 
     var boardSel = establish(parentSel, 'svg', `#${plane.id}`, initBoard);
     var zoomRootSel = establish(boardSel, 'g', '.zoom-root', initZoom);
@@ -124,6 +132,13 @@ export function RenderPlane({ onEstablishCardContainer }) {
     function removeThing() {
       collectionStore.remove(plane);
       store.del();
+    }
+
+    function initAddButton(sel) {
+      sel
+        .attr('class', 'add-card-button')
+        .text('Add a card')
+        .on('click', addCard);
     }
   }
 }
