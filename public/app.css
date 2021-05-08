@@ -110,7 +110,7 @@ input {
   display: grid;
   row-gap: calc(1 * var(--atom));
   width: var(--card-width);
-  height: calc(40 * var(--atom));
+  height: calc(30 * var(--atom));
   overflow-y: scroll;
   font-size: calc(2 * var(--atom));
 }
