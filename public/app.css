@@ -203,9 +203,14 @@ input {
   background-color: #df3;
 }
 
+#planes-container {
+  width: 100%;
+}
 
 .plane svg {
-  width: 1000px;
+  width: calc(100% - 2*var(--atom));
+  border: solid var(--darken) 1px;
+  border-radius: var(--atom);
   height: 1000px;
 }
 
