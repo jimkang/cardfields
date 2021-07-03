@@ -25,17 +25,6 @@ export interface Plane extends Omit<UIThing, 'title'> {
 export type CardPt = { cardId: string; pt: Pt };
 export type Pt = [number, number, number];
 
-export interface Pile extends Omit<UIThing, 'title'> {
-  title: string;
-  cards: Card[];
-}
-
-export interface Deck extends UIThing {
-  piles: Pile[];
-}
-
-export type StateOptParams = { initCards?: Card[]; initPiles? };
-
 export interface ThingConflictPair {
   id: string; // Only needs to be unique to the import.
   incumbent: Thing;
