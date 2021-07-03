@@ -112,12 +112,21 @@ export function assemblePlanesMachine() {
 
     function createNewCardInStore() {
       var newCard = createNewCard();
-      store.setPart({
-        cardPts: store
-          .get()
-          .cardPts.concat([{ cardId: newCard.id, pt: [0, 0, 0] }]),
-      });
+      var planes: Plane[] = storeRegistry
+        .getCollectionStore('plane', null)
+        .get();
+      planes.forEach(addCardToPlane);
       return createStoreForCard(true, newCard);
+
+      // TODO: Move to updaters?
+      function addCardToPlane(plane: Plane) {
+        var planeStore = storeRegistry.getStore(plane.id);
+        planeStore.setPart({
+          cardPts: plane.cardPts.concat([
+            { cardId: newCard.id, pt: [0, 0, 0] },
+          ]),
+        });
+      }
     }
   }
 
