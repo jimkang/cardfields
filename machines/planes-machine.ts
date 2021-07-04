@@ -68,7 +68,7 @@ export function assemblePlanesMachine() {
   var cardCollectionStore: CollectionStoreType = setUpCardStores();
   var zoneCollectionStore: CollectionStoreType = setUpZoneStores();
 
-  var planes: Plane[] = loadThings(planeIdsKey).map(upgradePlanes) as Plane[];
+  var planes: Plane[] = loadThings(planeIdsKey).map(tuneUpPlanes) as Plane[];
   var alreadyPersisted = true;
   // If no planes, create the default plane.
   if (planes.length < 1) {
@@ -296,9 +296,21 @@ function createNewZone(): Zone {
   };
 }
 
-function upgradePlanes(obj) {
+// Assumes storeRegistry is populated.
+function tuneUpPlanes(obj) {
   if (!obj.zonePts) {
     obj.zonePts = [];
+  }
+  for (let i = obj.zonePts.length - 1; i > -1; --i) {
+    if (!storeRegistry.getStore(obj.zonePts[i].zoneId)) {
+      console.error(
+        obj.zonePts[i].zoneId,
+        'listed in',
+        obj.id,
+        'zonePts is not in storage.'
+      );
+      obj.zonePts.splice(i, 1);
+    }
   }
   writeThing(obj);
   return obj;
