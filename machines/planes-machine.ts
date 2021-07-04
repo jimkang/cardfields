@@ -312,6 +312,21 @@ function tuneUpPlanes(obj) {
       obj.zonePts.splice(i, 1);
     }
   }
+
+  if (!obj.cardPts) {
+    obj.cardPts = [];
+  }
+  for (let i = obj.cardPts.length - 1; i > -1; --i) {
+    if (!storeRegistry.getStore(obj.cardPts[i].cardId)) {
+      console.error(
+        obj.cardPts[i].cardId,
+        'listed in',
+        obj.id,
+        'cardPts is not in storage.'
+      );
+      obj.cardPts.splice(i, 1);
+    }
+  }
   writeThing(obj);
   return obj;
 }
