@@ -51,6 +51,12 @@ export function RenderZone({ deleteZone }) {
       '.remove-zone-button',
       initRemoveButton
     );
+    establish(
+      zoneHTMLAreaSel,
+      'input',
+      '.zone-color-picker',
+      initZoneColorPicker
+    );
 
     establish(zoneHTMLAreaSel, 'div', '.resize-handle', initResizeHandle);
 
@@ -82,6 +88,13 @@ export function RenderZone({ deleteZone }) {
         .call(drag().on('drag', onResizeDrag).on('end', onResizeDragEnd));
     }
 
+    function initZoneColorPicker(sel) {
+      sel
+        .attr('type', 'color')
+        .attr('value', zone.color)
+        .on('change', onChangeColor);
+    }
+
     function onResizeDrag() {
       const newWidth = +zoneActualSel.attr('width') + event.dx;
       const newHeight = +zoneActualSel.attr('height') + event.dy;
@@ -97,6 +110,11 @@ export function RenderZone({ deleteZone }) {
 
     function onDeleteClick() {
       deleteZone(zone);
+    }
+
+    function onChangeColor() {
+      store.setPart({ color: this.value });
+      zoneActualSel.attr('fill', this.value);
     }
   }
 }
