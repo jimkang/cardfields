@@ -5,17 +5,21 @@ export function AddThing({
   createNewThingInStore,
   createItemResponder,
   storeRegistry,
+  associatedStore,
 }: {
   collectionStore;
-  createNewThingInStore: () => StoreType<Thing>;
+  createNewThingInStore: (
+    parentThingStore?: StoreType<Thing>
+  ) => StoreType<Thing>;
   thingPersister;
   createItemResponder;
   storeRegistry;
+  associatedStore?;
 }) {
   return addThing;
 
   function addThing() {
-    var newStore = createNewThingInStore();
+    var newStore = createNewThingInStore(associatedStore);
     if (storeRegistry) {
       storeRegistry.putStore(newStore);
     }

@@ -6,6 +6,7 @@ import type {
   StoreType,
   Thing,
   CardPt,
+  ZonePt,
 } from '../types';
 import curry from 'lodash.curry';
 import { cardsControlsClass, planeControlsClass } from '../consts';
@@ -13,7 +14,12 @@ import accessor from 'accessor';
 import { zoom } from 'd3-zoom';
 import { drag } from 'd3-drag';
 
-export function RenderPlane({ onEstablishCardContainer, addCard }) {
+export function RenderPlane({
+  onEstablishCardContainer,
+  addCard,
+  onEstablishZoneContainer,
+  addZone,
+}) {
   return render;
 
   function render(
@@ -48,12 +54,16 @@ export function RenderPlane({ onEstablishCardContainer, addCard }) {
       `.${cardsControlsClass}`,
       (sel) => sel.attr('class', cardsControlsClass)
     );
-    establish(controlsParent, 'button', '.add-card-button', initAddButton);
+    establish(controlsParent, 'button', '.add-card-button', initAddCardButton);
+    establish(controlsParent, 'button', '.add-zone-button', initAddZoneButton);
 
     var boardSel = establish(parentSel, 'svg', `#${plane.id}`, initBoard);
     var zoomRootSel = establish(boardSel, 'g', '.zoom-root', initZoom);
     var planeRoot = establish(zoomRootSel, 'g', '.plane-root', (sel) =>
       sel.classed('plane-root', true)
+    );
+    var zoneRoot = establish(planeRoot, 'g', '.zone-root', (sel) =>
+      sel.classed('zone-root', true)
     );
 
     var containerSel = planeRoot
@@ -81,8 +91,26 @@ export function RenderPlane({ onEstablishCardContainer, addCard }) {
       .attr('y', accessor({ path: 'pt/1' }));
     // TODO: z
 
+    var zoneContainerSel = zoneRoot
+      .selectAll('.zone')
+      .data(plane.zonePts, accessor('zoneId'));
+    zoneContainerSel.exit().remove();
+    var newZoneContainerSel = zoneContainerSel
+      .enter()
+      .append('g')
+      .attr('class', (zonePt) => `zone container-${zonePt.zoneId}`, true)
+      .call(drag().on('drag', onZoneDrag).on('end', onZoneDragEnd))
+      .each(onEstablishZoneContainer);
+    newZoneContainerSel
+      .merge(zoneContainerSel)
+      .attr('transform', getZoneContainerTransform);
+
     function onDrag() {
       select(this).attr('x', event.x).attr('y', event.y);
+    }
+
+    function onZoneDrag() {
+      select(this).attr('transform', `translate(${event.x}, ${event.y})`);
     }
 
     function onDragEnd(cardPt: CardPt) {
@@ -94,6 +122,15 @@ export function RenderPlane({ onEstablishCardContainer, addCard }) {
       // Is it good enough to have to set the entire
       // cardPts prop? Should there be a 'persist' method?
       store.setPartSilent({ cardPts });
+    }
+
+    function onZoneDragEnd(zonePt: ZonePt) {
+      var zonePts: ZonePt[] = store.get().zonePts;
+      var changeTarget: ZonePt = zonePts.find(
+        (cp) => cp.zoneId === zonePt.zoneId
+      );
+      changeTarget.center = [event.x, event.y];
+      store.setPartSilent({ zonePts });
     }
 
     function initEditable(prop: string, sel) {
@@ -134,11 +171,18 @@ export function RenderPlane({ onEstablishCardContainer, addCard }) {
       store.del();
     }
 
-    function initAddButton(sel) {
+    function initAddCardButton(sel) {
       sel
         .attr('class', 'add-card-button')
         .text('Add a card')
         .on('click', addCard);
+    }
+
+    function initAddZoneButton(sel) {
+      sel
+        .attr('class', 'add-zone-button')
+        .text('Add a zone')
+        .on('click', addZone);
     }
   }
 }
@@ -179,4 +223,9 @@ export function RenderPlaneCollection({ parentSelector, addThing }) {
         .on('click', addThing);
     }
   }
+}
+
+// Should this translate by the top left corner?
+function getZoneContainerTransform(zonePt: ZonePt) {
+  return `translate(${zonePt.center[0]}, ${zonePt.center[1]})`;
 }

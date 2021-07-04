@@ -1,13 +1,17 @@
 import { CollectionStore, Store } from '../wily.js/stores/stores';
 import { OnCollectionChange } from '../wily.js/responders/basic-responders';
 import { OnThingChange } from '../responders/store-responders';
-import { OnEstablishCardContainer } from '../responders/render-responders';
+import {
+  OnEstablishCardContainer,
+  OnEstablishZoneContainer,
+} from '../responders/render-responders';
 import { AddThing } from '../wily.js/updaters/collection-modifiers';
 import { storeRegistry } from '../wily.js/stores/store-registry';
 import {
   thingPersister,
   IdsPersister,
   loadThings,
+  writeThing,
 } from '../wily.js/persistence/local';
 import { v4 as uuid } from 'uuid';
 import {
@@ -16,26 +20,55 @@ import {
 } from '../renderers/plane-renderers';
 import curry from 'lodash.curry';
 import { RenderCard } from '../renderers/card-renderers';
-import { Card, CollectionStoreType, Plane, StoreType, Thing } from '../types';
-import { DeleteCard } from '../updaters/updaters';
+import { RenderZone } from '../renderers/zone-renderers';
+import {
+  Zone,
+  Card,
+  CollectionStoreType,
+  Plane,
+  StoreType,
+  Thing,
+} from '../types';
+import { DeletePlaneChild } from '../updaters/updaters';
 
 const cardIdsKey = 'ids__cards';
-var cardIdsPersister = IdsPersister(cardIdsKey);
-
+const zoneIdsKey = 'ids__zones';
 const planeIdsKey = 'ids__planes';
+
+var cardIdsPersister = IdsPersister(cardIdsKey);
+var zoneIdsPersister = IdsPersister(zoneIdsKey);
 var planeIdsPersister = IdsPersister(planeIdsKey);
 
-var renderCard = RenderCard({ deleteCard: DeleteCard({ storeRegistry }) });
+var renderCard = RenderCard({
+  deleteCard: DeletePlaneChild({
+    storeRegistry,
+    typeName: 'card',
+    collectionMemberName: 'cardPts',
+  }),
+});
+var renderZone = RenderZone({
+  deleteZone: DeletePlaneChild({
+    storeRegistry,
+    typeName: 'zone',
+    collectionMemberName: 'zonePts',
+  }),
+});
 
 var onEstablishCardContainer = OnEstablishCardContainer(
   storeRegistry,
   renderCard
 );
 
+var onEstablishZoneContainer = OnEstablishZoneContainer(
+  storeRegistry,
+  renderZone
+);
+
 export function assemblePlanesMachine() {
   var cardCollectionStore: CollectionStoreType = setUpCardStores();
+  var zoneCollectionStore: CollectionStoreType = setUpZoneStores();
 
-  var planes: Plane[] = loadThings(planeIdsKey) as Plane[];
+  var planes: Plane[] = loadThings(planeIdsKey).map(upgradePlanes) as Plane[];
   var alreadyPersisted = true;
   // If no planes, create the default plane.
   if (planes.length < 1) {
@@ -94,7 +127,7 @@ export function assemblePlanesMachine() {
 
   return { renderCollection, collectionStore, itemStores, onItemChangeFns };
 
-  function onItemChangeMapper(store: StoreType<Thing>) {
+  function onItemChangeMapper(planeStore: StoreType<Thing>) {
     // Card updaters.
     var addCard = AddThing({
       collectionStore: cardCollectionStore,
@@ -102,12 +135,6 @@ export function assemblePlanesMachine() {
       thingPersister,
       createItemResponder: createCardResponder,
       storeRegistry,
-    });
-
-    return OnThingChange({
-      render: RenderPlane({ onEstablishCardContainer, addCard }),
-      collectionStore,
-      thingStore: store,
     });
 
     function createNewCardInStore() {
@@ -120,7 +147,6 @@ export function assemblePlanesMachine() {
 
       // TODO: Move to updaters?
       function addCardToPlane(plane: Plane) {
-        var planeStore = storeRegistry.getStore(plane.id);
         planeStore.setPart({
           cardPts: plane.cardPts.concat([
             { cardId: newCard.id, pt: [0, 0, 0] },
@@ -128,11 +154,48 @@ export function assemblePlanesMachine() {
         });
       }
     }
+
+    // Zone updaters.
+    var addZone = AddThing({
+      collectionStore: zoneCollectionStore,
+      createNewThingInStore: createNewZoneInStore,
+      thingPersister,
+      createItemResponder: createZoneResponder,
+      storeRegistry,
+      associatedStore: planeStore,
+    });
+
+    return OnThingChange({
+      render: RenderPlane({
+        onEstablishCardContainer,
+        addCard,
+        onEstablishZoneContainer,
+        addZone,
+      }),
+      collectionStore,
+      thingStore: planeStore,
+    });
+
+    function createNewZoneInStore(planeStore) {
+      var newZone = createNewZone();
+      var plane = planeStore.get();
+      planeStore.setPart({
+        zonePts: plane.zonePts.concat([{ zoneId: newZone.id, center: [0, 0] }]),
+      });
+
+      return createStoreForZone(true, newZone);
+    }
   }
 
   function createCardResponder() {
     return function respondToCardCreation(store: StoreType<Card>) {
       renderCard(cardCollectionStore, store);
+    };
+  }
+
+  function createZoneResponder() {
+    return function respondToZoneCreation(store: StoreType<Card>) {
+      renderZone(zoneCollectionStore, store);
     };
   }
 }
@@ -149,6 +212,7 @@ function createNewPlane(title = 'New plane'): Plane {
     title,
     text: '',
     cardPts: [],
+    zonePts: [],
     visible: true,
   };
 
@@ -183,12 +247,59 @@ function setUpCardStores() {
   return collectionStore;
 }
 
+// Consider refactoring the setUp functions.
+function setUpZoneStores() {
+  var collectionStore = storeRegistry.makeCollectionStoreHappen(
+    'zone',
+    null,
+    () =>
+      CollectionStore({
+        idsPersister: zoneIdsPersister,
+        thingPersister,
+        kind: 'zone',
+        parentThingId: null,
+        vals: loadThings(zoneIdsKey),
+        alreadyPersisted: true,
+        initValIsAlreadyDehydrated: false,
+      })
+  );
+
+  // Item stores.
+  collectionStore.get().map(curry(createStoreForZone)(false));
+  return collectionStore;
+}
+
 export function createStoreForCard(isNew: boolean, card: Card) {
   return storeRegistry.makeStoreHappen(card.id, () =>
     Store<Thing>(thingPersister, card, null, null, !isNew, false)
   );
 }
 
+export function createStoreForZone(isNew: boolean, zone: Zone) {
+  return storeRegistry.makeStoreHappen(zone.id, () =>
+    Store<Thing>(thingPersister, zone, null, null, !isNew, false)
+  );
+}
+
 function createNewCard(): Card {
   return { id: `card-${uuid()}`, title: 'New card', text: '', visible: true };
+}
+
+function createNewZone(): Zone {
+  return {
+    id: `zone-${uuid()}`,
+    title: 'New zone',
+    width: 300,
+    height: 300,
+    visible: true,
+    color: 'hsla(0, 0%, 50%, 0.5)',
+  };
+}
+
+function upgradePlanes(obj) {
+  if (!obj.zonePts) {
+    obj.zonePts = [];
+  }
+  writeThing(obj);
+  return obj;
 }

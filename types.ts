@@ -20,10 +20,18 @@ export interface Card extends Omit<UIThing, 'text'> {
 export interface Plane extends Omit<UIThing, 'title'> {
   title: string;
   cardPts: CardPt[];
+  zonePts: ZonePt[];
+}
+
+export interface Zone extends Omit<UIThing, 'title'> {
+  title: string;
+  width: number;
+  height: number;
 }
 
 export type CardPt = { cardId: string; pt: Pt };
 export type Pt = [number, number, number];
+export type ZonePt = { zoneId: string; center: [number, number] };
 
 export interface ThingConflictPair {
   id: string; // Only needs to be unique to the import.

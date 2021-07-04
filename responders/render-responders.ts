@@ -1,4 +1,4 @@
-import { StoreType, Thing, CardPt } from '../types';
+import { StoreType, Thing, CardPt, ZonePt } from '../types';
 
 export function OnEstablishContainerForChildren(
   stores: StoreType<Thing>[],
@@ -22,5 +22,16 @@ export function OnEstablishCardContainer(
 
   function onEstablishCardContainer(cardPt: CardPt) {
     renderCard(storeRegistry.getStore(cardPt.cardId), this);
+  }
+}
+// TODO: Genericize
+export function OnEstablishZoneContainer(
+  storeRegistry,
+  renderZone: (StoreType, object) => void
+) {
+  return onEstablishZoneContainer;
+
+  function onEstablishZoneContainer(zonePt: ZonePt) {
+    renderZone(storeRegistry.getStore(zonePt.zoneId), this);
   }
 }
