@@ -214,6 +214,22 @@ input {
   height: 1000px;
 }
 
+.zone > foreignObject > div {
+  width: 100%;
+  height: 100%;
+}
+
+.resize-handle {
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  width: 40px;
+  height: 40px;
+  background-color: hsla(0, 0%, 0%, 0.2);
+  border: solid 1px hsla(0, 0%, 0%, 0.5);
+  cursor: pointer;
+}
+
 @media all and (max-height: 568px) {
   body {
     font-size: 18px;

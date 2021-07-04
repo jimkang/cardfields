@@ -1,8 +1,9 @@
-import { select } from 'd3-selection';
+import { select, event } from 'd3-selection';
 import { establish } from '../wily.js/rendering/establish';
 import type { Zone, StoreType, Thing } from '../types';
 import curry from 'lodash.curry';
 import accessor from 'accessor';
+import { drag } from 'd3-drag';
 
 export function RenderZone({ deleteZone }) {
   return renderZone;
@@ -51,6 +52,8 @@ export function RenderZone({ deleteZone }) {
       initRemoveButton
     );
 
+    establish(zoneHTMLAreaSel, 'div', '.resize-handle', initResizeHandle);
+
     // TODO: Factor this out.
     function initEditable(prop: string, sel) {
       sel
@@ -70,6 +73,26 @@ export function RenderZone({ deleteZone }) {
         .attr('class', 'remove-zone-button')
         .on('click', onDeleteClick)
         .text('Delete');
+    }
+
+    function initResizeHandle(sel) {
+      sel
+        .classed('resize-handle', true)
+        .datum(zone)
+        .call(drag().on('drag', onResizeDrag).on('end', onResizeDragEnd));
+    }
+
+    function onResizeDrag() {
+      const newWidth = +zoneActualSel.attr('width') + event.dx;
+      const newHeight = +zoneActualSel.attr('height') + event.dy;
+      console.log('new dimensions', newWidth, newHeight);
+      zoneActualSel.attr('width', newWidth).attr('height', newHeight);
+      zoneHTMLContainerSel.attr('width', newWidth).attr('height', newHeight);
+    }
+
+    function onResizeDragEnd() {
+      store.setPartSilent({ width: +zoneActualSel.attr('width') });
+      store.setPartSilent({ height: +zoneActualSel.attr('height') });
     }
 
     function onDeleteClick() {
