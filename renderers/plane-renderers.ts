@@ -13,6 +13,7 @@ import { cardsControlsClass, planeControlsClass } from '../consts';
 import accessor from 'accessor';
 import { zoom } from 'd3-zoom';
 import { drag } from 'd3-drag';
+import { storeRegistry } from '../wily.js/stores/store-registry';
 
 export function RenderPlane({
   onEstablishCardContainer,
@@ -191,11 +192,9 @@ export function RenderPlaneCollection({ parentSelector, addThing }) {
   return renderCollection;
 
   function renderCollection(collectionStore) {
+    var ids = collectionStore.getRaw();
     var parentSel = select(parentSelector);
 
-    var itemRoot = establish(parentSel, 'div', '.planes-root', (sel) =>
-      sel.attr('class', 'planes-root')
-    );
     var controlsParent = establish(
       parentSel,
       'div',
@@ -203,8 +202,16 @@ export function RenderPlaneCollection({ parentSelector, addThing }) {
       (sel) => sel.attr('class', planeControlsClass)
     );
     establish(controlsParent, 'button', '.add-plane-button', initAddButton);
+    var selectSel = establish(
+      controlsParent,
+      'select',
+      '.select-plane-button',
+      initSelect
+    );
 
-    var ids = collectionStore.getRaw();
+    var itemRoot = establish(parentSel, 'div', '.planes-root', (sel) =>
+      sel.attr('class', 'planes-root')
+    );
     var containers = itemRoot
       .selectAll('.planes-root > .item-container')
       .data(ids, accessor('identity'));
@@ -216,11 +223,35 @@ export function RenderPlaneCollection({ parentSelector, addThing }) {
       .classed('plane', true)
       .attr('id', accessor('identity'));
 
+    selectPlane.bind(selectSel.node())();
+
     function initAddButton(sel) {
       sel
         .attr('class', 'add-plane-button')
         .text('Add a plane')
         .on('click', addThing);
+    }
+
+    function initSelect(sel) {
+      // TODO: Allow selected plane to be passed in.
+      sel
+        .attr('class', 'select-plane')
+        .attr('selected', ids.length > 0 ? ids[0] : '')
+        .attr('value', ids[0])
+        .on('change', selectPlane);
+      sel
+        .selectAll('option')
+        .data(ids.map((id) => storeRegistry.getStore(id).get()))
+        .join('option')
+        .attr('value', accessor())
+        .text(accessor('title'));
+    }
+
+    function selectPlane() {
+      var selectedId = this.value;
+      itemRoot
+        .selectAll('.planes-root > .item-container')
+        .classed('hidden', (id) => id !== selectedId);
     }
   }
 }
